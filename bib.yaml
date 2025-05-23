@@ -1,0 +1,56 @@
+# See https://github.com/typst/hayagriva/pull/192
+# yaml-language-server: $schema=https://raw.githubusercontent.com/typst/hayagriva/0c640417cfb35067c13f1ee0ce0ee35f57a897fb/hayagriva.schema.json
+
+odri-controls:
+  type: repository
+  url:
+    value: https://github.com/open-dynamic-robot-initiative/odri_controls_interface
+    date: 2025-05-20
+
+odri-masterboard:
+  type: repository
+  url:
+    value: https://github.com/open-dynamic-robot-initiative/master-board
+    date: 2025-05-20
+
+odri-properties-solo:
+  type: repository
+  url:
+    value: https://github.com/open-dynamic-robot-initiative/robot_properties_solo
+    date: 2025-05-21
+
+nix-language:
+  type: reference
+  url:
+    value: https://nix.dev/manual/nix/2.17/language/
+    date: 2025-05-19
+
+nix-derivation:
+  type: reference
+  url:
+    value: https://nix.dev/manual/nix/2.17/language/derivations
+    date: 2025-05-19
+
+hydra:
+  type: web
+  url:
+    value: https://hydra.nixos.org/
+    date: 2025-05-21
+
+nixpkgs-xacro:
+  type: repository
+  url:
+    value: https://github.com/NixOS/nixpkgs/pull/409754
+    date: 2025-05-22
+
+json-schema:
+  type: reference
+  url:
+    value: https://json-schema.org/draft/2020-12/json-schema-core
+    date: 2025-05-23
+
+uv:
+  type: web
+  url:
+    value: https://docs.astral.sh/uv/
+    date: 2025-05-22
