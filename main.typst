@@ -1,0 +1,7 @@
+= Stage au LAAS
+
+== Journal de bord
+
+#for month in ("may", "june", "july", "august", "september", "november") {
+	include(month + ".typst")
+}
