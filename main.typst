@@ -5,3 +5,5 @@
 #for month in ("may", "june", "july", "august", "september", "november") {
 	include(month + ".typst")
 }
+
+#bibliography("bib.yaml")
