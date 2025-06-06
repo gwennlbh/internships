@@ -54,3 +54,27 @@ uv:
   url:
     value: https://docs.astral.sh/uv/
     date: 2025-05-22
+
+gazebo:
+  type: web
+  url:
+    value: https://gazebosim.org/
+    date: 2025-06-06
+
+raspi:
+  type: web
+  url:
+    value: https://www.raspberrypi.com/
+    date: 2025-06-06
+
+unitree_sdk2:
+  type: repository
+  url:
+    value: https://github.com/unitreerobotics/unitree_sdk2
+    date: 2025-06-06
+
+h1:
+  type: web
+  url:
+    value: https://www.unitree.com/h1/
+    date: 2025-06-06

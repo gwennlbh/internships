@@ -1,0 +1,6 @@
+=== 2-6 Juin
+
+- Début de recherches sur l'installation de NixOS sur Raspberry Pi @raspi 400 et 5
+- Flash du firmware master-board sur un testbench
+- Test du packaging de odri_control_interface @odri-controls avec les scripts de démos à l'aide d'un testbench
+- Début de recherches sur la création d'un plugin Gazebo @gazebo communiquant avec la couche bas niveau du SDK2 @unitree_sdk2 d'Unitree afin de simuler du code pour le robot H1 @h1 dans Gazebo
