@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
-    paths: ["*.typst", "*.typ"]
+    paths: ["*.typst", "*.typ", ".github/workflows/typst.yml"]
+
+permissions:
+  contents: write
 
 jobs:
   build:
