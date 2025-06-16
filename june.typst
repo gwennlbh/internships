@@ -4,3 +4,9 @@
 - Flash du firmware master-board sur un testbench
 - Test du packaging de odri_control_interface @odri-controls avec les scripts de démos à l'aide d'un testbench
 - Début de recherches sur la création d'un plugin Gazebo @gazebo communiquant avec la couche bas niveau du SDK2 @unitree_sdk2 d'Unitree afin de simuler du code pour le robot H1 @h1 dans Gazebo
+
+=== 9-13 Juin
+
+- Progrès sur l'accès à la couche bas niveau du SDK2 @unitree_sdk2
+  - Analyse via Wireshark des paquets
+  - Analyse du code source du plugin Mujoco @mujoco fourni par Unitree

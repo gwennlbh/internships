@@ -78,3 +78,9 @@ h1:
   url:
     value: https://www.unitree.com/h1/
     date: 2025-06-06
+
+mujoco:
+  type: web
+  url:
+    value: https://mujoco.org/
+    date: 2025-06-16
