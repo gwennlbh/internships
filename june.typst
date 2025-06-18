@@ -10,3 +10,8 @@
 - Progrès sur l'accès à la couche bas niveau du SDK2 @unitree_sdk2
   - Analyse via Wireshark des paquets
   - Analyse du code source du plugin Mujoco @mujoco fourni par Unitree
+
+=== 16-20 Juin
+
+- Réussite de l'accès à la couche bas niveau du SDK2 @unitree_sdk2 via les définitions IDL @omgidl fournies par Unitree
+- Documentation sur le système de plugins de Gazebo @gazebo
