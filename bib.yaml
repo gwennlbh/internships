@@ -84,3 +84,9 @@ mujoco:
   url:
     value: https://mujoco.org/
     date: 2025-06-16
+
+omgidl:
+  type: web
+  url:
+    value: https://www.omg.org/spec/IDL/4.2/About-IDL
+    date: 2025-06-18
