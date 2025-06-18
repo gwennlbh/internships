@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-    paths: ["*.typst", "*.typ", ".github/workflows/typst.yml"]
+    paths: ["*.typst", "*.typ", ".github/workflows/typst.yml", "bib.yaml"]
 
 permissions:
   contents: write
