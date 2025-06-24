@@ -86,13 +86,15 @@ mujoco:
     date: 2025-06-16
 
 omgidl:
-  type: web
+  type: reference
+  title: Interface Definition Language Specification Version 4.2
   url:
     value: https://www.omg.org/spec/IDL/4.2/About-IDL
     date: 2025-06-18
 
 dds:
-  type: web
+  type: reference
+  title: DDS Interoperability Wire Protocol Specification Version 2.5
   url:
     value: https://www.omg.org/spec/DDSI-RTPS/
     date: 2025-06-24
