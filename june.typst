@@ -15,3 +15,5 @@
 
 - Réussite de l'accès à la couche bas niveau du SDK2 @unitree_sdk2 via les définitions IDL @omgidl fournies par Unitree
 - Documentation sur le système de plugins de Gazebo @gazebo
+- Début de travail sur le bridge Gazebo/unitree: `gz-unitree`
+  - Implémentation de la communication DDS @dds entre un binaire d'exemple d'utilisation du SDK2 et le plugin Gazebo
