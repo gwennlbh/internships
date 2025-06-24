@@ -90,3 +90,9 @@ omgidl:
   url:
     value: https://www.omg.org/spec/IDL/4.2/About-IDL
     date: 2025-06-18
+
+dds:
+  type: web
+  url:
+    value: https://www.omg.org/spec/DDSI-RTPS/
+    date: 2025-06-24
