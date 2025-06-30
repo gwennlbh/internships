@@ -79,6 +79,12 @@ h1:
     value: https://www.unitree.com/h1/
     date: 2025-06-06
 
+h1v2:
+  type: web
+  url:
+    value: https://www.unitree.com/h1/
+    date: 2025-06-30
+
 mujoco:
   type: web
   url:
@@ -98,3 +104,10 @@ dds:
   url:
     value: https://www.omg.org/spec/DDSI-RTPS/
     date: 2025-06-24
+
+sdf:
+  type: reference
+  title: SDFormat Specification
+  url:
+    value: http://sdformat.org/spec
+    date: 2025-06-30
