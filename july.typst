@@ -1,3 +1,9 @@
 === 30 Juin - 4 Juillet
 
 - Continuation du travail: essais pour rajouter un capteur IMU sur le robot, essais pour faire fonctionner l'auto-collision
+
+=== 7-11 Juillet
+
+- Capteur IMU rajouté
+- Ajout du tick (temps) de simulation 
+- Essais d'utilisation de gz-unitree avec les politiques RL#footnote[Reinforcement Learning] de Gepetto
