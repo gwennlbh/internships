@@ -7,3 +7,12 @@
 - Capteur IMU rajouté
 - Ajout du tick (temps) de simulation 
 - Essais d'utilisation de gz-unitree avec les politiques RL#footnote[Reinforcement Learning] de Gepetto
+
+=== 14-18 Juillet
+
+- Tentatives d'amélioration des performances pour améliorer le RTF: passage de 10% à 15%
+  - Parallélisation de l'envoi des messages des DDS dans un thread différent du principal
+  - Optimisations classiques
+
+- Ecriture d'une recette _Just_ @justfile pour configurer l'environnement de développement, sur Arch Linux ou Ubuntu
+- Reproduction des résultats sur un OS et une machine différente
