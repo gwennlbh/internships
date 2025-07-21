@@ -117,3 +117,9 @@ justfile:
   url:
     value: https://just.systems
     date: 2025-07-21
+
+gazebo-sim-overlay:
+  type: repository
+  url:
+    value: https://github.com/muellerbernd/gazebo-sim-overlay
+    date: 2025-07-21

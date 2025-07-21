@@ -16,3 +16,8 @@
 
 - Ecriture d'une recette _Just_ @justfile pour configurer l'environnement de développement, sur Arch Linux ou Ubuntu
 - Reproduction des résultats sur un OS et une machine différente
+
+=== 21-25 Juillet
+
+- Évaluation de `gazebo-sim-overlay` @gazebo-sim-overlay comme solution pour un packaging Nix
+- Recherche sur un mode headless de gazebo suite à des erreurs de QT sous devshell Nix
