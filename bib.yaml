@@ -111,3 +111,9 @@ sdf:
   url:
     value: http://sdformat.org/spec
     date: 2025-06-30
+
+justfile:
+  type: web
+  url:
+    value: https://just.systems
+    date: 2025-07-21
