@@ -123,3 +123,16 @@ gazebo-sim-overlay:
   url:
     value: https://github.com/muellerbernd/gazebo-sim-overlay
     date: 2025-07-21
+
+msr2022-cps:
+  type: article
+  title: Problems and Solutions in Applying Continuous Integration and Delivery to 20 Open-Source Cyber-Physical Systems
+  serial-number:
+    doi: http://dx.doi.org/10.1145/3524842.3527948
+  author:
+    - Fiorella Zampetti 
+    - Vittoria Nardone
+    - Massimiliano Di Penta
+  url:
+    value: https://mdipenta.github.io/files/msr2022-cps.pdf
+    date: 2025-07-28

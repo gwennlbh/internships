@@ -18,9 +18,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Typst
+      - name: Compile main
         uses: lvignoli/typst-action@main
         with: { source_file: main.typst }
+
+      - name: Compile biblio
+        uses: lvignoli/typst-action@main
+        with: { source_file: biblio.typst }
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9

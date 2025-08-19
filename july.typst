@@ -21,3 +21,7 @@
 
 - Évaluation de `gazebo-sim-overlay` @gazebo-sim-overlay comme solution pour un packaging Nix
 - Recherche sur un mode headless de gazebo suite à des erreurs de QT sous devshell Nix
+
+=== 28 Juillet - 1 août
+
+- Recherche autour de l'utilisation de Gazebo dans des environnements CI/CD @msr2022-cps, en particulier pour capturer une simulation en vidéo
