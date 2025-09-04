@@ -64,8 +64,7 @@
         ),
       ),
     ),
-    numbering: (current, ..total) => if total.pos().len() > 0
-      and current == total.at(0) {
+    numbering: (current, ..total) => if total.pos().len() > 0 and current == total.at(0) {
       // sig(str(current))
       str(current)
     } else {
@@ -177,7 +176,26 @@
         )
       }
 
-      align(center)[#date]
+      align(center)[#{
+        if type(date) == datetime {
+          date
+            .display("[day padding:none] [month repr:long] [year]")
+            .replace("January", "janvier")
+            .replace("February", "février")
+            .replace("March", "mars")
+            .replace("April", "avril")
+            .replace("May", "mai")
+            .replace("June", "juin")
+            .replace("July", "juillet")
+            .replace("August", "août")
+            .replace("September", "septembre")
+            .replace("October", "octobre")
+            .replace("November", "novembre")
+            .replace("December", "décembre")
+        } else {
+          date
+        }
+      }]
 
       // Abstract.
       if abstract != none {

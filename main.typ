@@ -4,7 +4,7 @@
   authors: (
     (name: "Gwenn Le Bihan", email: "gwenn.lebihan@etu.inp-n7.fr", affiliation: "ENSEEIHT"),
   ),
-  date: "2 Septembre 2025",
+  date: datetime.today(),
   logo: "enseeiht.jpeg",
   abstract: [
     Ce stage porte sur l'intégration de Nix et NixOS dans les processus de développement et de déploiement logiciel dans le domaine robotique au sein du LAAS. Nix, le _package manager_, et NixOS, l'OS, sont des technologies permettant une reproductibilité, une qualité importante dans le monde de la recherche.
@@ -20,9 +20,9 @@
 #pagebreak()
 
 
-#include("biblio.typ")
+#include "biblio.typ"
 
-#include("log.typ")
+#include "log.typ"
 
 
 #bibliography("bib.yaml")

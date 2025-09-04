@@ -20,11 +20,7 @@ jobs:
 
       - name: Compile files
         uses: lvignoli/typst-action@main
-        with: 
-          source_file: |
-            log.typ
-            biblio.typ
-            main.typ
+        with: { source_file: main.typ }
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
