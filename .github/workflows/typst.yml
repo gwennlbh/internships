@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-    paths: ["*.typst", "*.typ", ".github/workflows/typst.yml", "bib.yaml"]
+    paths: ["*.typ", ".github/workflows/typst.yml", "bib.yaml"]
 
 permissions:
   contents: write
@@ -18,17 +18,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Compile main
+      - name: Compile log
         uses: lvignoli/typst-action@main
-        with: { source_file: main.typst }
+        with: { source_file: log.typ }
 
       - name: Compile biblio
         uses: lvignoli/typst-action@main
-        with: { source_file: biblio.typst }
+        with: { source_file: biblio.typ }
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
         with:
           default_author: github_actions
-          message: Update main.pdf
-          add: main.pdf
+          message: Update PDFs
+          add: '*.pdf'

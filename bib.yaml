@@ -136,3 +136,97 @@ msr2022-cps:
   url:
     value: https://mdipenta.github.io/files/msr2022-cps.pdf
     date: 2025-07-28
+
+nixpkgs:
+  type: web
+  url:
+    value: https://search.nixos.org/packages
+    date: 2025-09-03
+
+nixpkgs-contributing:
+  type: web
+  title: Nixpkgs/Contributing
+  author: NixOS Wiki Authors
+  url:
+    value: https://wiki.nixos.org/wiki/Nixpkgs/Contributing
+    date: 2025-09-03
+
+cachix:
+  type: web
+  title: Cachix — Nix binary cache hosting
+  url:
+    value: https://www.cachix.org/
+    date: 2025-09-03
+
+nix-sandboxing:
+  type: article
+  title: Nix (package manager) — Sandboxing
+  url:
+    value: https://wiki.nixos.org/wiki/Nix_(package_manager)#Internals
+    date: 2025-09-03
+
+purefunctions:
+  type: article
+  title: Professor Frisby’s Mostly Adequate Guide to Functional Programming
+  volume: 3
+  volume-total: 13
+  author: Brian Lonsdorf
+  publisher: Github
+  date: 2015
+  url:
+    value: https://github.com/MostlyAdequate/mostly-adequate-guide/blob/master/ch03.md
+    date: 2025-09-04
+
+reproducibility:
+  type: web
+  title: Reproducible Builds
+  url:
+    value: https://reproducible-builds.org/
+    date: 2025-09-04
+
+#  "ISO/IEC JTC 1/SC 22/WG5/N2137 – Fortran 2015 Committee Draft (J3/17-007r2)" (PDF). International Organization for Standardization. July 6, 2017. pp. 336–338.
+fortran-pure:
+  type: book
+  title: ISO/IEC JTC 1/SC 22/WG5/N2137
+  author: Fortran 2015 Committee Draft (J3/17-007r2)
+  publisher: International Organization for Standardisation
+  date: 2017-07-06
+  page-range: 336-338
+  url:
+    value: https://wg5-fortran.org/N2101-N2150/N2137.pdf
+    date: 2025-09-04
+
+ibm-function-procedure-routine:
+  type: article
+  title: Relationship Between Routines, Functions, and Procedures
+  publisher: IBM
+  date: 2025-01-13
+  url:
+    value: https://www.ibm.com/docs/en/informix-servers/15.0.0?topic=statement-relationship-between-routines-functions-procedures
+    date: 2025-09-04
+
+programming-languages-robotics:
+  type: article
+  title: Different Types of Robot Programming Languages
+  publisher: Plant Automation Technology
+  date: 2015
+  url:
+    value: https://www.plantautomation-technology.com/articles/different-types-of-robot-programming-languages
+    date: 2025-09-04
+
+imperative-languages:
+  type: article
+  title: "Imperative programming: Overview of the oldest programming paradigm"
+  publisher: IONOS
+  date: 2021-05-21
+  url:
+    value: https://www.ionos.com/digitalguide/websites/web-development/imperative-programming/
+    date: 2025-09-04
+
+github-runners:
+  type: article
+  title: GitHub-hosted runners
+  publisher: Github
+  url:
+    value: https://docs.github.com/en/actions/concepts/runners/github-hosted-runners
+    date: 2025-09-04
