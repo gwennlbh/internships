@@ -22,7 +22,10 @@
 
 #include "biblio.typ"
 
-#include "log.typ"
+= Journal de bord
 
+#for month in ("may", "june", "july", "august", "september", "november") {
+	include("log/" + month + ".typ")
+}
 
 #bibliography("bib.yaml")
