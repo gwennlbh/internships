@@ -1,4 +1,5 @@
 #import "@preview/arkheion:0.1.0": arkheion, arkheion-appendices
+#import "@preview/fletcher:0.5.8": diagram, edge, node
 
 #show: arkheion.with(
   title: "Étude bibliographique I",
@@ -7,17 +8,17 @@
   ),
   date: "2 Septembre 2025",
   abstract: [
-    Ce stage porte sur l'intégration de Nix et NixOS dans les processus de développement et de déploiement logiciel dans le domaine robotique au sein du LAAS. Nix, le _package manager_, et NixOS, l'OS, sont des technologies permettant une reproductibilité, une qualité importante dans le monde de la recherche. 
+    Ce stage porte sur l'intégration de Nix et NixOS dans les processus de développement et de déploiement logiciel dans le domaine robotique au sein du LAAS. Nix, le _package manager_, et NixOS, l'OS, sont des technologies permettant une reproductibilité, une qualité importante dans le monde de la recherche.
 
     J'ai été aussi amenée à travailler sur la création d'un _plugin_ pour Gazebo, un logiciel de simulation robotique, pour l'utiliser avec le _SDK_ d'un robot de Unitree.
-  ]
+  ],
 )
 
 #outline(
-  title: [Table des matières]
+  title: [Table des matières],
 )
 
-= Reproductibilité 
+= Reproductibilité
 
 == État dans le domaine de la programmation
 
@@ -28,7 +29,7 @@ Cette liberté permet, par exemple, d'avoir accès à la date et à l'heure cour
 Mais, en contrepartie, on perd une équation qui est fondamentale en mathématiques:
 
 $
-forall E, F, forall f: E->F, forall (e_1, e_2) in E^2, e_1 = e_2 => f(e_1) = f(e_2)
+  forall E, F, forall f: E->F, forall (e_1, e_2) in E^2, e_1 = e_2 => f(e_1) = f(e_2)
 $
 
 En programmation, on peut très facilement construire un $f$ qui ne vérifie pas ceci:
@@ -91,16 +92,17 @@ Une autre caractéristique que l'on trouve souvent dans la famille de langages f
     else:
       x = 8
     return f(x)
-  ```, 
+  ```,
   ```ocaml
   let g x y = f (
-    if y = 5 then 
-      6 
-    else 
+    if y = 5 then
+      6
+    else
       8
   )
   ```,
-  [ *Python* (`if` et `else` sont des instructions) ], [ *OCaml* (`if` et `else` forment une expression) ]
+
+  [ *Python* (`if` et `else` sont des instructions) ], [ *OCaml* (`if` et `else` forment une expression) ],
 )
 
 Afin de décrire les dépendances d'un programme, l'environnement de compilation, et les étapes pour le compiler (en somme, afin de définir le $f in "bin"^"src"$), Nix comprend un langage d'expressions @nix-language. Un fichier `.nix` définit une fonction, que Nix sait exécuter pour compiler le code source.
@@ -113,7 +115,7 @@ Afin de décrire les dépendances d'un programme, l'environnement de compilation
   ```,
   ```nix
   { a }: a + 3
-  ```
+  ```,
 )
 
 Voici un exemple de définition d'un programme, appelée _dérivation_ dans le jargon de Nix:
@@ -163,7 +165,7 @@ stdenv.mkDerivation {
 
 La dérivation ici prend en entrée le code source (`src-odri-masterboard-sdk`), ainsi que des dépendances, que ce soit des fonctions relatives à Nix même (comme `stdenv.mkDerivation`) pour simplifier la définition de dérivation, ou des dépendances au programmes, que ce soit pour sa compilation ou pour son exécution (dans ce dernier cas de figures, les dépendances sont inclues ou reliées au binaire final)
 
-== Un ecosystème de dépendances 
+== Un ecosystème de dépendances
 
 Afin de conserver la reproductibilité même lorsque l'on dépend de libraries tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des _packages_ Nix, disponibles sur _Nixpkgs_ @nixpkgs.
 
@@ -213,19 +215,32 @@ Au final, en explorant le code source du plugin pour un autre logiciel de simula
 
 == `rt/lowstate`, `rt/lowcmd`
 
-Le SDK de Unitree fonctionne via des canaux DDS, une technologie de communication temps-réel bas niveau @dds. 
+Le SDK de Unitree fonctionne via des canaux DDS, une technologie de communication temps-réel bas niveau @dds.
 
 Deux de ces canaux donnent accès au contrôle (resp. à l'état) bas-niveau des moteurs (resp. capteurs) du robot: `rt/lowcmd` (resp. `rt/lowstate`).
 
 Grâce à l'étude des paquets transmis via Wireshark, j'ai pu débugger les communications entre mon plugin, _gz-unitree_, et le SDK.
 
+Et au final, mon plugin fonctionne, en simulant un robot H1v2 via ces deux canaux:
+
+#align(center, diagram(
+  node((-1, 0))[Unitree SDKv2],
+  edge("->", bend: 45deg)[`rt/lowcmd`],
+  edge("<-", bend: -45deg)[`rt/lowstate`],
+  node((0, 0))[gz-unitree],
+  edge("<->")[`::PreUpdate`],
+  node((1, 0))[Gazebo],
+  edge("--"),
+  node((2, 0))[Modèle SDF du robot]
+))
+
 == Des tests end-to-end automatisés
 
-Je souhaitais permettre de tester le code sur simulateur de manière automatique: on push un commit modifiant une politique de contrôle du robot, et, automatiquement, en CI, un test sous simulateur est lancé. On reçoit un artéfact avec une vidéo filmant le test. 
+Je souhaitais permettre de tester le code sur simulateur de manière automatique: on push un commit modifiant une politique de contrôle du robot, et, automatiquement, en CI, un test sous simulateur est lancé. On reçoit un artéfact avec une vidéo filmant le test.
 
 Pour faire ceci, il a fallu rendre la fonctionnalité native à Gazebo d'enregistrement vidéo automatisable: elle ne l'est pas nativement, il a donc fallu que je duplique le code du module Gazebo correspondant, afin d'y rajouter de quoi contrôler l'entregistrement vidéo via des _topics_ Gazebo.
 
-Il y a aussi un challenge lié au fait que, en CI, il n'y a pas d'interface graphique, ce qui rend le lancement de l'interface graphique de Gazebo impossible. Il faut donc simuler une interface graphique avec _Xvfb_ @xvfb, un serveur X virtuel.
+Il y a aussi un challenge lié au fait que, en CI, il n'y a pas d'interface graphique, ce qui rend le lancement de l'interface graphique de Gazebo impossible. Il faut donc simuler une interface graphique avec _XVFB_, un serveur X virtuel @xvfb.
 
 == Packaging sous Nix
 
