@@ -1,4 +1,4 @@
-=== 19-23 Mai
+== 19-23 Mai
 
 - Mise en place de l'environnement de développement 
 - Documentation sur Nix le langage @nix-language
@@ -12,9 +12,6 @@
 - Recherche autour d'une potentielle validation au runtime en C++ des fichiers de config par le JSON Schema 
 - Découverte des overlays Nix
 
-=== 26-28 Mai
+== 26-28 Mai
 
 - Continuation du travail précédent
-
-
-

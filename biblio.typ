@@ -1,26 +1,10 @@
-#import "@preview/arkheion:0.1.0": arkheion, arkheion-appendices
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 
-#show: arkheion.with(
-  title: "Étude bibliographique I",
-  authors: (
-    (name: "Gwenn Le Bihan", email: "gwenn.lebihan@etu.inp-n7.fr", affiliation: "ENSEEIHT"),
-  ),
-  date: "2 Septembre 2025",
-  abstract: [
-    Ce stage porte sur l'intégration de Nix et NixOS dans les processus de développement et de déploiement logiciel dans le domaine robotique au sein du LAAS. Nix, le _package manager_, et NixOS, l'OS, sont des technologies permettant une reproductibilité, une qualité importante dans le monde de la recherche.
+= Étude bibliographique Ⅰ
 
-    J'ai été aussi amenée à travailler sur la création d'un _plugin_ pour Gazebo, un logiciel de simulation robotique, pour l'utiliser avec le _SDK_ d'un robot de Unitree.
-  ],
-)
+== Reproductibilité
 
-#outline(
-  title: [Table des matières],
-)
-
-= Reproductibilité
-
-== État dans le domaine de la programmation
+=== État dans le domaine de la programmation
 
 La différence entre une fonction au sens mathématique et une fonction au sens programmatique consiste en le fait que, par des raisons de practicité, on permet aux `function`s des langages de programmation d'avoir des _effets de bords_. Ces effets affectent, modifient ou font dépendre la fonction d'un environnement global qui n'est pas explicitement déclaré comme une entrée (un argument) de la fonction en question @purefunctions.
 
@@ -45,14 +29,14 @@ Selon l'année dans laquelle nous sommes, $mono(f)(0)$ n'a pas la même valeur.
 
 De manière donc très concrète, si cette fonction `f` fait partie du protocole expérimental d'une expérience, cette expérience n'est plus reproductible, et ses résultats sont donc potentiellement non vérifiables, si le papier est soumis le 15 décembre 2025 et la _peer review_ effectuée le 2 janvier 2026.
 
-== Contenir les effets de bords
+=== Contenir les effets de bords
 
 En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée dans certains domaines de programmation @reproducibility
 
 Il existe donc depuis longtemps des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limite les effets de bords. Certains langages font également la distinction entre une fonction _pure_#footnote[sans effets de bord] et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord puisqu'elle ne renvoie pas de valeur @ibm-function-procedure-routine
 
 
-== État dans le domaine de la robotique
+=== État dans le domaine de la robotique
 
 En robotique, pour donner des ordres au matériel, on intéragit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel
 
@@ -61,7 +45,7 @@ De fait, les langages employés sont communément C, C++ ou Python#footnote[Il a
 L'idée de s'affranchir d'effets de bords pour rendre les programmes dans la recherche en robotique reproductibles est donc plus utopique que réaliste.
 
 
-== Environnements de développement
+=== Environnements de développement
 
 Cependant, ce qui fait un programme n'est pas seulement son code: surtout dans des langages plus anciens sans gestion de dépendance simple, les dépendances (bibliothèques) du programme, ainsi que l'environnement et les étapes de compilation de ce dernier, représentent également une partie considérable de la complexité du programme (par exemple, en C++, on utilise un outil générant des fichiers de configuration pour un autre outil qui à son tour configure le compilateur de C++ @cmake)
 
@@ -77,9 +61,9 @@ On a la proposition (1), avec $E = "src"$, l'ensemble des code source possibles 
 
 Nix ne peut pas garantir que le programme sera sans effets de bords au _runtime_, mais vise à le garantir au _build-time_.
 
-= Nix, le gestionnaire de paquets pur
+== Nix, le gestionnaire de paquets pur
 
-== Un _DSL_#footnote[Domain-Specific Language] fonctionnel
+=== Un _DSL_#footnote[Domain-Specific Language] fonctionnel
 
 Une autre caractéristique que l'on trouve souvent dans la famille de langages fonctionnels est l'omniprésence des _expressions_: quasi toute les constructions syntaxiques forment des expressions valides, et peuvent donc servir de valeur
 
@@ -165,7 +149,7 @@ stdenv.mkDerivation {
 
 La dérivation ici prend en entrée le code source (`src-odri-masterboard-sdk`), ainsi que des dépendances, que ce soit des fonctions relatives à Nix même (comme `stdenv.mkDerivation`) pour simplifier la définition de dérivation, ou des dépendances au programmes, que ce soit pour sa compilation ou pour son exécution (dans ce dernier cas de figures, les dépendances sont inclues ou reliées au binaire final)
 
-== Un ecosystème de dépendances
+=== Un ecosystème de dépendances
 
 Afin de conserver la reproductibilité même lorsque l'on dépend de libraries tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des _packages_ Nix, disponibles sur _Nixpkgs_ @nixpkgs.
 
@@ -173,17 +157,17 @@ Parfois donc, écrire un paquet Nix pour son logiciel demande aussi d'écrire le
 
 Pour ne pas avoir à compiler toutes les dépendances soit-même quand on dépend de `.nix` de _nixpkgs_, il existe un serveur de cache, qui propose des binaires des dépendances, Cachix @cachix
 
-== Une compilation dans un environnement fixé
+=== Une compilation dans un environnement fixé
 
 Certains aspects de l'environnement dans lequel l'on compile un programme peuvent faire varier le résultat final. Pour éviter cela, Nix limite au maximum les variations d'environnement. Par exemple, la date du système est fixée au 0 UNIX (1er janvier 1990): le programme compilé ne peut pas dépendre de la date à laquelle il a été compilé.
 
 Quand le _sandboxing_ est activé, Nix isole également le code source de tout accès au réseau, aux autres fichiers du système (ainsi que d'autres mesures) pour améliorer la reproductibilité @nix-sandboxing
 
-=== Un complément utile: compiler en CI
+==== Un complément utile: compiler en CI
 
 Pour aller plus loin, on peut lancer la compilation du paquet Nix en _CI_#footnote[Continuous Integration, lit. intégration continue], c'est-à-dire sur un serveur distant au lieu de sur sa propre machine. On s'assure donc que l'état de notre machine de développement personnelle n'influe pas sur la compilation, puisque chaque compilation est lancée dans une machine virtuelle vierge @github-runners.
 
-= NixOS, un système d'exploitation à configuration déclarative
+== NixOS, un système d'exploitation à configuration déclarative
 
 Une fois le programme compilé avec ses dépendances, il est prêt à être transféré sur l'ordinateur ou la carte de contrôle embarquée au robot.
 
@@ -199,21 +183,21 @@ Ici, NixOS assure que toute modification de la configuration d'un système est _
 
 Ici encore, cela apporte un gain en terme de reproductibilité: l'état de configuration de l'OS sur lequel est déployé le programme du robot est, lui aussi, rendu reproductible.
 
-= Gazebo & Unitree
+== Gazebo & Unitree
 
-== Contexte
+=== Contexte
 
 J'ai également été approchée pour travailler sur la création d'un _plugin_ pour Gazebo, un logiciel de simulation robotique @gazebo.
 
 Le but était de pouvoir utiliser ce logiciel de simulation open source avec un robot de la companie Unitree, le H1v2 @h1v2, un robot humanoïde tout-usage.
 
-== Une base de code partiellement open-source
+=== Une base de code partiellement open-source
 
 Une partie du code source de ce SDK n'est pas disponible, et n'est que distribué sous forme de binaires @sdk2-in-source-binaries. J'ai donc chercher à comprendre cette partie du code par ingénierie inverse, ce qui ne s'est pas avéré nécéssaire.
 
 Au final, en explorant le code source du plugin pour un autre logiciel de simulation, Mujoco @mujoco @unitree-mujoco, j'ai pu comprendre comment interfacer le SDK avec Gazebo.
 
-== `rt/lowstate`, `rt/lowcmd`
+=== `rt/lowstate`, `rt/lowcmd`
 
 Le SDK de Unitree fonctionne via des canaux DDS, une technologie de communication temps-réel bas niveau @dds.
 
@@ -234,7 +218,7 @@ Et au final, mon plugin fonctionne, en simulant un robot H1v2 via ces deux canau
   node((2, 0))[Modèle SDF du robot]
 ))
 
-== Des tests end-to-end automatisés
+=== Des tests end-to-end automatisés
 
 Je souhaitais permettre de tester le code sur simulateur de manière automatique: on push un commit modifiant une politique de contrôle du robot, et, automatiquement, en CI, un test sous simulateur est lancé. On reçoit un artéfact avec une vidéo filmant le test.
 
@@ -242,10 +226,6 @@ Pour faire ceci, il a fallu rendre la fonctionnalité native à Gazebo d'enregis
 
 Il y a aussi un challenge lié au fait que, en CI, il n'y a pas d'interface graphique, ce qui rend le lancement de l'interface graphique de Gazebo impossible. Il faut donc simuler une interface graphique avec _XVFB_, un serveur X virtuel @xvfb.
 
-== Packaging sous Nix
+=== Packaging sous Nix
 
 Le packaging sous Nix de _gz-unitree_ est en cours, mais se heurte à quelques problèmes liés à l'état du packaging Nix de Gazebo lui-même: gazebo est packagé dans un _overlay_ tierce, _gazebo-sim-overlay_ @gazebo-sim-overlay, qui n'a pas mis à jour une des bibliothèques de Gaazebo depuis plus d'un an @gz-sim-overlay-update-msgs-issue
-
-
-
-#bibliography("bib.yaml")
