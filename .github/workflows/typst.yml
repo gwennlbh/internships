@@ -18,13 +18,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Compile logs
-        uses: lvignoli/typst-action@main
-        with: { source_file: "logs.typ" }
+      # - name: Compile logs
+      #   uses: lvignoli/typst-action@main
+      #   with: { source_file: "logs.typ" }
 
       - name: Compile rapport
         uses: lvignoli/typst-action@main
-        with: { source_file: "rapport.typ" }
+        with: 
+          source_file: rapport/main.typ
+          options: --root=.
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9

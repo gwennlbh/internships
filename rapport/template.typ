@@ -1,10 +1,3 @@
-// #let sig(in-between) = stack(
-//   dir: ltr,
-//   spacing: 0.5em,
-//   move(dy: -0.07em, image("heart.png", width: 2%)),
-//   in-between,
-//   move(dy: -0.15em, image("flag.png", width: 2.5%)),
-// )
 
 // From https://github.com/mgoulao/arkheion, slightly tweaked parce que le Français.
 #let arkheion(
@@ -22,6 +15,11 @@
   set document(author: authors.map(a => a.name), title: title)
   set page(
     margin: (left: 25mm, right: 25mm, top: 25mm, bottom: 30mm),
+    numbering: (no, total) => if no > 1 {
+      [#no / #total]
+    } else {
+      none
+    },
     header: text(
       fill: luma(30%),
       stack(
@@ -64,15 +62,9 @@
         ),
       ),
     ),
-    numbering: (current, ..total) => if total.pos().len() > 0 and current == total.at(0) {
-      // sig(str(current))
-      str(current)
-    } else {
-      str(current)
-    },
     number-align: center,
   )
-  show raw: set text(size: 0.85em, font: ("MartianMono NF", "Martian Mono"))
+  show raw: set text(size: 0.85em, font: ("MartianMono Nerd Font", "MartianMono NF", "Martian Mono"))
   set text(font: "New Computer Modern", lang: "fr")
   set raw(theme: "snazzylight.tmTheme")
   show math.equation: set text(weight: 400)
@@ -105,14 +97,12 @@
 
   pad(
     x: 0%,
-    y: 25%,
+    y: 30%,
     {
       if logo != none {
         pad(
-          top: 1em,
-          align(center)[
-            #image(logo, width: 80%)
-          ],
+          top: -8em,
+          align(center, logo),
         )
       }
 
@@ -176,26 +166,7 @@
         )
       }
 
-      align(center)[#{
-        if type(date) == datetime {
-          date
-            .display("[day padding:none] [month repr:long] [year]")
-            .replace("January", "janvier")
-            .replace("February", "février")
-            .replace("March", "mars")
-            .replace("April", "avril")
-            .replace("May", "mai")
-            .replace("June", "juin")
-            .replace("July", "juillet")
-            .replace("August", "août")
-            .replace("September", "septembre")
-            .replace("October", "octobre")
-            .replace("November", "novembre")
-            .replace("December", "décembre")
-        } else {
-          date
-        }
-      }]
+      align(center)[#date]
 
       // Abstract.
       if abstract != none {
