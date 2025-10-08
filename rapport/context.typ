@@ -1,6 +1,7 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
 #let comment = content => text(fill: gray)[(Note: #content)]
+#let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
 
 #show terms: it => grid(
     columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
@@ -98,9 +99,9 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 / Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
 
 
-=== Nécéssité de la validation
+=== Tendances à la "tricherie" des agents
 
-Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
+Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement #refneeded: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
 ==== Sous-spécification de la fonction coût
 
@@ -126,7 +127,11 @@ Bien évidemment, pour l'agent, tant qu'un bug n'est pas explicitement décourag
 
 #comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
 
-==== 
+==== La validation comme méthode de mitigation 
+#comment[ça se dit mitigation en français?]
+
+
+
 
 == Application en robotique
 
