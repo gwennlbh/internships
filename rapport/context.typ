@@ -1,5 +1,7 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
+#let comment = content => text(fill: gray)[(Note: #content)]
+
 #show terms: it => grid(
     columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
     ..it.children.map(item =>
@@ -96,13 +98,19 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 / Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
 
 
-
 === Tendances à la "tricherie" des agents
 
 Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
-Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones
+==== Sous-spécification de la fonction coût
 
+#comment[ Bof cette partie ]
+
+Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense (une fonction à maximiser au lieu de minimiser) "le nombre de trombones existant sur Terre", finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
+
+==== Bug dans un moteur de physique
+
+Plus 
 
 
 == Application en robotique
