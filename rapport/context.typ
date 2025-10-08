@@ -37,13 +37,13 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #let exhaustive_memory_table = (caption, filled: false) => {
   let maybe = content => if filled { content } else { [] }
-  let costs = (plus_one, minus_one) => [ $L(+1) = #plus_one,  L(-1) = #minus_one$ ]
-  pad(x: 10%, figure(
+  let costs = (plus_one, minus_one) => [ $L(x+1,) = #plus_one quad  L(x-1,) = #minus_one$ ]
+  pad(x: 7%, y: 10%, figure(
     table(
-      columns: (2fr, 1.2fr, 3fr),
-      align: left,
+      columns: (2fr, 1.9fr, 3fr),
+      align: (left, center, left),
       inset: 8pt,
-      [*État courant* $(x, "retour")$], [*Action* \ +1 ou -1], [*Coûts associés* \ #maybe[avec $L = (x, "retour") |-> |x-2|$]],
+      [*État actuel* \ $(x, "retour")$], [*Meilleure action* \ +1 ou -1], [*Coûts associés* \ #maybe[avec $L = (x, "retour") |-> |x-2|$]],
       [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe(costs(2, 2)),
       [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe(costs(1, 2)),
       [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe(costs(2, 3)),
@@ -58,11 +58,21 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas. 
 
+Il faut définir la fonction de coût, souvent appelée $L$ pour _loss_:
+
+$
+L: E -> S
+$
+
+avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$)
+
+Quand on parle de "coût d'une action", on parle du coût de l'état résultant de l'application de l'action en question à l'état actuel
+
 #exhaustive_memory_table(filled: true)[ Entraînement terminé, avec pour fonction coût $L$ la distance à la solution ]
 
 Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments
 
-Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $n in [| 0, 10^34 |]$), infinis ($n in NN$) ou indénombrables ($n in RR$)
+Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $x in [| 0, 10^34 |]$), infinis ($x in NN$) ou indénombrables ($x in RR$)
 
 Dans le cas de la robotique, $E$ est une certaine représentation numérique du monde réel autour du robot, on imagine donc bien qu'il y a beaucoup trop d'états possibles.
 
