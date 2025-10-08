@@ -297,3 +297,16 @@ cat:
   url:
     date: 2025-10-08
     value: https://constraints-as-terminations.github.io/
+
+# TODO: Cognitive, Emotive and Ethical Aspects of Decision Making in Humans and in Artificial Intelligence, Vol. 2, ed. I. Smit et al., Int. Institute of Advanced Studies in Systems Research and Cybernetics, 2003, pp. 12-17
+trombones:
+  type: article
+  title: Ethical Issues in Advanced Artificial Intelligence
+  author: Nick Bostrom
+  issue: 2
+  publisher: Int. Institute of Advanced Studies in Systems Research and Cybernetics
+  date: 2003
+  page-range: 12-17
+  url:
+    date: 2025-10-08
+    value: https://nickbostrom.com/ethics/ai
