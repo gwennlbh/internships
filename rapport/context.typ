@@ -98,7 +98,7 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 / Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
 
 
-=== Tendances à la "tricherie" des agents
+=== Nécéssité de la validation
 
 Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
@@ -116,9 +116,17 @@ Bien évidemment, ce sont des programmes complexes avec souvent des résolutions
 
 Ces phénomènes, appelés _"glitches"_ dans le jargon du jeu vidéo, peuvent se manifester de diverses manières:
 
-/ _No clip_: passage à travers un objet solide à cause de cas limites dans les calculs de collision joueur-objet
-/ Téléportation: mouvement brutal du joueur sur des grandes distances sans cause raisonnable, souvent causé par des erreurs dans le calcul des coordonnées de sa position
+#comment[ Compliqué sans vidéo... ptet à remplacer par une phrase seulement, ou alors c'est peut-être déjà assez clair sans exemples? ]
 
+- Le passage à travers un objet solide à cause de cas limites dans les calculs de collision joueur-objet (appelé _No clip_)
+- La téléportation du joueur sur des grandes distances sans cause raisonnable, souvent causé par des erreurs dans le calcul des coordonnées de sa position
+- La projection d'un objet a une vitesse extrême, souvent causé par des cas limites dans le calcul de la vélocité lors d'une collision
+
+Bien évidemment, pour l'agent, tant qu'un bug n'est pas explicitement découragé par sa prise en compte dans la fonction coût, si l'état résultant améliore le score, l'agent apprendra à faire cette action quand c'est utile.
+
+#comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
+
+==== 
 
 == Application en robotique
 
