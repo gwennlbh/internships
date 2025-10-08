@@ -110,7 +110,14 @@ Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @tr
 
 ==== Bug dans un moteur de physique
 
-Plus 
+Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
+
+Bien évidemment, ce sont des programmes complexes avec souvent des résolutions numériques d'équation physiques, il est presque inévitable que des bugs se glissent dans ces programmes.
+
+Ces phénomènes, appelés _"glitches"_ dans le jargon du jeu vidéo, peuvent se manifester de diverses manières:
+
+/ _No clip_: passage à travers un objet solide à cause de cas limites dans les calculs de collision joueur-objet
+/ Téléportation: mouvement brutal du joueur sur des grandes distances sans cause raisonnable, souvent causé par des erreurs dans le calcul des coordonnées de sa position
 
 
 == Application en robotique
