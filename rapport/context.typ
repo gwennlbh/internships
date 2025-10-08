@@ -37,17 +37,18 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #let exhaustive_memory_table = (caption, filled: false) => {
   let maybe = content => if filled { content } else { [] }
+  let costs = (plus_one, minus_one) => [ $+1 |-> #plus_one quad -1 |-> #minus_one$ ]
   pad(x: 10%, figure(
     table(
       columns: (1fr, 1fr, 1fr),
       align: left,
       inset: 8pt,
       [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1], [*Coûts associés*],
-      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe[ $+1 |-> 2, -1 |-> 2$ ],
-      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe[ $+1 |-> 1, -1 |-> 2$ ],
-      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 2, -1 |-> 1$ ],
-      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 3, -1 |-> 2$ ],
-      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 4, -1 |-> 3$ ],
+      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe(costs(2, 2)),
+      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe(costs(1, 2)),
+      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe(costs(2, 3)),
+      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe(costs(3, 4)),
+      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe(costs(4, 5))
     ), 
     caption: caption 
   ))
