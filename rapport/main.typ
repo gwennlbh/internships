@@ -97,7 +97,7 @@
 
 #include "nix.typ"
 
-= Étude du SDK d'Unitre et du bridge SDK #sym.arrows.lr MuJoCo
+= Étude du SDK d'Unitree et du bridge SDK #sym.arrows.lr MuJoCo
 
 #include "sdk2-study.typ"
 
@@ -105,11 +105,6 @@
 
 #include "gz-unitree.typ"
 
-= Mise en CI/CD
-
-#include "ci.typ"
-
-= Conclusion
 
 #bibliography("../bib.yaml")
 
