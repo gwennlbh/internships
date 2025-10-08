@@ -41,13 +41,13 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
     align: left,
     [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1],
     // [ $(0, "C'est moins")$ ], if filled { [ aucune ] } else { [] },
-    [ $(0, "C'est plus")$ ], if filled { [ $x <- 1$ ] } else { [] },
+    [ $(0, "C'est plus")$ ], if filled { [ +1 ] } else { [] },
     // [ $(1, "C'est moins")$ ], if filled { [ $x <- 0$ ] } else { [] },
-    [ $(1, "C'est plus")$ ], if filled { [ $x <- 2$ ] } else { [] },
+    [ $(1, "C'est plus")$ ], if filled { [ +1 ] } else { [] },
     // [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
-    [ $(3, "C'est moins")$ ], if filled { [ $x <- 2$ ] } else { [] },
-    [ $(4, "C'est moins")$ ], if filled { [ $x <- 3$ ] } else { [] },
-    [ $(5, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
+    [ $(3, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
+    [ $(4, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
+    [ $(5, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
     // [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
   ), 
   caption: caption 
