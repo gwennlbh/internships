@@ -15,11 +15,7 @@
   set document(author: authors.map(a => a.name), title: title)
   set page(
     margin: (left: 25mm, right: 25mm, top: 25mm, bottom: 30mm),
-    numbering: (no, total) => if no > 1 {
-      [#no / #total]
-    } else {
-      none
-    },
+    numbering: "1 ⁄ 1",
     header: text(
       fill: luma(30%),
       stack(
@@ -38,8 +34,11 @@
 
             let heading = headings.last()
 
+            let sep = "⁄"
+
             if heading.numbering != none [
-              #headertitle ⁄ #heading.body
+              #level.display(heading.numbering)
+              #heading.body
             ]
           },
         ),
@@ -56,7 +55,7 @@
 
             let heading = headings.last()
             if heading.numbering != none [
-              Ch. #level.display(heading.numbering)
+              #headertitle
             ]
           },
         ),

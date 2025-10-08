@@ -130,7 +130,7 @@ msr2022-cps:
   serial-number:
     doi: http://dx.doi.org/10.1145/3524842.3527948
   author:
-    - Fiorella Zampetti 
+    - Fiorella Zampetti
     - Vittoria Nardone
     - Massimiliano Di Penta
   url:
@@ -242,7 +242,7 @@ cmake:
 nixos-impatient:
   type: article
   title: NixOS for the Impatient
-  author: Fernando Borretti 
+  author: Fernando Borretti
   date: 2023-05-07
   url:
     date: 2025-09-04
@@ -281,3 +281,19 @@ unitree-mujoco:
   url:
     date: 2025-09-04
     value: https://github.com/unitreerobotics/unitree_mujoco
+
+cat:
+  type: article
+  title: "CaT: Constraints as Terminations for Legged Locomotion Reinforcement Learning"
+  author:
+    - Elliot Chane-Sane
+    - Pierre-Alexandre Leziart
+    - Thomas Flayols
+    - Olivier Stasse
+    - Philippe Souères
+    - Nicolas Mansard
+  publisher: IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)
+  date: 2024
+  url:
+    date: 2025-10-08
+    value: https://constraints-as-terminations.github.io/

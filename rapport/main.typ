@@ -85,7 +85,31 @@
 
 #pagebreak()
 
+= Remerciements
 
+#outline()
+
+= Contexte
+
+#include "context.typ"
+
+= Packaging reproductible avec Nix
+
+#include "nix.typ"
+
+= Étude du SDK d'Unitre et du bridge SDK #sym.arrows.lr MuJoCo
+
+#include "sdk2-study.typ"
+
+= Développement du bridge SDK #sym.arrows.lr Gazebo
+
+#include "gz-unitree.typ"
+
+= Mise en CI/CD
+
+#include "ci.typ"
+
+= Conclusion
 
 #bibliography("../bib.yaml")
 
