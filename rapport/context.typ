@@ -50,6 +50,8 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
   caption: [ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" avec $x in { 0, 1, 2 }$ ]
 ))
 
+L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas.
+
 
 Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments:
 
@@ -64,7 +66,9 @@ Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $n in [|
 Dans le cas de la robotique, $E$ est une certaine représentation numérique du monde réel autour du robot, on imagine donc bien qu'il y a beaucoup trop d'états possibles.
 
 
+==== Deep Reinforcement Learning
 
+Une façon de remédier à ce problème de dimensions est de remplacer le tableau exhaustif par un réseau de neurones.
 
 
 === Tendances à la "tricherie" des agents
