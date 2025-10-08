@@ -42,12 +42,12 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
       columns: (1fr, 1fr, 1fr),
       align: left,
       inset: 8pt,
-      [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1], [*Coût associé*],
-      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe[ 2 ],
-      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe[ 1 ],
-      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe[ 1 ],
-      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe[ 2 ],
-      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe[ 3 ],
+      [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1], [*Coûts associés*],
+      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe[ $+1 |-> 2, -1 |-> 2$ ],
+      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe[ $+1 |-> 1, -1 |-> 2$ ],
+      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 2, -1 |-> 1$ ],
+      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 3, -1 |-> 2$ ],
+      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe[ $+1 |-> 4, -1 |-> 3$ ],
     ), 
     caption: caption 
   ))
