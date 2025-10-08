@@ -14,19 +14,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      TYPST_FONT_PATHS: .
+      TYPST_ROOT: .
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # - name: Compile logs
-      #   uses: lvignoli/typst-action@main
-      #   with: { source_file: "logs.typ" }
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+
+      - name: Install Martian Mono
+        run: |
+          mv *.ttf /usr/share/fonts/
+          fc-cache -fv
+          fc-list | grep Martian
+          typst fonts | grep Martian
 
       - name: Compile rapport
-        uses: lvignoli/typst-action@main
-        with: 
-          source_file: rapport/main.typ
-          options: --root=.
+        run: typst compile rapport/main.typ
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
