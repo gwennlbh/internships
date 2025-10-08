@@ -43,7 +43,7 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
       columns: (2fr, 1.2fr, 3fr),
       align: left,
       inset: 8pt,
-      [*État courant* $(x, "retour")$], [*Action* \ +1 ou -1], [*Coûts associés*],
+      [*État courant* $(x, "retour")$], [*Action* \ +1 ou -1], [*Coûts associés* \ #maybe[avec $L = (x, "retour") |-> |x-2|$]],
       [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe(costs(2, 2)),
       [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe(costs(1, 2)),
       [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe(costs(2, 3)),
@@ -58,17 +58,9 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas. 
 
-On peut définir la fonction coût par la distance de $x$ à la solution: $(x, "retour") |-> | x - 2 |$
+#exhaustive_memory_table(filled: true)[ Entraînement terminé, avec pour fonction coût $L$ la distance à la solution ]
 
-#exhaustive_memory_table(filled: true)[ Entraînement terminé ]
-
-Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments//:
-
-// $
-// "card" E &= "card" ( { "C'est plus", "C'est moins" } times { 0, 1, 2 } ) \
-// &= "card" { "C'est plus", "C'est moins" } dot "card" { 0, 1, 2 }  \
-// &= 2 dot 3 = 6 
-// $
+Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments
 
 Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $n in [| 0, 10^34 |]$), infinis ($n in NN$) ou indénombrables ($n in RR$)
 
