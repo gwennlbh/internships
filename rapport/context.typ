@@ -1,6 +1,11 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
-#set terms(indent: 10pt)
+#show terms: it => grid(
+    columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
+    ..it.children.map(item =>
+      (strong(item.term), item.description)
+    ).flatten()
+  )
 
 == Bases théoriques du _Reinforcement Learning_
 
@@ -93,6 +98,10 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 
 
 === Tendances à la "tricherie" des agents
+
+Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
+
+Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones
 
 
 
