@@ -35,7 +35,7 @@ Une fois que ce cadre est posé, il reste à savoir _comment_ l'on va trouver la
 
 Une première approche naïve, mais suffisante dans certains cas, consiste à faire une recherche exhaustive et à stocker dans un simple tableau la meilleure action à faire en fonction d'un état de l'environnement:
 
-#let exhaustive_memory_table = filled => pad(x: 15%, figure(
+#let exhaustive_memory_table = (caption, filled: false) => pad(x: 15%, figure(
   table(
     columns: (1fr, 1fr),
     align: left,
@@ -47,14 +47,14 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
     [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
     [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
   ), 
-  caption: [ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" avec $x in { 0, 1, 2 }$ ]
+  caption: caption 
 ))
 
-#exhaustive_memory_table(filled: false)
+#exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" avec $x in { 0, 1, 2 }$ ]
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas.
 
-#exhaustive_memory_table(filled: true)
+#exhaustive_memory_table(filled: true)[ Entraînement terminé ]
 
 Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments:
 
