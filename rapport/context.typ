@@ -39,18 +39,18 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
   table(
     columns: (1fr, 1fr),
     align: left,
-    [*État courant* $("retour", x)$], [*Action à effectuer* $x <- n$],
-    [ $(0, "C'est moins")$ ], if filled { [ aucune ] } else { [] },
+    [*État courant* $(x, "retour")$], [*Action à effectuer* $x <- n$],
+    // [ $(0, "C'est moins")$ ], if filled { [ aucune ] } else { [] },
     [ $(0, "C'est plus")$ ], if filled { [ $x <- 1$ ] } else { [] },
-    [ $(1, "C'est moins")$ ], if filled { [ $x <- 0$ ] } else { [] },
+    // [ $(1, "C'est moins")$ ], if filled { [ $x <- 0$ ] } else { [] },
     [ $(1, "C'est plus")$ ], if filled { [ $x <- 2$ ] } else { [] },
-    [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
-    [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
+    // [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
+    // [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
   ), 
   caption: caption 
 ))
 
-#exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" avec $x in { 0, 1, 2 }$ ]
+#exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas.
 
