@@ -55,7 +55,9 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
 
-L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas.
+L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas. 
+
+On peut définir la fonction coût par la distance de $x$ à la solution: $(x, "retour") |-> | x - 2 |$
 
 #exhaustive_memory_table(filled: true)[ Entraînement terminé ]
 
