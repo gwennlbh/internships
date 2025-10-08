@@ -39,12 +39,15 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
   table(
     columns: (1fr, 1fr),
     align: left,
-    [*État courant* $(x, "retour")$], [*Action à effectuer* $x <- n$],
+    [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1],
     // [ $(0, "C'est moins")$ ], if filled { [ aucune ] } else { [] },
     [ $(0, "C'est plus")$ ], if filled { [ $x <- 1$ ] } else { [] },
     // [ $(1, "C'est moins")$ ], if filled { [ $x <- 0$ ] } else { [] },
     [ $(1, "C'est plus")$ ], if filled { [ $x <- 2$ ] } else { [] },
     // [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
+    [ $(3, "C'est moins")$ ], if filled { [ $x <- 2$ ] } else { [] },
+    [ $(4, "C'est moins")$ ], if filled { [ $x <- 3$ ] } else { [] },
+    [ $(5, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
     // [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
   ), 
   caption: caption 
@@ -56,13 +59,13 @@ L'entraînement consiste donc ici en l'exploration de l'entièreté des états p
 
 #exhaustive_memory_table(filled: true)[ Entraînement terminé ]
 
-Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments:
+Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments//:
 
-$
-"card" E &= "card" ( { "C'est plus", "C'est moins" } times { 0, 1, 2 } ) \
-&= "card" { "C'est plus", "C'est moins" } dot "card" { 0, 1, 2 }  \
-&= 2 dot 3 = 6 
-$
+// $
+// "card" E &= "card" ( { "C'est plus", "C'est moins" } times { 0, 1, 2 } ) \
+// &= "card" { "C'est plus", "C'est moins" } dot "card" { 0, 1, 2 }  \
+// &= 2 dot 3 = 6 
+// $
 
 Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $n in [| 0, 10^34 |]$), infinis ($n in NN$) ou indénombrables ($n in RR$)
 
