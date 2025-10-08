@@ -35,23 +35,23 @@ Une fois que ce cadre est posé, il reste à savoir _comment_ l'on va trouver la
 
 Une première approche naïve, mais suffisante dans certains cas, consiste à faire une recherche exhaustive et à stocker dans un simple tableau la meilleure action à faire en fonction d'un état de l'environnement:
 
-#let exhaustive_memory_table = (caption, filled: false) => pad(x: 15%, figure(
-  table(
-    columns: (1fr, 1fr),
-    align: left,
-    [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1],
-    // [ $(0, "C'est moins")$ ], if filled { [ aucune ] } else { [] },
-    [ $(0, "C'est plus")$ ], if filled { [ +1 ] } else { [] },
-    // [ $(1, "C'est moins")$ ], if filled { [ $x <- 0$ ] } else { [] },
-    [ $(1, "C'est plus")$ ], if filled { [ +1 ] } else { [] },
-    // [ $(2, "C'est moins")$ ], if filled { [ $x <- 1$ ] } else { [] },
-    [ $(3, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
-    [ $(4, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
-    [ $(5, "C'est moins")$ ], if filled { [ -1 ] } else { [] },
-    // [ $(2, "C'est plus")$ ], if filled { [ aucune ] } else { [] }
-  ), 
-  caption: caption 
-))
+#let exhaustive_memory_table = (caption, filled: false) => {
+  let maybe = content => if filled { content } else { [] }
+  pad(x: 10%, figure(
+    table(
+      columns: (1fr, 1fr, 1fr),
+      align: left,
+      inset: 8pt,
+      [*État courant* $(x, "retour")$], [*Action à effectuer* +1 ou -1], [*Coût associé*],
+      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe[ 2 ],
+      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe[ 1 ],
+      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe[ 1 ],
+      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe[ 2 ],
+      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe[ 3 ],
+    ), 
+    caption: caption 
+  ))
+}
 
 #exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
 
