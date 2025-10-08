@@ -1,5 +1,7 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
+#set terms(indent: 10pt)
+
 == Bases théoriques du _Reinforcement Learning_
 
 L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de développer des programmes sans expliciter leur logique: on décrit plutôt quatre choses, qui vont permettre à la logique d'émerger pendant la phase d'entraînement:
@@ -56,7 +58,7 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #exhaustive_memory_table(filled: false)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
 
-L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. On remplit la colonne "Action à effectuer" avec l'action associée au coût le plus bas. 
+L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible. 
 
 Il faut définir la fonction de coût, souvent appelée $L$ pour _loss_:
 
@@ -66,7 +68,9 @@ $
 
 avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$)
 
-Quand on parle de "coût d'une action", on parle du coût de l'état résultant de l'application de l'action en question à l'état actuel
+Quand on parle de "coût d'une action", on parle du coût de l'état résultant de l'application de l'action en question à l'état actuel//: $ L: E times A -> S = (e, a) |-> L(a(e))$
+
+On remplit la colonne "Action à effectuer" avec l'action au coût le plus bas: 
 
 #exhaustive_memory_table(filled: true)[ Entraînement terminé, avec pour fonction coût $L$ la distance à la solution ]
 
@@ -79,7 +83,13 @@ Dans le cas de la robotique, $E$ est une certaine représentation numérique du 
 
 ==== Deep Reinforcement Learning
 
-Une façon de remédier à ce problème de dimensions est de remplacer le tableau exhaustif par un réseau de neurones.
+Une façon de remédier à ce problème de dimensions est de remplacer le tableau exhaustif par un réseau de neurones:
+
+/ État actuel: devient la couche d'entrée
+/ Meilleure action: devient la couche de sortie
+/ Coûts associés: deviennent les neurones des couches cachées
+/ Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
+
 
 
 === Tendances à la "tricherie" des agents
