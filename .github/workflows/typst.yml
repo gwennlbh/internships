@@ -1,4 +1,4 @@
-name: Compile main.typst
+name: Compile typst files
 
 on:
   workflow_dispatch: 
@@ -18,9 +18,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Compile files
+      - name: Compile logs
         uses: lvignoli/typst-action@main
-        with: { source_file: main.typ }
+        with: { source_file: "logs.typ" }
+
+      - name: Compile rapport
+        uses: lvignoli/typst-action@main
+        with: { source_file: "rapport.typ" }
 
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
