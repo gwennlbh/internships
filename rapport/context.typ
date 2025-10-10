@@ -2,14 +2,8 @@
 
 
 #let comment = content => text(fill: gray)[(Note: #content)]
+#let todo = content => text(fill: red)[(TODO: #content)]
 #let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
-
-#show terms: it => grid(
-    columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
-    ..it.children.map(item =>
-      (strong(item.term), item.description)
-    ).flatten()
-  )
 
 == Bases théoriques du _Reinforcement Learning_
 
@@ -18,7 +12,7 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 - Un _agent_: c'est le programme que l'on souhaite créer
 - Des _actions_ que l'agent peut choisir d'effectuer ou pas
 - Un _environnement_, que les actions viennent modifier
-- Un _score_ (_coût_ s'il doit être minimisé, _récompense_ inversement) qui dépend de l'état pré- et post-action de l'environnement ainsi que de l'action qui a été effectuée #footnote[Le Q-learning consiste en la définition d'une fonction coût qui ne dépend que de l'état actuel de l'environnement]
+- Un _score_ (_coût_ s'il doit être minimisé, _récompense_ inversement) qui dépend de l'état pré- et post-action de l'environnement ainsi que de l'action qui a été effectuée
 
 La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec meilleur définit comme "qui minimise le coût" (ou maximise la récompense):
 
@@ -41,6 +35,8 @@ En robotique, on a des correspondances claires pour ces quatres notions:
 / Coût: un ensemble de contraintes ("ne pas endommager le robot"), dont la plupart dépendent de l'objectif de la politique
 
 === L'entraînement
+
+#todo[Expliquer exploration vs exploitation et $gamma$]
 
 Une fois que ce cadre est posé, il reste à savoir _comment_ l'on va trouver la fonction qui associe un état de l'environnement à une action.
 
@@ -75,7 +71,7 @@ $
 L: E -> S
 $
 
-avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$)
+avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$). Ces fonctions coût, qui ne dépendent que de l'état actuel de l'environnement, représente un domaine du RL#footnote[Reinforcement Learning] appelé _Q-Learning_ @qlearning
 
 On remplit la colonne "Action à effectuer" avec l'action au coût le plus bas: 
 

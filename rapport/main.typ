@@ -7,6 +7,13 @@
   it.text.replace("graph TD", "digraph {").replace("-->", "->") + "}",
 )
 
+#show terms: it => grid(
+    columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
+    ..it.children.map(item =>
+      (strong(item.term), item.description)
+    ).flatten()
+  )
+
 
 #let imagefigure(path, caption, size: 100%) = figure(
   image(path, width: size),

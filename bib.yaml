@@ -369,7 +369,8 @@ gazebo-physics-engines:
 
 isaacsim:
   type: web
-  title: Isaac Sim - Robotics Simulation and Synthetic Data Generation | NVIDIA Developer
+  title: Isaac Sim - Robotics Simulation and Synthetic Data Generation
+  author: NVIDIA Developer
   url:
     date: '2025-10-10'
     value: https://developer.nvidia.com/isaac/sim
@@ -377,7 +378,8 @@ isaacsim:
 
 physx:
   type: web
-  title: PhysX SDK - Latest Features & Libraries | NVIDIA Developer
+  title: PhysX SDK - Latest Features & Libraries 
+  author: NVIDIA Developer
   url:
     date: '2025-10-10'
     value: https://developer.nvidia.com/physx-sdk
@@ -425,4 +427,13 @@ proximalpolicy:
   url: https://arxiv.org/abs/1707.06347
   serial-number:
     arxiv: '1707.06347'
+
+qlearning:
+  type: book
+  title: Reinforcement Learning for Sequential Decision and Optimal Control
+  author: Shengbo Eben Li
+  page-range: 1-460
+  publisher: Springer Singapore
+  serial-number:
+    doi: 10.1007/978-981-19-7784-8
 
