@@ -14,19 +14,27 @@ function cite-github
 	  }'
 
 	set citation '{ $id: { 
-	  type: "website", 
+	  type: "web", 
 	  title: .name,
 	  publisher: "GitHub", 
 	  author: .owner.name, 
 	  url: { date: $today, value: .url }, 
-	  date: .createdAt 
+	  date: .createdAt | sub("T.+$", "")
 	} }' 
 
 
-	gh api graphql -F owner=bulletphysics -F repo=bullet3 -f query="$query" \
-		| jq .data.repository \
-		| yq -Y "$citation" --arg today (date --iso-8601) --arg id bullet >> bib.yaml
+	set data (
+		gh api graphql -F owner=$owner -F repo=$repo -f query="$query" | jq .data.repository
+	)
+
+	echo "Adding $data"
+
+	echo "$data" | yq -Y "$citation" \
+		--arg today (date --iso-8601) \
+		--arg id $id \
+	>> bib.yaml
 
 	# Add a blank line
 	echo >> bib.yaml 
+	echo >> bib.yaml
 end

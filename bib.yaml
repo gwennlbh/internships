@@ -358,3 +358,20 @@ bullet-featherstone:
   url:
     date: 2025-10-10
     value: https://docs.google.com/presentation/d/1wGUJ4neOhw5i4pQRfSGtZPE3CIm7MfmqfTp5aJKuFYM/edit?slide=id.g644a5aa5f_0_16#slide=id.g644a5aa5f_0_16
+
+gazebo-physics-engines:
+  type: web
+  title: "Gazebo Sim: Physics engines"
+  url:
+    date: '2025-10-10'
+    value: https://gazebosim.org/api/sim/9/physics.html
+
+
+isaacsim:
+  type: web
+  title: Isaac Sim - Robotics Simulation and Synthetic Data Generation | NVIDIA Developer
+  url:
+    date: '2025-10-10'
+    value: https://developer.nvidia.com/isaac/sim
+
+

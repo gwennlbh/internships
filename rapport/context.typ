@@ -138,9 +138,15 @@ Dans le contexte de la robotique, le calcul de l'état post-action de l'environn
 
 Bien évidemment, ce sont des programmes complexes avec souvent des numériques souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
 
-Il existe plusieurs moteurs de physique 
+Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 
-=== Simulateurs 
+Cet ensemble s'appelle un _simulateur_.
+
+=== Inventaire des simulateurs en robotique 
+
+==== Isaac
+
+Un simulateur développé par NVIDIA @isaacsim
 
 ==== MuJoCo
 
@@ -148,9 +154,12 @@ MuJoCo @mujoco
 
 ==== Gazebo 
 
-Gazebo @gazebo
+Les intérêts de Gazebo @gazebo sont multiples:
 
-=== Moteurs de simulation physique 
+- C'est un logiciel open-source _communautaire_, qui ne dépend pas du financement d'une grande entreprise
+- Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents, à l'inverse de MuJoCo @gazebo-physics-engines
+
+=== Inventaire des moteurs de simulation physique 
 
 ==== 
 
