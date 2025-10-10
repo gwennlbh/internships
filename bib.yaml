@@ -316,6 +316,27 @@ featherstone:
   title: Robot Dynamics Algorithms
   author: Roy Featherstone 
   publisher: Springer New York, NY
+  date: 1978
   book-number:
     isbn: 978-1-4757-6437
+
+bullet:
+  type: web
+  title: bullet3
+  publisher: GitHub
+  author: Bullet Physics SDK
+  url:
+    date: '2025-10-10'
+    value: https://github.com/bulletphysics/bullet3
+  date: '2011-04-12'
+
+dart:
+  type: web
+  title: dart
+  publisher: GitHub
+  author: 'DART: Dynamic Animation and Robotics Toolkit'
+  url:
+    date: '2025-10-10'
+    value: https://github.com/dartsim/dart
+  date: '2011-09-19'
 

@@ -144,9 +144,23 @@ Il existe plusieurs moteurs de physique
 
 ==== MuJoCo
 
+MuJoCo @mujoco
+
 ==== Gazebo 
 
+Gazebo @gazebo
+
 === Moteurs de simulation physique 
+
+==== 
+
+==== Bullet
+
+Bullet @bullet
+
+==== Bullet avec Featherstone
+
+L'algorithme de Featherstone @featherstone
 
 
 == Le H1v2 d'_Unitree_
