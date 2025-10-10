@@ -383,3 +383,10 @@ physx:
     value: https://developer.nvidia.com/physx-sdk
 
 
+mujoco-simulate:
+  type: web
+  title: MuJoCo simulate tutorial
+  url:
+    date: '2025-10-10'
+    value: https://youtu.be/P83tKA1iz2Y
+

@@ -152,16 +152,28 @@ Un simulateur développé par NVIDIA @isaacsim, utilisant son propre moteur de r
 
 Un simulateur initialement propriétaire. Il a été rendu gratuit puis open source par Google DeepMind @mujoco.
 
+Bien que MuJoCo est décrit comme un moteur de simulation physique et non un simulateur, il embarque une commande `simulate` qui le rend fonctionnellement équivalent à un simulateur @mujoco-simulate.
+
 ==== Gazebo 
 
 Les intérêts de Gazebo @gazebo sont multiples:
 
 - C'est un logiciel open-source _communautaire_, qui ne dépend pas du financement d'une grande entreprise
-- Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents, à l'inverse de MuJoCo @gazebo-physics-engines
+- Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents, à l'inverse de MuJoCo @gazebo-physics-engines.
+
+Gazebo possède des plugins officiels pour:
+
+/ DART: Plugin `gz-physics-dartsim-plugin`, c'est l'implémentation principale, et celle par défaut.
+/ Bullet: Plugin `gz-physics-bulletsim-plugin`. En beta.
+/ Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta.
+
+
 
 === Inventaire des moteurs de simulation physique 
 
-==== 
+==== DART
+
+DART @dart
 
 ==== Bullet
 
@@ -169,7 +181,7 @@ Bullet @bullet @pybullet
 
 ==== Bullet avec Featherstone
 
-L'algorithme de Featherstone @featherstone, disponible sur Bullet @bullet-featherstone
+L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
 
 == Le H1v2 d'_Unitree_
