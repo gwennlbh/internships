@@ -18,7 +18,7 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 - Un _agent_: c'est le programme que l'on souhaite créer
 - Des _actions_ que l'agent peut choisir d'effectuer ou pas
 - Un _environnement_, que les actions viennent modifier
-- Un _coût_ (ou _récompense_) qui dépend de l'environnement
+- Un _score_ (_coût_ s'il doit être minimisé, _récompense_ inversement) qui dépend de l'état pré- et post-action de l'environnement ainsi que de l'action qui a été effectuée #footnote[Le Q-learning consiste en la définition d'une fonction coût qui ne dépend que de l'état actuel de l'environnement]
 
 La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec meilleur définit comme "qui minimise le coût" (ou maximise la récompense):
 
@@ -27,7 +27,7 @@ La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, que
   edge((0, 0), (1, 0), "->")[Action],
   node((1, 0))[Environnement],
   edge((1, 0), (2, 0), "-->")[Fonction coût],
-  node((2, 0))[Coût],
+  node((2, 0))[Score],
   edge((2, 0), (0, 0), "->", bend: 45deg)[Mise à jour]
 ))
 
@@ -76,8 +76,6 @@ L: E -> S
 $
 
 avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$)
-
-Quand on parle de "coût d'une action", on parle du coût de l'état résultant de l'application de l'action en question à l'état actuel//: $ L: E times A -> S = (e, a) |-> L(a(e))$
 
 On remplit la colonne "Action à effectuer" avec l'action au coût le plus bas: 
 
@@ -183,6 +181,12 @@ Bullet @bullet @pybullet
 ==== Bullet avec Featherstone
 
 L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
+
+=== Fonctions coût en robotique
+
+==== _Proximal Policy Optimization_
+
+
 
 
 == Le H1v2 d'_Unitree_

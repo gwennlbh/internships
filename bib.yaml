@@ -412,3 +412,17 @@ dart:
     issue: 22
     volume: 3
 
+proximalpolicy:
+  type: misc
+  title: Proximal Policy Optimization Algorithms
+  author:
+    - Schulman, John
+    - Wolski, Filip
+    - Dhariwal, Prafulla
+    - Radford, Alec
+    - Klimov, Oleg
+  date: 2017
+  url: https://arxiv.org/abs/1707.06347
+  serial-number:
+    arxiv: '1707.06347'
+
