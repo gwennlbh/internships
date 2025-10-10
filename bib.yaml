@@ -330,7 +330,7 @@ bullet:
     value: https://github.com/bulletphysics/bullet3
   date: '2011-04-12'
 
-dart:
+dart-github:
   type: web
   title: dart
   publisher: GitHub
@@ -389,4 +389,26 @@ mujoco-simulate:
   url:
     date: '2025-10-10'
     value: https://youtu.be/P83tKA1iz2Y
+
+dart:
+  type: article
+  title: 'Dart: Dynamic animation and robotics toolkit'
+  author:
+    - Lee, Jeongseok
+    - X. Grey, Michael
+    - Ha, Sehoon
+    - Kunz, Tobias
+    - Jain, Sumit
+    - Ye, Yuting
+    - S. Srinivasa, Siddhartha
+    - Stilman, Mike
+    - Karen Liu, C
+  date: 2018
+  page-range: '500'
+  parent:
+    type: periodical
+    title: The Journal of Open Source Software
+    publisher: The Open Journal
+    issue: 22
+    volume: 3
 
