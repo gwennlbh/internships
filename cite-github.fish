@@ -36,5 +36,4 @@ function cite-github
 
 	# Add a blank line
 	echo >> bib.yaml 
-	echo >> bib.yaml
 end

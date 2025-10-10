@@ -146,7 +146,7 @@ Cet ensemble s'appelle un _simulateur_.
 
 ==== Isaac
 
-Un simulateur développé par NVIDIA @isaacsim
+Un simulateur développé par NVIDIA @isaacsim, utilisant son propre moteur de rendu, PhysX @physx
 
 ==== MuJoCo
 

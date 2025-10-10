@@ -375,3 +375,11 @@ isaacsim:
     value: https://developer.nvidia.com/isaac/sim
 
 
+physx:
+  type: web
+  title: PhysX SDK - Latest Features & Libraries | NVIDIA Developer
+  url:
+    date: '2025-10-10'
+    value: https://developer.nvidia.com/physx-sdk
+
+
