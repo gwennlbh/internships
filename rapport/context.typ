@@ -178,7 +178,16 @@ Bullet @bullet @pybullet
 
 L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
-=== Fonctions coût en robotique
+=== Fonctions coût 
+
+=== Descente de gradient
+
+
+==== _Deep Q-Network_
+
+
+
+==== _Trust Region Policy Optimization_
 
 ==== _Proximal Policy Optimization_
 
