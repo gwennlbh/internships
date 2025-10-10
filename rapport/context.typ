@@ -150,7 +150,7 @@ Un simulateur développé par NVIDIA @isaacsim, utilisant son propre moteur de r
 
 ==== MuJoCo
 
-MuJoCo @mujoco
+Un simulateur initialement propriétaire. Il a été rendu gratuit puis open source par Google DeepMind @mujoco.
 
 ==== Gazebo 
 
