@@ -310,3 +310,12 @@ trombones:
   url:
     date: 2025-10-08
     value: https://nickbostrom.com/ethics/ai
+
+featherstone:
+  type: article
+  title: Robot Dynamics Algorithms
+  author: Roy Featherstone 
+  publisher: Springer New York, NY
+  book-number:
+    isbn: 978-1-4757-6437
+

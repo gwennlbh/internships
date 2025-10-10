@@ -36,7 +36,7 @@ En robotique, on a des correspondances claires pour ces quatres notions:
 
 / Agent: Robot pour lequel on développe le programme de contrôle (appelée une _politique_)
 / Actions: Envoi d'ordres aux moteurs // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécéssaire au microcontrolleurs sur le robot même]
-/ Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la multiplicité des implémentations est importante, voir @simulators
+/ Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la multiplicité des implémentations est importante, voir @why_multiple_simulators
 / Coût: un ensemble de contraintes ("ne pas endommager le robot"), dont la plupart dépendent de l'objectif de la politique
 
 === L'entraînement
@@ -109,38 +109,46 @@ Expérimentalement, on sait que des tendances "tricheuses" émergent facilement 
 
 Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense (une fonction à maximiser au lieu de minimiser) "le nombre de trombones existant sur Terre", finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
 
-==== Bug dans un moteur de physique
+==== Bug dans l'implémentation de l'environnement
 
-Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
 
-Bien évidemment, ce sont des programmes complexes avec souvent des résolutions numériques d'équation physiques, il est presque inévitable que des bugs se glissent dans ces programmes.
+Bien évidemment, pour l'agent, tant qu'un bug n'est pas explicitement découragé par sa prise en compte dans la fonction coût. Si une action est favorable à l'amélioration du score, l'agent la prendra.
 
-Ces phénomènes, appelés _"glitches"_ dans le jargon du jeu vidéo, peuvent se manifester de diverses manières:
 
-#comment[ Compliqué sans vidéo... ptet à remplacer par une phrase seulement, ou alors c'est peut-être déjà assez clair sans exemples? ]
-
-- Le passage à travers un objet solide à cause de cas limites dans les calculs de collision joueur-objet (appelé _No clip_)
-- La téléportation du joueur sur des grandes distances sans cause raisonnable, souvent causé par des erreurs dans le calcul des coordonnées de sa position
-- La projection d'un objet a une vitesse extrême, souvent causé par des cas limites dans le calcul de la vélocité lors d'une collision
-
-Bien évidemment, pour l'agent, tant qu'un bug n'est pas explicitement découragé par sa prise en compte dans la fonction coût, si l'état résultant améliore le score, l'agent apprendra à faire cette action quand c'est utile.
-
-#comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
-
-==== La validation comme méthode de mitigation 
+==== La validation comme méthode de mitigation <why_multiple_simulators>
 #comment[ça se dit mitigation en français?]
 
+Comme ces bugs sont des comportements non voulus, il est très probables qu'ils ne soient pas exactement les mêmes d'implémentation à implémentation du même environnement.
 
+Il convient donc de se servir de _plusieurs_ implémentations: un sert à la phase d'entraînement, pendant laquelle l'agent développe des "tendances à la tricherie", puis une phase de _validation_.
+
+Cette phase consiste en le lancement de l'agent dans une autre implémentation, avec les mêmes actions mais qui, crucialement, ne comporte pas les mêmes bugs que l'environnement ayant servi à la phase d'apprentissage.
+
+Les "techniques de triche" ainsi apprises deviennent inefficace, et si le score (le coût ou la récompense) devient bien pire que pendant l'apprentissage, on peut détecter les cas de triche.
+
+On peut même aller plus loin, et multiplier les phases de validation avec des implémentations supplémentaires, ce qui réduit encore la probabilité qu'une technique de triche se glisse dans l'agent final
+
+#comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
 
 
 == Application en robotique
 
+
+Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
+
+Bien évidemment, ce sont des programmes complexes avec souvent des numériques souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
+
+Il existe plusieurs moteurs de physique 
+
+=== Simulateurs 
+
+==== MuJoCo
+
+==== Gazebo 
+
+=== Moteurs de simulation physique 
+
+
 == Le H1v2 d'_Unitree_
-
-== Environnements et moteurs de simulation physique <simulators>
-
-=== MuJoCo
-
-=== Gazebo 
 
 == Reproductibilité logicielle
