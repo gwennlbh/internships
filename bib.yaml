@@ -340,3 +340,21 @@ dart:
     value: https://github.com/dartsim/dart
   date: '2011-09-19'
 
+pybullet:
+  type: web
+  title: 'Bullet Real-Time Physics Simulation | Home of Bullet and PyBullet: physics
+    simulation for games, visual effects, robotics and reinforcement learning.'
+  url:
+    date: '2025-10-10'
+    value: https://pybullet.org/wordpress/
+
+bullet-featherstone:
+  type: conference
+  title: Bullet Physics Simulation Constraint Solving and Featherstone Articulated Body Algorithm
+  author: Erwin Coumans
+  publisher: International Conference and Exhibition on Computer Graphics and Interactive Technologies
+  date: 2015
+  page: 6
+  url:
+    date: 2025-10-10
+    value: https://docs.google.com/presentation/d/1wGUJ4neOhw5i4pQRfSGtZPE3CIm7MfmqfTp5aJKuFYM/edit?slide=id.g644a5aa5f_0_16#slide=id.g644a5aa5f_0_16

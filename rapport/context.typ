@@ -156,11 +156,11 @@ Gazebo @gazebo
 
 ==== Bullet
 
-Bullet @bullet
+Bullet @bullet @pybullet
 
 ==== Bullet avec Featherstone
 
-L'algorithme de Featherstone @featherstone
+L'algorithme de Featherstone @featherstone, disponible sur Bullet @bullet-featherstone
 
 
 == Le H1v2 d'_Unitree_
