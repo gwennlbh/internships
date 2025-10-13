@@ -476,7 +476,7 @@ qlearning-etymology:
   url:
     value: https://web.archive.org/web/20180407053740/http://neuro.cs.ut.ee/demystifying-deep-reinforcement-learning/
     date: 2025-10-13
-tpro:
+trpo:
   type: article
   title: Trust Region Policy Optimization
   author:
