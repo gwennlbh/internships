@@ -183,9 +183,13 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 === Descente de gradient
 
 
-==== _Deep Q-Network_
+==== _Q-learning_
 
+La récompense associée à un état et une action, appelée $Q$ ici pour "quality" #refneeded, est mise à jour ainsi:
 
+$
+Q(S_t, A_t) <- (1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
+$
 
 ==== _Trust Region Policy Optimization_
 
