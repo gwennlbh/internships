@@ -7,9 +7,9 @@ $ forall s in S, Q(s, 1) = Q(s, 2) $ <dkl-zero-qeq>
 
 Soit $Q' : S times A -> [0, 1]$ définit ainsi:
 
-$ forall s in S, Q'(s, 1) = 2 Q(s, 1) $ <dkl-zero-a1>
-$ forall s in S, Q'(s, 2) = 1/2 Q(s, 2) $ <dkl-zero-a2>
-$ forall s in S, forall a in A - {1, 2}, Q'(s, a) = Q(s, a) $ <dkl-zero-else>
+$ forall s in S, Q'(s, 1) := 2 Q(s, 1) $ <dkl-zero-a1>
+$ forall s in S, Q'(s, 2) := 1/2 Q(s, 2) $ <dkl-zero-a2>
+$ forall s in S, forall a in A - {1, 2}, Q'(s, a) := Q(s, a) $ <dkl-zero-else>
 
 #let why = (content, reference) => $underbracket(#content, "d'après " #ref(reference))$
 #let crossout = (content, reference) => $why(cancel(#content), reference)$
