@@ -67,16 +67,22 @@
 #show ref: it => {
   let eq = math.equation
   let el = it.element
+  let appendix_root = if el == none { 0 } else { counter("appendices").at(el.location()).at(0) }
   if el != none and el.func() == eq {
     // Override equation references.
     numbering(
       el.numbering,
       ..counter(eq).at(el.location())
     )
-  } else if el != none and counter("appendices").at(el.location()).at(0) != 0 {
-    let letter = el.numbering(counter("appendices").at(el.location()).at(0))
-    let heading_path = numbering(heading().numbering, counter(heading)).at(el.location())
-    [Annexe #path]
+  } else if el != none and appendix_root != 0 {
+    let letter = numbering(el.numbering, counter("appendices").at(el.location()).at(0))
+    let heading_path = numbering("1.1", ..counter(heading).at(el.location()).slice(1))
+    let path = letter + "." + heading_path
+    if appendix_root == 1 {
+      [preuve en #path]
+    } else {
+      [Annexe #path]
+    }
   } else {
     it
   }
