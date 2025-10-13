@@ -2,6 +2,7 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
 
+
 == Bases théoriques du _Reinforcement Learning_
 
 L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de développer des programmes sans expliciter leur logique: on décrit plutôt quatre choses, qui vont permettre à la logique d'émerger pendant la phase d'entraînement:
@@ -210,6 +211,23 @@ $
 
 Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilité: dans notre cas, $cal(X) = S times A$.
 
+L'idée de la _TRPO_ est de maximiser le score de $Q$ tout en limitant l'ampleur des modifications apportées à $Q$. 
+
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$ @trpo:
+
+// #todo[Pourquoi pas regarder $D_"KL" (Q' || Q)$ directement??]
+
+$
+max_(s in S) D_"KL" (Q'(s, dot) || Q(s, dot)) < delta
+$
+
+Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
+
+Cette contrainte définit un ensemble réduit de $Q'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
+
+#let ddot = [ #sym.dot #h(-1em/16) #sym.dot ]
+
+En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise donc une approximation de $max_(a in A) D_"KL" (dot || ddot)$, avec l'espérance au lieu du maximum: $overline(D_"KL") := bb(E)_() D_"KL" (dot || ddot)$
 
 
 ==== _Proximal Policy Optimization_
