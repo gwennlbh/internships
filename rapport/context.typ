@@ -185,11 +185,18 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 
 ==== _Q-learning_
 
-La récompense associée à un état et une action, appelée $Q$ ici pour "quality" #refneeded, est mise à jour ainsi:
+La récompense associée à un état $S_t$ et une action $A_t$, appelée $Q(S_t, A_t)$ ici pour "quality" @qlearning-etymology, est mise à jour ainsi @maxq:
 
 $
-Q(S_t, A_t) <- (1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
+Q(S_t, A_t) <- (1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
 $
+
+L'expression comporte deux hyperparamètres:
+
+/ Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
+/ Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
+
+
 
 ==== _Trust Region Policy Optimization_
 

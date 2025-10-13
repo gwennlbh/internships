@@ -424,7 +424,9 @@ proximalpolicy:
     - Radford, Alec
     - Klimov, Oleg
   date: 2017
-  url: https://arxiv.org/abs/1707.06347
+  url: 
+    value: https://arxiv.org/abs/1707.06347
+    date: 2025-10-10
   serial-number:
     arxiv: '1707.06347'
 
@@ -437,3 +439,40 @@ qlearning:
   serial-number:
     doi: 10.1007/978-981-19-7784-8
 
+maxq:
+  type: article
+  title: Hierarchical Reinforcement Learning with the {MAXQ} Value Function Decomposition
+  author: Dietterich, Thomas G.
+  date: 1999
+  url:
+    value: https://arxiv.org/abs/cs/9905014
+    date: 2002
+  parent:
+    type: periodical
+    title: CoRR
+maxq-discount:
+  type: article
+  title: 'How to Discount Deep Reinforcement Learning: Towards New Dynamic Strategies'
+  author:
+    - François-Lavet, Vincent
+    - Fonteneau, Raphaël
+    - Ernst, Damien
+  date: 2015
+  url:
+    value: http://arxiv.org/abs/1512.02011
+    date: '2025-10-13'
+  serial-number:
+    arxiv: '1512.02011'
+  parent:
+    type: periodical
+    title: CoRR
+
+qlearning-etymology:
+  type: article
+  title: Demystifying deep reinforcement learning
+  author: Tambet Matiisen
+  publisher: Computational Neuroscience Research Group at University of Tartu
+  date: 2015-12-19
+  url:
+    value: https://web.archive.org/web/20180407053740/http://neuro.cs.ut.ee/demystifying-deep-reinforcement-learning/
+    date: 2025-10-13
