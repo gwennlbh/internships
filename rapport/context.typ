@@ -212,7 +212,7 @@ Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilit�
 
 L'idée de la _TRPO_ est de maximiser le score de $Q$ tout en limitant l'ampleur des modifications apportées à $Q$. 
 
-Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$ @trpo:
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$, c'est-à-dire @trpo
 
 // #todo[Pourquoi pas regarder $D_"KL" (Q' || Q)$ directement??]
 
