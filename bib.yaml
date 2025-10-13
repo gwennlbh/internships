@@ -503,3 +503,23 @@ trpo:
   parent:
     type: periodical
 
+kullback-leibler:
+  type: book
+  title: Asymptotia, Ch. 3, "Distances and affinities between measures"
+  author: David Pollard
+  date: 2000
+  page-range: 6-7
+  url:
+    date: '2025-10-13'
+    value: https://web.archive.org/web/20150412031925/http://www.stat.yale.edu/~pollard/Books/Asymptopia/Metrics.pdf
+
+kullback-leibler2:
+  type: web
+  title: Information Theory, Inference and Learning Algorithms
+  author: David J. C. MacKay
+  publisher: Cambridge University Press
+  date: 2003-09-25
+  url:
+    date: '2025-10-13'
+    value: 'https://books.google.fr/books?id=AKuMj4PN_EMC&lpg=PA34&pg=PA34#v=onepage&q&f=false'
+

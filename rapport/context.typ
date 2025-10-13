@@ -182,10 +182,10 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 
 ==== _Q-learning_
 
-La récompense associée à un état $S_t$ et une action $A_t$, appelée $Q(S_t, A_t)$ ici pour "quality" @qlearning-etymology, est mise à jour avec cette valeur @maxq:
+Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology, est mise à jour avec cette valeur @maxq:
 
 $
-(1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
+(1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
 $
 
 L'expression comporte deux hyperparamètres:
@@ -194,9 +194,21 @@ L'expression comporte deux hyperparamètres:
 / Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
 
 
-
 ==== _Trust Region Policy Optimization_
 
+Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
+
+La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q*$, qui est bien sûr inconnue.
+
+Pour mesurer à quel point l'entraînement progresse, on mesure donc une _distance_ entre ces deux distributions de probabilité.
+
+Il existe plusieurs manières de mesurer l'écart entre deux distributions de probabilité, dont notamment la _divergence de Kullback-Leibler_, aussi appelée entropie relative @kullback-leibler @kullback-leibler2:
+
+$
+D_"KL" (P || Q) := sum_(x in cal(X)) P(x) log P(x) / Q(x)
+$
+
+Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilité: dans notre cas, $cal(X) = S times A$.
 
 
 
