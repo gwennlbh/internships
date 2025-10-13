@@ -1,3 +1,8 @@
+#let comment = content => text(fill: gray)[(Note: #content)]
+#let todo = content => text(fill: red)[(TODO: #content)]
+#let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
+
+
 #let cut-lines = (
   starts,
   ends,
@@ -109,3 +114,4 @@
     raw(lang: lang, dedent(transform(contents)))
   }
 }
+

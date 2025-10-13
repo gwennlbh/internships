@@ -476,3 +476,30 @@ qlearning-etymology:
   url:
     value: https://web.archive.org/web/20180407053740/http://neuro.cs.ut.ee/demystifying-deep-reinforcement-learning/
     date: 2025-10-13
+tpro:
+  type: article
+  title: Trust Region Policy Optimization
+  author:
+    - Schulman, John
+    - Levine, Sergey
+    - Moritz, Philipp
+    - Jordan, Michael I.
+    - Abbeel, Pieter
+  date: 2015-02
+  url:
+    value: http://arxiv.org/abs/1502.05477v5
+    date: '2025-10-13'
+  serial-number:
+    arxiv: 1502.05477v5
+  abstract: 'We describe an iterative procedure for optimizing policies, with guaranteed
+    monotonic improvement. By making several approximations to the theoretically-justified
+    procedure, we develop a practical algorithm, called Trust Region Policy Optimization
+    (TRPO). This algorithm is similar to natural policy gradient methods and is effective
+    for optimizing large nonlinear policies such as neural networks. Our experiments
+    demonstrate its robust performance on a wide variety of tasks: learning simulated
+    robotic swimming, hopping, and walking gaits; and playing Atari games using images
+    of the screen as input. Despite its approximations that deviate from the theory,
+    TRPO tends to give monotonic improvement, with little tuning of hyperparameters.'
+  parent:
+    type: periodical
+

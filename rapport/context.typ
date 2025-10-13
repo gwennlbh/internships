@@ -1,9 +1,6 @@
+#import "utils.typ": todo, comment, refneeded
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
-
-#let comment = content => text(fill: gray)[(Note: #content)]
-#let todo = content => text(fill: red)[(TODO: #content)]
-#let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
 
 == Bases théoriques du _Reinforcement Learning_
 
@@ -180,15 +177,15 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 
 === Fonctions coût 
 
-=== Descente de gradient
+=== Mise a jour
 
 
 ==== _Q-learning_
 
-La récompense associée à un état $S_t$ et une action $A_t$, appelée $Q(S_t, A_t)$ ici pour "quality" @qlearning-etymology, est mise à jour ainsi @maxq:
+La récompense associée à un état $S_t$ et une action $A_t$, appelée $Q(S_t, A_t)$ ici pour "quality" @qlearning-etymology, est mise à jour avec cette valeur @maxq:
 
 $
-Q(S_t, A_t) <- (1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
+(1 - alpha) underbrace(Q(S_t, A_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
 $
 
 L'expression comporte deux hyperparamètres:
@@ -199,6 +196,9 @@ L'expression comporte deux hyperparamètres:
 
 
 ==== _Trust Region Policy Optimization_
+
+
+
 
 ==== _Proximal Policy Optimization_
 

@@ -1,3 +1,5 @@
+#import "utils.typ": todo, comment, refneeded
+
 == Reproductibilité
 
 === État dans le domaine de la programmation
@@ -34,16 +36,16 @@ Il existe donc depuis longtemps des langages de programmation dits _fonctionnels
 
 === État dans le domaine de la robotique
 
-En robotique, pour donner des ordres au matériel, on intéragit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel
+En robotique, pour donner des ordres au matériel, on intéragit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel.
 
-De fait, les langages employés sont communément C, C++ ou Python#footnote[Il arrive assez communément d'utiliser Python, un langage haut-niveau, mais c'est dans ce cas   à but de prototypage, et le code contrôlant les moteurs est écrit dans un langage bas niveau plus appelé par Python par FFI] @programming-languages-robotics, des langages bien plus impératifs que fonctionnels @imperative-languages.
+De fait, les langages employés sont communément C, C++ ou Python#footnote[Il arrive assez communément d'utiliser Python, un langage haut-niveau, mais c'est dans ce cas   à but de prototypage, et le code contrôlant les moteurs est écrit dans un langage bas niveau puis appelé par Python par FFI.] @programming-languages-robotics, des langages bien plus impératifs que fonctionnels @imperative-languages.
 
 L'idée de s'affranchir d'effets de bords pour rendre les programmes dans la recherche en robotique reproductibles est donc plus utopique que réaliste.
 
 
 === Environnements de développement
 
-Cependant, ce qui fait un programme n'est pas seulement son code: surtout dans des langages plus anciens sans gestion de dépendance simple, les dépendances (bibliothèques) du programme, ainsi que l'environnement et les étapes de compilation de ce dernier, représentent également une partie considérable de la complexité du programme (par exemple, en C++, on utilise un outil générant des fichiers de configuration pour un autre outil qui à son tour configure le compilateur de C++ @cmake)
+Cependant, ce qui fait un programme n'est pas seulement son code: surtout dans des langages plus anciens sans gestion de dépendance intégrée au langage, les dépendances (bibliothèques) du programme, ainsi que l'environnement et les étapes de compilation de ce dernier, représentent également une partie considérable de la complexité du programme (par exemple, en C++, on utilise un outil générant des fichiers de configuration pour un autre outil qui à son tour configure le compilateur de C++ @cmake)
 
 C'est cette partie que Nix, le gestionnaire de paquet, permet d'encapsuler et de rendre reproductible. Dans ce modèle, la compilation (et de manière plus générale la construction, ou _build_) du projet est la fonction que l'on veut rendre pure. L'entrée est le code source, et le résultat de la fonction est un binaire, qui ne doit dépendre que du code source.
 
@@ -169,12 +171,16 @@ Une fois le programme compilé avec ses dépendances, il est prêt à être tran
 
 Lorsqu'il y a un ordinateur embarqué, comme par exemple une Raspberry Pi @raspi, il faut choisir un OS sur lequel faire tourner le programme.
 
-La encore, un OS s'accompagne d'un amas considérable de configuration des différentes parties du système: accès au réseau, drivers,…
+Là encore, un OS s'accompagne d'un amas considérable de configuration des différentes parties du système: accès au réseau, drivers,…
 
-Sur les OS Linux classiques tels que Ubuntu ou Debian, cette configuration est parfois stockée dans des fichiers, ou parfois retenue en mémoire, modifiée par l'execution de commandes.
+Sur les OS Linux classiques tels que Ubuntu ou Debian, cette configuration est parfois stockée dans des fichiers, ou parfois retenue en mémoire, modifiée par l'éxécution de commandes.
 
 C'est un problème assez récurrent dans Linux de manière générale: d'un coup, le son ne marche plus, on passe ½h sur un forum à copier-coller des commandes dans un terminal, et le problème est réglé… jusqu'à ce qu'il survienne à nouveau après un redémarrage ou une réinstallation.
 
-Ici, NixOS assure que toute modification de la configuration d'un système est _déclarée_ (d'où l'adjectif "déclaratif") dans des fichiers de configurations, également écrit dans des fichiers `.nix` @nixos-impatient.
+Ici, NixOS assure que toute modification de la configuration d'un système est _déclarée_ (d'où l'adjectif "déclaratif") dans des fichiers de configurations, également écrits dans des fichiers `.nix` @nixos-impatient.
 
 Ici encore, cela apporte un gain en terme de reproductibilité: l'état de configuration de l'OS sur lequel est déployé le programme du robot est, lui aussi, rendu reproductible.
+
+== Packaging Nix pour _gz-unitree_ 
+
+#todo[Faire cette partie]
