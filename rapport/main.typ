@@ -1,10 +1,6 @@
 #import "template.typ": arkheion, arkheion-appendices, monospace
 #import "utils.typ": cut-around, cut-between, dedent, include-function
 
-#let comment = content => text(fill: gray)[(Note: #content)]
-#let todo = content => text(fill: red)[(TODO: #content)]
-#let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
-
 #import "@preview/diagraph:0.3.2"
 #show raw.where(lang: "dot"): it => diagraph.render(it.text)
 #show raw.where(lang: "mermaid"): it => diagraph.render(
