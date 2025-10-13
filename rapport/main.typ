@@ -117,5 +117,9 @@
 
 #show: arkheion-appendices
 
+= Preuves
+
+#include "proofs.typ"
+
 #heading(numbering: none)[Annexes]
 

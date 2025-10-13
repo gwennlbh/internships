@@ -241,27 +241,8 @@ Q' := (s, a) |-> cases(
 forall s in S, Q(s, 1) = Q(s, 2)
 $
 
-On a dans ce cas
+Dans ce cas, on a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles, là ou $Q$ les considérait comme identiques.
 
-#let kl = (a, b) => $#a log #a / #b$
-
-#let crossout = (content, why) => $undershell(cancel(#content), "car " #why)$
-
-$
-D_"KL" ( Q || Q' ) 
-&= sum_((s, a) in S times A) kl(Q(s, a), Q'(s, a)) \
-&= sum_(s in S) 
-crossout(
-  sum_(a in A - {1, 2}) [ kl(Q(s, a), Q'(s, a)) ], 
-  Q(s, a) = Q'(s, a) " pour " a in.not {1, 2}
-) 
-+ kl(Q(s, 1), 2Q(s, 1)) + kl(Q(s, 2), 1/2 Q(s, 2)) \
-&= sum_(s in S) 
-Q(s, 1) lr([ log Q(s, 1) - log Q(s, 1) - log 2   ], size: #200%) + 
-Q(s, 2)    [ log Q(s, 2) - log Q(s, 2) - log 1/2 ] \
-&= sum_(s in S)
-- Q(s, 1) log 2 + Q(s, 2) log 2
-$
 
 Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
 
@@ -280,3 +261,4 @@ En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissan
 == Le H1v2 d'_Unitree_
 
 == Reproductibilité logicielle
+
