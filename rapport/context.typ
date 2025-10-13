@@ -2,7 +2,6 @@
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
 
-
 == Bases théoriques du _Reinforcement Learning_
 
 L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de développer des programmes sans expliciter leur logique: on décrit plutôt quatre choses, qui vont permettre à la logique d'émerger pendant la phase d'entraînement:
@@ -219,6 +218,49 @@ Pour évaluer cette distance, on regarde la plus grande des distances entre des 
 
 $
 max_(s in S) D_"KL" (Q'(s, dot) || Q(s, dot)) < delta
+$
+
+Ce qui revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
+
+Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause d'une "compensation" de la modification de la probabilité pour un $Q(s, a_2)$ par une autre modification pour $Q(s, a_1)$:
+
+
+Imaginons:
+
+#let si = $& quad "si"$
+#let sinon = $& quad "sinon"$
+
+
+$
+Q' := (s, a) |-> cases(
+  Q(s, a) dot 2 si a = 1 \
+  Q(s, a) dot 1/2 si a = 2 \
+  Q(s, a)       sinon
+) \
+
+forall s in S, Q(s, 1) = Q(s, 2)
+$
+
+On a dans ce cas
+
+#let kl = (a, b) => $#a log #a / #b$
+
+#let crossout = (content, why) => $undershell(cancel(#content), "car " #why)$
+
+$
+D_"KL" ( Q || Q' ) 
+&= sum_((s, a) in S times A) kl(Q(s, a), Q'(s, a)) \
+&= sum_(s in S) 
+crossout(
+  sum_(a in A - {1, 2}) [ kl(Q(s, a), Q'(s, a)) ], 
+  Q(s, a) = Q'(s, a) " pour " a in.not {1, 2}
+) 
++ kl(Q(s, 1), 2Q(s, 1)) + kl(Q(s, 2), 1/2 Q(s, 2)) \
+&= sum_(s in S) 
+Q(s, 1) lr([ log Q(s, 1) - log Q(s, 1) - log 2   ], size: #200%) + 
+Q(s, 2)    [ log Q(s, 2) - log Q(s, 2) - log 1/2 ] \
+&= sum_(s in S)
+- Q(s, 1) log 2 + Q(s, 2) log 2
 $
 
 Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
