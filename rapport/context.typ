@@ -222,14 +222,17 @@ $
 
 Ce qui revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
 
-Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause d'une "compensation" de la modification de la probabilité pour un $Q(s, a_2)$ par une autre modification pour $Q(s, a_1)$:
-
-
-Imaginons:
+Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause de modifications se "compensant". Par exemple, avec
 
 #let si = $& quad "si"$
 #let sinon = $& quad "sinon"$
 
+
+$
+forall s in S, Q(s, 1) = Q(s, 2)
+$
+
+et
 
 $
 Q' := (s, a) |-> cases(
@@ -238,10 +241,9 @@ Q' := (s, a) |-> cases(
   Q(s, a)       sinon
 ) \
 
-forall s in S, Q(s, 1) = Q(s, 2)
 $
 
-Dans ce cas, on a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles, là ou $Q$ les considérait comme identiques.
+On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine que $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.  
 
 
 Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.

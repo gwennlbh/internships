@@ -64,6 +64,24 @@
 
 #show link: underline
 
+#show ref: it => {
+  let eq = math.equation
+  let el = it.element
+  if el != none and el.func() == eq {
+    // Override equation references.
+    numbering(
+      el.numbering,
+      ..counter(eq).at(el.location())
+    )
+  } else if el != none and counter("appendices").at(el.location()).at(0) != 0 {
+    let letter = el.numbering(counter("appendices").at(el.location()).at(0))
+    let heading_path = numbering(heading().numbering, counter(heading)).at(el.location())
+    [Annexe #path]
+  } else {
+    it
+  }
+}
+
 #show: arkheion.with(
   title: [_gz-unitree_: Reinforcement learning en robotique avec validation par moteurs de physique multiples pour le H1v2 d'Unitree],
   headertitle: "gz-unitree",
@@ -92,7 +110,7 @@
 
 #pagebreak()
 
-= Remerciements
+= Remerciements 
 
 #outline()
 
@@ -100,7 +118,8 @@
 
 #include "context.typ"
 
-= Packaging reproductible avec Nix
+= Packaging reproductible avec Nix 
+
 
 #include "nix.typ"
 
@@ -120,6 +139,3 @@
 = Preuves
 
 #include "proofs.typ"
-
-#heading(numbering: none)[Annexes]
-

@@ -1,17 +1,3 @@
-#show ref: it => {
-  let eq = math.equation
-  let el = it.element
-  if el != none and el.func() == eq {
-    // Override equation references.
-    link(el.location(),numbering(
-      el.numbering,
-      ..counter(eq).at(el.location())
-    ))
-  } else {
-    // Other references as usual.
-    it
-  }
-}
 
 == Cas dégénéré de $D_"KL" (Q, Q') = 0$ sans utilisation de $max$ <dkl-zero>
 
