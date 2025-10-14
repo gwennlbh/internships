@@ -4,6 +4,7 @@
 #show math.equation.where(block: true): set block(spacing: 2em)
 
 #let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
+#let exp = $op(bb(E), limits: #true)$
 
 
 == Bases théoriques du _Reinforcement Learning_
@@ -200,28 +201,75 @@ L'expression comporte deux hyperparamètres:
 
 ==== Évaluation de la performance d'une politique
 
-
 #let cL = $cal(L)$
+#let proba = $bb(P)$
 
 Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
 La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q^*$, qui est bien sûr inconnue.
 
-Pour se faire, on met à jour $Q$ avec un $Q'$ qui maximise l'amélioration du score @trpo-openai
+On note dans le reste de cette section $cal(P): S -> A$ une politique et $Q: S times A -> [0, 1]$ sa distribution de probabilité, telle que#footnote[
+  On peut aussi bien définir $cal(P)$ en fonction de $Q$:
+
+  $
+  cal(P) = s |-> max_(a in A) Q(s, a)
+  $
+
+  que $Q$ en fonction de $cal(P)$:
+
+  $
+  Q = (s, a) |-> proba(cal(P)(s) = a)
+  $
+] pour tout $(s, a) in S times A$, on a $cal(P)(s) = a <=> Q(s, a) = max_(a in A) Q(s, a)$
+
+#section[Récompense attendue $eta$]
+
+$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $Q$ avec fonction de récompense $R$. 
 
 $
-Q' <- argmax_(q) cL(q, Q)
+eta(Q) = exp_((s_0, a_0), ...) sum_(t=0)^oo gamma^t R(s_t)
 $
 
-Avec 
+Cette espérance est calculée pour tout "chemin" effectué en partant d'un état et d'une action initiale $(s_0, a_0)$ puis en "déroulant" la politique:
+
+#align(center, diagram(
+  node((0, 0))[$s_0$],
+  edge((0, 0), (1, 0), "->")[$Q arrow.r.squiggly a_0$],
+  node((1, 0))[$s_1$],
+  edge((1, 0), (2, 0), "->")[$a_1$],
+  node((2, 0))[$s_2$],
+  edge((2, 0), (3, 0), "->")[$a_2$],
+  node((3, 0))[$dots.c$]
+))
+
+$eta$ prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps
+
+
+
+
+#section[Avantage $A$]
+
+#section[_Surrogate advantage_ $cL$]
+
 
 
 ==== _Trust Region Policy Optimization_
 
 
-#section[Contrôler les modifications de politique]
 
-Pour mesurer à quel point l'entraînement progresse, on mesure donc une _distance_ entre ces deux distributions de probabilité.
+La méthode TRPO définit la mise à jour de $Q$ avec un $Q'$ qui maximise le _surrogate advantage_ @trpo-openai, sous une contrainte limitant l'écart entre $Q$ et $Q'$
+
+
+L'idée de la _TRPO_ est de maximiser le _surrogate advantage_ du nouveau $Q$ tout en limitant l'ampleur des modifications apportées à $Q$, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
+
+$
+Q'  <- & argmax_(q) cL(q, Q) \
+"s.c." #h(1em/2) & "distance"(Q', Q) < delta
+$
+
+Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
+
+#section[Distance entre politiques]
 
 Il existe plusieurs manières de mesurer l'écart entre deux distributions de probabilité, dont notamment la _divergence de Kullback-Leibler_, aussi appelée entropie relative @kullback-leibler @kullback-leibler2:
 
@@ -231,10 +279,7 @@ $
 
 Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilité: dans notre cas, $cal(X) = S times A$.
 
-L'idée de la _TRPO_ est de maximiser le score de $Q$ tout en limitant l'ampleur des modifications apportées à $Q$, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
 
-
-Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
 
 Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$, c'est-à-dire @trpo
 
@@ -257,6 +302,7 @@ Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à
 $
 forall s in S, Q(s, 1) = Q(s, 2)
 $
+
 
 et
 
