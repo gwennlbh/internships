@@ -1,5 +1,8 @@
 #import "utils.typ": todo, comment, refneeded
-#import "@preview/fletcher:0.5.8": diagram, node, edge
+#import "@preview/fletcher:0.5.8": node, edge
+#import "@preview/fletcher:0.5.8"
+
+#let diagram = (..args) => pad(y: 2em, align(center, fletcher.diagram(..args)))
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
@@ -204,7 +207,7 @@ L'expression comporte deux hyperparamètres:
 
 #let cL = $cal(L)$
 #let proba = $bb(P)$
-#let setbuilder = (content, with) => ${ #content mid(|) #with }$
+#let setbuilder = (content, with) => ${ #content thick mid(|) thick #with }$
 
 Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
@@ -256,22 +259,24 @@ On a aussi, pour tout pas de temps $t in NN$:
 $
 cases(
   a_t &= p(s_t),
-  s_(t+1) &= M(s_t, a_t)
+  s_(t+1) &= M(s_t, a_t),
 )
 $
 
 Cette "chemin" se modélise aisément par une suite d'éléments de $S$.
 
-L'ensemble des chemins d'états possibles d'une politique, $cal(S)_p subset S^NN$, peut donc être définit ainsi:
+#todo[Expliquer pourquoi une suite de $S$ en fait ça marche pas, en gros on choppe pas tt les chemins possible psk faut trouver $a$ en fonction de $p$ donc ya pas tout]
+
+L'ensemble des chemins d'états possibles d'une politique, $cal(C)_p subset S^NN$, peut donc être définit ainsi:
 
 $
-cal(S)_p := 
+cal(C)_p := 
 setbuilder(
   cases(
     s_0 &= s,
-    forall t in NN quad s_(t+1) &= M(s_t, p(s_t))
+    forall t in NN quad s_(t+1) &= M(s_t, a_t)
   ),
-  s in S
+  (s, a) in S times A^NN
 )
 $
 
@@ -285,7 +290,9 @@ $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour u
 Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
 
 $
-eta(p, r) = exp_((s_t)_(t in NN) in cal(S)_p) sum_(t=0)^oo gamma^t r(s_t)
+eta(p, r) 
+&= exp_((s_t)_(t in NN) in cal(S)_p) sum_(t=0)^oo gamma^t r(s_t) \
+&= sum_((s_t)_(t in NN) in cal(S)_p) Q_p (s_t, p(s_t)) sum_(t=0)^oo gamma^t r(s_t)
 $
 
 Avec $p$ une politique, $r$ une fonction de récompense, et 
@@ -299,26 +306,7 @@ Avec $p$ une politique, $r$ une fonction de récompense, et
 
 L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir $a$ parmi toutes les actions possibles quand on est dans l'état $s$ (pour la politique $p$, avec "préférable" au sens de $(r(S), >=)$)
 
-Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $p(s)$
-
-$
-A_(p, r)(s, a) := 
-underbracket(
-  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = p(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
-  Q(s, a)
-) - underbracket(
-  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
-  V(s)
-)
-$
-
 On peut visualiser ce calcul ainsi:
-
-// #align(center, diagram($
-//                            &                    edge((<s>, #auto), ->, a_t) & s_t edge(=>) \
-//   dots.c edge(->, a_(t-1)) & node(<s>, s_(t-1)) edge(->, a_t) & s_t edge(=>) 
-// $))
-//
 
 #align(center, diagram(
   // Prior path
@@ -332,36 +320,56 @@ On peut visualiser ce calcul ainsi:
   edge("-")[],
   node((3.5, 0)),
   edge("->", label-pos: 0%)[$a_t$],
-  node((4.5, 0))[$dots.c$],
+  node((4.5, 0))[$sum^oo dots.c$],
 
   // Top-branch path
-  node((4.5, +1.5))[$dots.c$],
+  node((4.5, +1.5))[$sum^oo dots.c$],
   edge((), <break>, "<-", bend: 35deg)[$a'_t$],
 
   // Bottom-branch path
-  node((4.5, -1.5))[$dots.c$],
+  node((4.5, -1.5))[$sum^oo dots.c$],
   edge((), <break>, "<-", bend: -35deg)[$a''_t$],
 
   // Expectation bar V(s)
-  edge((2, 1.75), (1.85, -1.75), "l,d,r"),
-  // node((2, 1.75)),
-  // edge("-"),
-  // node((1.85, 1.75)),
-  // edge("-"),
-  // node((1.85, -1.75)),
-  // edge("-")[$V(s_t)$],
-  // node((2, -1.75)),
+  node((5, 1.75)),
+  edge("--"),
+  node((1.85, 1.75)),
+  edge("-", label-side: left, label-pos: 75%)[$exp$],
+  node((1.85, -1.75)),
+  edge("--")[$V(s_t)$],
+  node((5, -1.75)),
 
   // Expectation bar Q(s, a)
-  node((3.45, 0.5)),
-  edge("-"),
+  node((5, 0.5)),
+  edge("--"),
   node((3.25, 0.5)),
-  edge("-"),
+  edge("-", label-side: left, label-pos: 75%)[$exp$],
   node((3.25, -0.5)),
-  edge("-")[$Q(s_t, a_t)$],
-  node((3.45, -0.5)),
+  edge("--")[$Q(s_t, a_t)$],
+  node((5, -0.5)),
 ))
 
+Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
+
+$
+A_(p, r)(s, a) := 
+underbracket(
+  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+  Q(s, a)
+) - underbracket(
+  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
+  V(s)
+)
+$
+
+
+
+On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'espérance...
+
+/ pour $V(s_t)$: de tout les chemins
+/ pour $Q(s_t, a_t)$: du chemin où l'on a choisi $a_t$
+
+En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
 
 
 
