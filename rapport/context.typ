@@ -294,13 +294,40 @@ Avec $p$ une politique, $r$ une fonction de récompense, et
 
 #section[Avantage $A$]
 
-L'avantage est la simple différence entre les récompenses attendues pour deux politiques:
+
+// L'avantage $A_(p, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
+
+L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir $a$ parmi toutes les actions possibles quand on est dans l'état $s$ (pour la politique $p$, avec "préférable" au sens de $(r(S), >=)$)
+
+Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $p(s)$
 
 $
-// A_p &: S times A &-> RR^+ \
-forall (s, a) in S times A, \
-A_p (s, a) := f
+A_(p, r)(s, a) := exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = p(s_0, a)) sum_(t=0)^oo gamma^t r(s_t) -  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t)
 $
+
+On peut visualiser ce calcul ainsi:
+
+// #align(center, diagram($
+//                            &                    edge((<s>, #auto), ->, a_t) & s_t edge(=>) \
+//   dots.c edge(->, a_(t-1)) & node(<s>, s_(t-1)) edge(->, a_t) & s_t edge(=>) 
+// $))
+//
+
+#align(center, diagram(
+  node((0, 0))[$dots.c$],
+  edge("->")[$a_(t-2)$],
+  node((1, 0))[$s_(t-1)$],
+  edge("->")[$a_(t-1)$],
+  node(<break>, (2, 0))[$s_t$],
+  edge("->")[$a_t$],
+  node((3, 0))[$sum_(l = t+1)^oo gamma^l r(s_l)$],
+
+  node((2, +0.5))[$a'_t$],
+  edge(((), <break>), "->")[$s'_t$],
+  node((2, -0.5))[$s_t'$]
+))
+
+
 
 
 
