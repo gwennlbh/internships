@@ -230,15 +230,9 @@ On note dans le reste de cette section:
 
 $cal(S)_p$ est l'ensemble des "chemins d'états" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états: 
 
-#align(center, diagram(
-  node((0, 0))[$s_0$],
-  edge((0, 0), (1, 0), "->")[$a_0$],
-  node((1, 0))[$s_1$],
-  edge((1, 0), (2, 0), "->")[$a_1$],
-  node((2, 0))[$s_2$],
-  edge((2, 0), (3, 0), "->")[$a_2$],
-  node((3, 0))[$dots.c$]
-))
+#align(center, diagram($
+  s_0 edge(a_0, ->) & s_1 edge(a_1, ->) & s_2 edge(a_2, ->) & dots.c
+$))
 
 Cette suite se modélise aisément par une suite de $S^NN$.
 
@@ -247,12 +241,12 @@ $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'
 
 #align(center, diagram(
   node((0, 0))[$s_t$],
+  edge("", corner: right, label-pos: 1/8, label-side: left)[Choix de l'action],
+  edge("->", corner: right, label-pos: 1/4, label-side: left)[$p$],
   node((1, -1))[$a_t$],
+  edge("->", corner: right, label-pos: 3/4, label-side: left)[$M$],
   node((2, 0))[$s_(t+1)$],
-
-  edge((0, 0), (1, -1), "->", bend: 45deg)[$p$ \ #text(size: 0.8em)[choix de l'action]],
-  edge((1, -1), (2, 0), "->", bend: 45deg)[$M$ \ #text(size: 0.8em)[simulation]],
-  edge((2, 0), (0, 0), "-->", bend: 45deg)
+  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->")
 ))
 
 On a aussi, pour tout pas de temps $t in NN$:
