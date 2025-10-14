@@ -2,7 +2,7 @@
 #import "@preview/fletcher:0.5.8": node, edge
 #import "@preview/fletcher:0.5.8"
 
-#let diagram = (..args) => pad(y: 2em, align(center, fletcher.diagram(..args)))
+#let diagram = (..args) => pad(y: 3em, align(center, fletcher.diagram(..args)))
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
@@ -22,14 +22,14 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 
 La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec meilleur définit comme "qui minimise le coût" (ou maximise la récompense):
 
-#align(center, diagram(
+#diagram(
   node((0, 0))[Agent],
   edge((0, 0), (1, 0), "->")[Action],
   node((1, 0))[Environnement],
   edge((1, 0), (2, 0), "-->")[Fonction coût],
   node((2, 0))[Score],
   edge((2, 0), (0, 0), "->", bend: 45deg)[Mise à jour]
-))
+)
 
 Cette technique est particulièrement adaptée au problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
 
@@ -230,12 +230,12 @@ On note dans le reste de cette section:
 
 
 
-#section[Chemins d'états possibles $cal(S)_p$]
+#section[Chemins d'états possibles $cal(C)$]
 
 
 $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
 
-#align(center, diagram(
+#diagram(
   node((0, 0))[$s_t$],
   edge(corner: right, label-pos: 2/8, label-side: left)[choix de l'action],
   edge("->", corner: right, label-pos: 3/8, label-side: left)[$p$],
@@ -244,13 +244,13 @@ $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'
   edge(corner: right, label-pos: 6/8, label-side: left)[simulation],
   node((2, 0))[$s_(t+1)$],
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération]
-))
+)
 
-On note $cal(S)_p$ l'ensemble des "chemins d'états" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états: 
+On note $cal(C)_p$ l'ensemble des "chemins" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions: 
 
-#align(center, diagram($
+#diagram($
   s_0 edge(a_0, ->) & s_1 edge(a_1, ->) & s_2 edge(a_2, ->) & dots.c
-$))
+$)
 
 
 
@@ -263,20 +263,34 @@ cases(
 )
 $
 
-Cette "chemin" se modélise aisément par une suite d'éléments de $S$.
+Cette "chemin" se modélise aisément par une suite d'éléments de $S times A$. 
 
-#todo[Expliquer pourquoi une suite de $S$ en fait ça marche pas, en gros on choppe pas tt les chemins possible psk faut trouver $a$ en fonction de $p$ donc ya pas tout]
+#comment[p-ê Expliquer pourquoi une suite de $S$ en fait ça marche pas, en gros on choppe pas tt les chemins possible psk faut trouver $a$ en fonction de $p$ donc ya pas tout. Si on prend $p(a)$ c'est que le chemin que la politique prendrait]
 
-L'ensemble des chemins d'états possibles d'une politique, $cal(C)_p subset S^NN$, peut donc être définit ainsi:
+L'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C) subset (S times A)^NN$, peut être définit ainsi:
 
 $
-cal(C)_p := 
+cal(C) := 
 setbuilder(
   cases(
-    s_0 &= s,
-    forall t in NN quad s_(t+1) &= M(s_t, a_t)
+    & c_0 &= (s_0, a_0),
+    forall t in NN quad & c_(t+1) &= M(c_t)
   ),
-  (s, a) in S times A^NN
+  (s_0, a) in S times A^NN
+)
+$
+
+Et l'on note l'ensemble des chemins _pour une politique donnée_
+
+$
+cal(C)_p := setbuilder(
+  (s_t, a_t)_(t in NN) " avec "
+  cases(
+    & a_0 &= p(s_0),
+    forall t in NN quad & a_(t+1) &= p(s_t),
+    forall t in NN quad & s_(t+1) &= M(s_t, a_t)
+  ),
+  s_0 in S
 )
 $
 
@@ -285,18 +299,32 @@ Cette formalisation est utile par la suite pour proprement définir certaines gr
 
 #section[Récompense attendue $eta$]
 
-$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $Q$ avec fonction de récompense $R$. 
+$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $p$ avec fonction de récompense $r$. 
 
 Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
 
 $
 eta(p, r) 
-&= exp_((s_t)_(t in NN) in cal(S)_p) sum_(t=0)^oo gamma^t r(s_t) \
-&= sum_((s_t)_(t in NN) in cal(S)_p) Q_p (s_t, p(s_t)) sum_(t=0)^oo gamma^t r(s_t)
+// &= exp_((s_t, a_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r(s_t) \
+&= underbracket(
+  sum_((s_t, a_t)_(t in NN) in cal(S)) 
+  underbracket(
+    sum_(t=0)^oo 
+    underbracket(Q_p (s_t, a_t), #[proba. de choisir $a_t$])
+    quad
+    underbracket(gamma^t r(s_(t+1)), "récompense associée"),
+    "dérouler le chemin"
+  ),
+  "pour tout chemin possible"
+) \
+#h(1.5em) \
+&#[en considérant les $(c_t)_(t in NN)$ comme des variables aléatoires,] \
+&#[on peut interpréter cela comme une espérance:] \
+#h(1.5em) \
+&= exp_((c_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
 $
 
 Avec $p$ une politique, $r$ une fonction de récompense, et 
-
 
 
 #section[Avantage $A$]
@@ -308,7 +336,7 @@ L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir
 
 On peut visualiser ce calcul ainsi:
 
-#align(center, diagram(
+#diagram(
   // Prior path
   node((0, 0))[$dots.c$],
   edge("->")[$a_(t-2)$],
@@ -347,14 +375,14 @@ On peut visualiser ce calcul ainsi:
   node((3.25, -0.5)),
   edge("--")[$Q(s_t, a_t)$],
   node((5, -0.5)),
-))
+)
 
 Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
 
 $
 A_(p, r)(s, a) := 
 underbracket(
-  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+  exp_((s_t)_(t in NN) &in cal(S)_p \ s_0 &= s \ s_1 &= M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
   Q(s, a)
 ) - underbracket(
   exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
@@ -370,8 +398,6 @@ On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'esp
 / pour $Q(s_t, a_t)$: du chemin où l'on a choisi $a_t$
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
-
-
 
 
 #section[_Surrogate advantage_ $cL$]
