@@ -224,15 +224,11 @@ On note dans le reste de cette section:
 / $Q$ et $Q^*$: $Q_cal(P)$ et $Q_(cal(P)^*)$, pour alléger les notations
 // $R$: $R_cal(P)$
 
-#section[Récompense attendue $eta$]
 
-$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $Q$ avec fonction de récompense $R$. 
 
-$
-eta(cal(P), R) = exp_((s_t)_(t in NN) in cal(S)_cal(P)) sum_(t=0)^oo gamma^t R(s_t)
-$
+#section[Chemins d'états possibles $cal(S)_p$]
 
-Cette espérance est calculée sur l'ensemble des "chemins d'états" possibles:
+$cal(S)_p$ est l'ensemble des "chemins d'états" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états: 
 
 #align(center, diagram(
   node((0, 0))[$s_0$],
@@ -244,19 +240,56 @@ Cette espérance est calculée sur l'ensemble des "chemins d'états" possibles:
   node((3, 0))[$dots.c$]
 ))
 
-L'ensemble des chemins d'états possibles d'une politique, $cal(S)_P subset S^NN$, peut être définit ainsi:
+Cette suite se modélise aisément par une suite de $S^NN$.
+
+
+$M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
+
+#align(center, diagram(
+  node((0, 0))[$s_t$],
+  node((1, -1))[$a_t$],
+  node((2, 0))[$s_(t+1)$],
+
+  edge((0, 0), (1, -1), "->", bend: 45deg)[$p$ \ #text(size: 0.8em)[choix de l'action]],
+  edge((1, -1), (2, 0), "->", bend: 45deg)[$M$ \ #text(size: 0.8em)[simulation]],
+  edge((2, 0), (0, 0), "-->", bend: 45deg)
+))
+
+On a aussi, pour tout pas de temps $t in NN$:
+
+$
+cases(
+  a_t &= p(s_t),
+  s_(t+1) &= M(s_t, a_t)
+)
+$
+
+
+L'ensemble des chemins d'états possibles d'une politique, $cal(S)_p subset S^NN$, peut donc être définit ainsi:
 
 $
 setbuilder(
   cases(
     s_0 &= s,
-    forall t in NN quad s_(t+1) &= M(s_t, cal(P)(s_t))
+    forall t in NN quad s_(t+1) &= M(s_t, p(s_t))
   ),
   s in S
 )
 $
 
-$eta$ prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps
+
+#section[Récompense attendue $eta$]
+
+$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $Q$ avec fonction de récompense $R$. 
+
+Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
+
+$
+eta(p, r) = exp_((s_t)_(t in NN) in cal(S)_p) sum_(t=0)^oo gamma^t r(s_t)
+$
+
+Avec $p$ une politique, $r$ une fonction de récompense, et 
+
 
 
 #section[Avantage $A$]
