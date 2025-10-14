@@ -1,6 +1,10 @@
 #import "utils.typ": todo, comment, refneeded
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
+#show math.equation.where(block: true): set block(spacing: 2em)
+
+#let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
+
 
 == Bases théoriques du _Reinforcement Learning_
 
@@ -196,9 +200,22 @@ L'expression comporte deux hyperparamètres:
 
 ==== _Trust Region Policy Optimization_
 
+#let cL = $cal(L)$
+#let section = content => [ #v(1em) #h(2em) #emph(content) #v(1em) ]
+
 Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
-La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q*$, qui est bien sûr inconnue.
+La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q^*$, qui est bien sûr inconnue.
+
+Pour se faire, on met à jour $Q$ avec un $Q'$ qui maximise l'amélioration du score
+
+$
+Q' <- argmax_(q) cL(q, Q)
+$
+
+Avec $cal(L)$ 
+
+#section[Contrôler les modifications de politique]
 
 Pour mesurer à quel point l'entraînement progresse, on mesure donc une _distance_ entre ces deux distributions de probabilité.
 
@@ -210,19 +227,24 @@ $
 
 Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilité: dans notre cas, $cal(X) = S times A$.
 
-L'idée de la _TRPO_ est de maximiser le score de $Q$ tout en limitant l'ampleur des modifications apportées à $Q$. 
+L'idée de la _TRPO_ est de maximiser le score de $Q$ tout en limitant l'ampleur des modifications apportées à $Q$, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
+
+
+Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
 
 Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$, c'est-à-dire @trpo
-
-// #todo[Pourquoi pas regarder $D_"KL" (Q' || Q)$ directement??]
 
 $
 max_(s in S) D_"KL" (Q'(s, dot) || Q(s, dot)) < delta
 $
 
+
+
 Ce qui revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
 
-Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause de modifications se "compensant". Par exemple, avec
+#comment[C'est ma théorie ça, faudrait etre sure que le papier ne donne pas d'explications]
+
+Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause de modifications se "compensant" #refneeded. Par exemple, avec
 
 #let si = $& quad "si"$
 #let sinon = $& quad "sinon"$
@@ -243,19 +265,26 @@ Q' := (s, a) |-> cases(
 
 $
 
-On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine que $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.  
+On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.  
 
 
-Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
 
 Cette contrainte définit un ensemble réduit de $Q'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
 
 #let ddot = [ #sym.dot #h(-1em/16) #sym.dot ]
 
-En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise donc une approximation de $max_(a in A) D_"KL" (dot || ddot)$, avec l'espérance au lieu du maximum: $overline(D_"KL") := bb(E)_() D_"KL" (dot || ddot)$
+En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise donc une approximation de $max_(s in S) D_"KL" (dot || ddot)$, avec l'espérance au lieu du maximum @trpo 
+
+$
+overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, a) || Q'(s, a))
+
+$
+
+
 
 
 ==== _Proximal Policy Optimization_
+
 
 
 

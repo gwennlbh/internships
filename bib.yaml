@@ -523,3 +523,10 @@ kullback-leibler2:
     date: '2025-10-13'
     value: 'https://books.google.fr/books?id=AKuMj4PN_EMC&lpg=PA34&pg=PA34#v=onepage&q&f=false'
 
+trpo-openai:
+  type: web
+  title: Trust Region Policy Optimization — Spinning Up  documentation
+  url:
+    date: '2025-10-14'
+    value: https://spinningup.openai.com/en/latest/algorithms/trpo.html#background
+
