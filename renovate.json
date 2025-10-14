@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>gwennlbh/renovate"],
+  "logLevelRemap": [
+    {
+      "matchMessage": "/^typst-universe/",
+      "newLogLevel": "info"
+    }
+  ],
+  "customDatasources": {
+    "typstUniverse": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repositories/typst/packages/preview/{{ packageName }}?ref=main",
+      "transformTemplates": [
+        "{ \"homepage\": \"https://typst.app/universe/package/{{ packageName }}\", \"sourceUrl\": \"https://github.com/typst/packages/tree/main/preview/{{ packageName }}\", \"releases\": $.{ \"version\": name, \"digest\": sha, \"sourceUrl\": _links.html } }"
+      ]
+    }
+  },
+  "customManagers": [
+    {
+      "managerFilePatterns": ["*.typ", "*.typst"],
+      "depNameTemplate": "@preview/{{ packageName }}",
+      "datasourceTemplate": "custom.typstUniverse",
+      "matchStrings": [
+        "^#import \"@preview/(?<packageName>[^:]+):(?<currentValue>[\\d.]+)\""
+      ]
+    }
+  ]
+}
