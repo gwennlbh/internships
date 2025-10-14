@@ -302,7 +302,14 @@ L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir
 Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $p(s)$
 
 $
-A_(p, r)(s, a) := exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = p(s_0, a)) sum_(t=0)^oo gamma^t r(s_t) -  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t)
+A_(p, r)(s, a) := 
+underbracket(
+  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s \ s_1 = p(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+  Q(s, a)
+) - underbracket(
+  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
+  V(s)
+)
 $
 
 On peut visualiser ce calcul ainsi:
@@ -314,17 +321,45 @@ On peut visualiser ce calcul ainsi:
 //
 
 #align(center, diagram(
+  // Prior path
   node((0, 0))[$dots.c$],
   edge("->")[$a_(t-2)$],
   node((1, 0))[$s_(t-1)$],
   edge("->")[$a_(t-1)$],
-  node(<break>, (2, 0))[$s_t$],
-  edge("->")[$a_t$],
-  node((3, 0))[$sum_(l = t+1)^oo gamma^l r(s_l)$],
 
-  node((2, +0.5))[$a'_t$],
-  edge(((), <break>), "->")[$s'_t$],
-  node((2, -0.5))[$s_t'$]
+  // Main-branch path
+  node((2, 0), name: <break>)[$s_t$],
+  edge("-")[],
+  node((3.5, 0)),
+  edge("->", label-pos: 0%)[$a_t$],
+  node((4.5, 0))[$dots.c$],
+
+  // Top-branch path
+  node((4.5, +1.5))[$dots.c$],
+  edge((), <break>, "<-", bend: 35deg)[$a'_t$],
+
+  // Bottom-branch path
+  node((4.5, -1.5))[$dots.c$],
+  edge((), <break>, "<-", bend: -35deg)[$a''_t$],
+
+  // Expectation bar V(s)
+  edge((2, 1.75), (1.85, -1.75), "l,d,r"),
+  // node((2, 1.75)),
+  // edge("-"),
+  // node((1.85, 1.75)),
+  // edge("-"),
+  // node((1.85, -1.75)),
+  // edge("-")[$V(s_t)$],
+  // node((2, -1.75)),
+
+  // Expectation bar Q(s, a)
+  node((3.45, 0.5)),
+  edge("-"),
+  node((3.25, 0.5)),
+  edge("-"),
+  node((3.25, -0.5)),
+  edge("-")[$Q(s_t, a_t)$],
+  node((3.45, -0.5)),
 ))
 
 
