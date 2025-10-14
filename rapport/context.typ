@@ -233,12 +233,13 @@ On note dans le reste de cette section:
 #section[Chemins d'états possibles $cal(C)$]
 
 
+
 $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
 
 #diagram(
   node((0, 0))[$s_t$],
   edge(corner: right, label-pos: 2/8, label-side: left)[choix de l'action],
-  edge("->", corner: right, label-pos: 3/8, label-side: left)[$p$],
+  edge("->", corner: right, label-pos: 3/8, label-side: left)[$cal(P)$],
   node((1, -1))[$a_t$],
   edge("->", corner: right, label-pos: 5/8, label-side: left)[$M$],
   edge(corner: right, label-pos: 6/8, label-side: left)[simulation],
@@ -246,41 +247,27 @@ $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération]
 )
 
-On note $cal(C)_p$ l'ensemble des "chemins" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions: 
+Quand on "déroule" $cal(P)$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions: 
 
 #diagram($
   s_0 edge(a_0, ->) & s_1 edge(a_1, ->) & s_2 edge(a_2, ->) & dots.c
 $)
 
 
-
-On a aussi, pour tout pas de temps $t in NN$:
+Pour tout pas de temps $t in NN$, on a:
 
 $
 cases(
-  a_t &= p(s_t),
+  a_t &= cal(P)(s_t),
   s_(t+1) &= M(s_t, a_t),
 )
 $
 
-Cette "chemin" se modélise aisément par une suite d'éléments de $S times A$. 
+Un chemin se modélise aisément par une suite d'éléments de $S times A$. Ainsi, on note
 
 #comment[p-ê Expliquer pourquoi une suite de $S$ en fait ça marche pas, en gros on choppe pas tt les chemins possible psk faut trouver $a$ en fonction de $p$ donc ya pas tout. Si on prend $p(a)$ c'est que le chemin que la politique prendrait]
 
-L'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C) subset (S times A)^NN$, peut être définit ainsi:
 
-$
-cal(C) := 
-setbuilder(
-  cases(
-    & c_0 &= (s_0, a_0),
-    forall t in NN quad & c_(t+1) &= M(c_t)
-  ),
-  (s_0, a) in S times A^NN
-)
-$
-
-Et l'on note l'ensemble des chemins _pour une politique donnée_
 
 $
 cal(C)_p := setbuilder(
@@ -294,8 +281,28 @@ cal(C)_p := setbuilder(
 )
 $
 
+l'ensemble des chemins possibles avec la politique $p$. C'est tout simplement l'ensemble de tout les "déroulements" de la politique $p$ en partant des états possibles de l'environnement.
 
-Cette formalisation est utile par la suite pour proprement définir certaines grandeurs.
+
+On définit également l'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
+
+$
+cal(C) := 
+setbuilder(
+  cases(
+    & c_0 &= (s_0, a_0),
+    forall t in NN quad & c_(t+1) &= M(c_t)
+  ),
+  (s_0, a) in S times A^NN
+)
+$
+
+On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
+
+#align(center)[
+_Cette formalisation est utile par la suite, \ pour proprement définir certaines grandeurs._
+]
+#comment[pas sûre de cette phrase]
 
 #section[Récompense attendue $eta$]
 
@@ -332,7 +339,7 @@ Avec $p$ une politique, $r$ une fonction de récompense, et
 
 // L'avantage $A_(p, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
 
-L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir $a$ parmi toutes les actions possibles quand on est dans l'état $s$ (pour la politique $p$, avec "préférable" au sens de $(r(S), >=)$)
+L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $p$, avec "préférable" au sens de $(r(S), >=)$)
 
 On peut visualiser ce calcul ainsi:
 
@@ -402,6 +409,26 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 
 #section[_Surrogate advantage_ $cL$]
 
+Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
+
+#todo[Modifier pour que $cal(P)$ soit mise à jour par argmax de $A$ après $s_(t+1)$]
+
+#diagram(
+  node((0, 0))[$s_t$],
+  edge("->", corner: right, label-side: left)[$cal(P)$],
+  node((1, -1))[$a_t$],
+  edge("->", corner: right, label-side: left)[$M$],
+  node((2, 0))[$s_(t+1)$],
+  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération]
+)
+
+
+Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
+
+$
+cL_r(p', p) := exp_((s_t, a_t)_(t in NN) in cal(C)) (Q_p (s_t, a_t)) / (Q_p' (s_t, a_t)) A_(p, r)(s_t, a_t)
+$
+
 
 
 ==== _Trust Region Policy Optimization_
@@ -414,8 +441,10 @@ La méthode TRPO définit la mise à jour de $Q$ avec un $Q'$ qui maximise le _s
 L'idée de la _TRPO_ est de maximiser le _surrogate advantage_ du nouveau $Q$ tout en limitant l'ampleur des modifications apportées à $Q$, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
 
 $
-Q'  <- & argmax_(q) cL(q, Q) \
-"s.c." #h(1em/2) & "distance"(Q', Q) < delta
+Q' = & cases(
+  argmax_(q) cL(q, Q),
+"s.c.  distance"(Q', Q) < delta
+)
 $
 
 Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
