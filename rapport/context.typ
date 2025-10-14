@@ -411,16 +411,19 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 
 Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
 
-#todo[Modifier pour que $cal(P)$ soit mise à jour par argmax de $A$ après $s_(t+1)$]
-
 #diagram(
   node((0, 0))[$s_t$],
-  edge("->", corner: right, label-side: left)[$cal(P)$],
-  node((1, -1))[$a_t$],
-  edge("->", corner: right, label-side: left)[$M$],
-  node((2, 0))[$s_(t+1)$],
-  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération]
+  edge("-"),
+  node(name: <policy>, (0, -1))[$cal(P)$],
+  edge("->", corner: right),
+  node((1, -2))[$a_t$],
+  edge("->", corner: right)[$M$],
+  node(name: <final>, (2, 0))[$s_(t+1)$],
+  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
+  edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left)[$Q_cal(P)(s_(t+1), a_(t+1)) <- argmax_(a in A) A_(cal(P), R)(s_(t+1), a)$ #todo[Pas fini, c pas homogène]]
 )
+
+Mais #todo[Page 2 trpo]
 
 
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
