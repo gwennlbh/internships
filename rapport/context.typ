@@ -183,6 +183,7 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 
 === Mise a jour
 
+#let section = content => [ #v(1em) #h(2em) #emph(content) #v(1em) ]
 
 ==== _Q-learning_
 
@@ -197,23 +198,26 @@ L'expression comporte deux hyperparamètres:
 / Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
 / Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
 
+==== Évaluation de la performance d'une politique
 
-==== _Trust Region Policy Optimization_
 
 #let cL = $cal(L)$
-#let section = content => [ #v(1em) #h(2em) #emph(content) #v(1em) ]
 
 Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
 La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q^*$, qui est bien sûr inconnue.
 
-Pour se faire, on met à jour $Q$ avec un $Q'$ qui maximise l'amélioration du score
+Pour se faire, on met à jour $Q$ avec un $Q'$ qui maximise l'amélioration du score @trpo-openai
 
 $
 Q' <- argmax_(q) cL(q, Q)
 $
 
-Avec $cal(L)$ 
+Avec 
+
+
+==== _Trust Region Policy Optimization_
+
 
 #section[Contrôler les modifications de politique]
 

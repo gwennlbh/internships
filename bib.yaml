@@ -526,6 +526,7 @@ kullback-leibler2:
 trpo-openai:
   type: web
   title: Trust Region Policy Optimization — Spinning Up  documentation
+  publisher: OpenAI
   url:
     date: '2025-10-14'
     value: https://spinningup.openai.com/en/latest/algorithms/trpo.html#background
