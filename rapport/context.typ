@@ -5,6 +5,7 @@
 
 #let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
 #let exp = $op(bb(E), limits: #true)$
+#let function = (name, input_domain, output_domain, args, body) => $#name : thick thick cases(delim: #none, #input_domain &-> #output_domain, #args &|-> #body)$
 
 
 == Bases théoriques du _Reinforcement Learning_
@@ -215,7 +216,7 @@ On note dans le reste de cette section:
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
 / $cal(P): S -> A$: une politique
 / $cal(P)^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
-/ $R: S -> RR$: sa fonction de récompense // d'une politique $p$
+/ $R: S -> RR^+$: sa fonction de récompense // d'une politique $p$
 / $Q_p: S times A -> [0, 1]$: sa distribution de probabilité#footnote[
     On peut facilement définir $cal(P)$ ou $Q$ selon l'autre, 
     avec $cal(P) = s |-> max_(a in A) Q(s, a)$ 
@@ -228,26 +229,27 @@ On note dans le reste de cette section:
 
 #section[Chemins d'états possibles $cal(S)_p$]
 
-$cal(S)_p$ est l'ensemble des "chemins d'états" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états: 
-
-#align(center, diagram($
-  s_0 edge(a_0, ->) & s_1 edge(a_1, ->) & s_2 edge(a_2, ->) & dots.c
-$))
-
-Cette suite se modélise aisément par une suite de $S^NN$.
-
 
 $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
 
 #align(center, diagram(
   node((0, 0))[$s_t$],
-  edge("", corner: right, label-pos: 1/8, label-side: left)[Choix de l'action],
-  edge("->", corner: right, label-pos: 1/4, label-side: left)[$p$],
+  edge(corner: right, label-pos: 2/8, label-side: left)[choix de l'action],
+  edge("->", corner: right, label-pos: 3/8, label-side: left)[$p$],
   node((1, -1))[$a_t$],
-  edge("->", corner: right, label-pos: 3/4, label-side: left)[$M$],
+  edge("->", corner: right, label-pos: 5/8, label-side: left)[$M$],
+  edge(corner: right, label-pos: 6/8, label-side: left)[simulation],
   node((2, 0))[$s_(t+1)$],
-  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->")
+  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération]
 ))
+
+On note $cal(S)_p$ l'ensemble des "chemins d'états" possibles avec une politique $p$. En effet, quand on "déroule" $p$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états: 
+
+#align(center, diagram($
+  s_0 edge(a_0, ->) & s_1 edge(a_1, ->) & s_2 edge(a_2, ->) & dots.c
+$))
+
+
 
 On a aussi, pour tout pas de temps $t in NN$:
 
@@ -258,10 +260,12 @@ cases(
 )
 $
 
+Cette "chemin" se modélise aisément par une suite d'éléments de $S$.
 
 L'ensemble des chemins d'états possibles d'une politique, $cal(S)_p subset S^NN$, peut donc être définit ainsi:
 
 $
+cal(S)_p := 
 setbuilder(
   cases(
     s_0 &= s,
@@ -271,6 +275,8 @@ setbuilder(
 )
 $
 
+
+Cette formalisation est utile par la suite pour proprement définir certaines grandeurs.
 
 #section[Récompense attendue $eta$]
 
@@ -289,6 +295,12 @@ Avec $p$ une politique, $r$ une fonction de récompense, et
 #section[Avantage $A$]
 
 L'avantage est la simple différence entre les récompenses attendues pour deux politiques:
+
+$
+// A_p &: S times A &-> RR^+ \
+forall (s, a) in S times A, \
+A_p (s, a) := f
+$
 
 
 
