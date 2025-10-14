@@ -203,38 +203,40 @@ L'expression comporte deux hyperparamètres:
 
 #let cL = $cal(L)$
 #let proba = $bb(P)$
+#let setbuilder = (content, with) => ${ #content mid(|) #with }$
 
 Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
-La mise à jour de la politique de l'agent revient donc à rapprocher $Q$ de la meilleure politique possible, $Q^*$, qui est bien sûr inconnue.
 
-On note dans le reste de cette section $cal(P): S -> A$ une politique et $Q: S times A -> [0, 1]$ sa distribution de probabilité, telle que#footnote[
-  On peut aussi bien définir $cal(P)$ en fonction de $Q$:
+On note dans le reste de cette section:
 
-  $
-  cal(P) = s |-> max_(a in A) Q(s, a)
-  $
-
-  que $Q$ en fonction de $cal(P)$:
-
-  $
-  Q = (s, a) |-> proba(cal(P)(s) = a)
-  $
-] pour tout $(s, a) in S times A$, on a $cal(P)(s) = a <=> Q(s, a) = max_(a in A) Q(s, a)$
+/ $A$: l'ensemble des actions
+/ $S$: l'ensemble des états possibles de l'environnement
+/ $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
+/ $cal(P): S -> A$: une politique
+/ $cal(P)^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
+/ $R: S -> RR$: sa fonction de récompense // d'une politique $p$
+/ $Q_p: S times A -> [0, 1]$: sa distribution de probabilité#footnote[
+    On peut facilement définir $cal(P)$ ou $Q$ selon l'autre, 
+    avec $cal(P) = s |-> max_(a in A) Q(s, a)$ 
+    ou $Q = (s, a) |-> proba(cal(P)(s) = a)$
+  ] d'une politique $p$
+/ $Q$ et $Q^*$: $Q_cal(P)$ et $Q_(cal(P)^*)$, pour alléger les notations
+// $R$: $R_cal(P)$
 
 #section[Récompense attendue $eta$]
 
 $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $Q$ avec fonction de récompense $R$. 
 
 $
-eta(Q) = exp_((s_0, a_0), ...) sum_(t=0)^oo gamma^t R(s_t)
+eta(cal(P), R) = exp_((s_t)_(t in NN) in cal(S)_cal(P)) sum_(t=0)^oo gamma^t R(s_t)
 $
 
-Cette espérance est calculée pour tout "chemin" effectué en partant d'un état et d'une action initiale $(s_0, a_0)$ puis en "déroulant" la politique:
+Cette espérance est calculée sur l'ensemble des "chemins d'états" possibles:
 
 #align(center, diagram(
   node((0, 0))[$s_0$],
-  edge((0, 0), (1, 0), "->")[$Q arrow.r.squiggly a_0$],
+  edge((0, 0), (1, 0), "->")[$a_0$],
   node((1, 0))[$s_1$],
   edge((1, 0), (2, 0), "->")[$a_1$],
   node((2, 0))[$s_2$],
@@ -242,12 +244,26 @@ Cette espérance est calculée pour tout "chemin" effectué en partant d'un éta
   node((3, 0))[$dots.c$]
 ))
 
+L'ensemble des chemins d'états possibles d'une politique, $cal(S)_P subset S^NN$, peut être définit ainsi:
+
+$
+setbuilder(
+  cases(
+    s_0 &= s,
+    forall t in NN quad s_(t+1) &= M(s_t, cal(P)(s_t))
+  ),
+  s in S
+)
+$
+
 $eta$ prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps
 
 
-
-
 #section[Avantage $A$]
+
+L'avantage est la simple différence entre les récompenses attendues pour deux politiques:
+
+
 
 #section[_Surrogate advantage_ $cL$]
 
