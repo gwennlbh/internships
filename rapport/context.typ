@@ -6,6 +6,7 @@
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
+//#let prod = $op(Pi, limits: #true)$
 #let card = $op("card")$
 #let indicatrix = contents => $thin op(bb(1), limits: #true)_(#contents) thin$
 #let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
@@ -332,10 +333,10 @@ eta(p, r)
 ) 
 $
 
-En considérant $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont les différents éléments de $cal(S)$, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ à valeurs depuis $S times A$:
+En considérant $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont les différents éléments de $cal(S)$, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ paramétrée#footnote[$X : (S times A)^NN -> Omega -> Omega'$ avec $Omega$ et $Omega'$ des espaces probabilisés] par $(S times A)^NN$
 
 $
-policyexp(p)(X) := exp
+policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
 $
 
 On a
