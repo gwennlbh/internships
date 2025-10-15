@@ -309,6 +309,10 @@ $
 
 On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
 
+On note aussi que $cal(C)$ (et donc $cal(C)_p$ aussi) est dénombrable, étant construit à partir de $(S times A)^NN$ et $S$, $A$ et $NN$ étant aussi dénombrables#footnote[
+  On a $card cal(C) <= card((S times A)^NN) = card(S times A) ^ (card NN) = (card S card A)^(card NN) <= (aleph_0)^(card NN) = attach(aleph_0, tl: 2) = aleph_0$
+]
+
 #align(center)[
 _Cette formalisation est utile par la suite, \ pour proprement définir certaines grandeurs._
 ]
@@ -337,7 +341,9 @@ eta(p, r)
 ) 
 $
 
-En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. 
+// En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. 
+//
+On peut considérer $eta(p, r)$ comme une espérance: soit $C$ une variable aléatoire de $cal(S)$.
 
 // $
 // policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
@@ -349,10 +355,24 @@ En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les
 // eta(p, r) = policyexp(p) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
 // $
 //
-$
-eta(p, r) = sum_((c_t)_(t in NN) in cal(S)) 
-$
+// $
+// Q_p (s, a) &= bb(P)(p(s) = a) \
+// eta(p, r) 
+// &= sum_((s_t, a_t)_(t in NN) in cal(S)) product_(t=0)^oo bb(P)(p(s_t) = a_t) sum_(t=0)^oo gamma^t r(s_t) \
+// &= sum_((s_t, a_t)_(t in NN) in cal(S)) bb(P)(inter.big_(t=0)^oo p(s_t) = a_t) sum_(t=0)^oo gamma^t r(s_t) \
+// &= sum_((s_t, a_t)_(t in NN) in cal(S)) bb(P)(p((s_t)_(t in NN)) = (a_t)_(t in NN)) sum_(t=0)^oo gamma^t r(s_t)
+// $
+//
 
+$
+exp(sum_(t=0)^oo gamma^t r(C_t)) 
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(sum_(t=0)^oo gamma^t r(C_t) = sum_(t=0)^oo gamma^t r(c_t)) \
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C_t = c_t)  \
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(inter.big_(t=0)^oo C_t = c_t) \
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) product_(t=0)^oo bb(P)(C_t = c_t) \
+&= sum_((s_t, a_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(s_t)) product_(t=0)^oo bb(P)(((C_t)_1 = s_t) inter ((C_t)_2 = a_t )) \
+&= sum_((s_t, a_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(s_t)) product_(t=0)^oo bb(P)(((C_t)_1 = p(a_t)) inter ((C_t)_2 = a_t )) \
+$
 
 
 
