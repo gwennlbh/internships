@@ -319,21 +319,23 @@ Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions
 
 $
 eta(p, r) 
-// &= exp_((s_t, a_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r(s_t) \
 = underbracket(
   sum_((s_t, a_t)_(t in NN) in cal(S)) 
   underbracket(
-    sum_(t=0)^oo 
-    underbracket(Q_p (s_t, a_t), #[proba. de choisir $a_t$])
+    underbracket(
+      product_(t=0)^oo Q_p (s_t, a_t), "proba. de faire ce chemin"
+    )
     quad
-    underbracket(gamma^t r(s_(t+1)), "récompense associée"),
+    underbracket(
+      sum_(t=0)^oo gamma^t r(s_t), "récompense associée"
+    ),
     "dérouler le chemin"
   ),
   "pour tout chemin possible"
 ) 
 $
 
-En considérant $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont les différents éléments de $cal(S)$, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ paramétrée#footnote[$X : (S times A)^NN -> Omega -> Omega'$ avec $Omega$ et $Omega'$ des espaces probabilisés] par $(S times A)^NN$
+En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ paramétrée#footnote[$X : (S times A)^NN -> Omega -> Omega'$ avec $Omega$ et $Omega'$ des espaces probabilisés] par $(S times A)^NN$
 
 $
 policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
