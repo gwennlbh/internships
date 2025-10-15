@@ -233,6 +233,11 @@ On note dans le reste de cette section:
 
 On suppose $A$ et $S$ dénombrables#footnote[En pratique, $bb(R)$ est discrétisé dans les simulateurs numérique, donc cette hypothèse ne pose pas de problèmes à l'application de la théorie au domaine de la robotique].
 
+Pour alléger les notations, on surchargera les fonctions récompenses pour qu'elle puissent prendre en entrée des éléments de $S times A$, en ignorant simplement l'action choisie:
+
+$
+forall (s, a) in S times A, forall r in "récompenses", r(s, a) := r(s)
+$
 
 
 #section[Chemins d'états possibles $cal(C)$]
@@ -320,31 +325,32 @@ Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions
 $
 eta(p, r) 
 = underbracket(
-  sum_((s_t, a_t)_(t in NN) in cal(S)) 
+  sum_((c_t)_(t in NN) in cal(S)) 
   underbracket(
-    underbracket(
-      product_(t=0)^oo Q_p (s_t, a_t), "proba. de faire ce chemin"
-    )
-    quad
-    underbracket(
-      sum_(t=0)^oo gamma^t r(s_t), "récompense associée"
-    ),
-    "dérouler le chemin"
+    product_(t=0)^oo Q_p (c_t), "probabilité du chemin"
+  )
+  quad
+  underbracket(
+    sum_(t=0)^oo gamma^t r(c_t), "récompense associée"
   ),
-  "pour tout chemin possible"
+"pour tout chemin possible"
 ) 
 $
 
-En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ paramétrée#footnote[$X : (S times A)^NN -> Omega -> Omega'$ avec $Omega$ et $Omega'$ des espaces probabilisés] par $(S times A)^NN$
+En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. 
 
+// $
+// policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
+// $
+// 
+// On a
+// 
+// $
+// eta(p, r) = policyexp(p) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
+// $
+//
 $
-policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
-$
-
-On a
-
-$
-eta(p, r) = policyexp(p) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
+eta(p, r) = sum_((c_t)_(t in NN) in cal(S)) 
 $
 
 
