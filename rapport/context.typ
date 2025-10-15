@@ -7,6 +7,7 @@
 #show math.equation.where(block: true): set block(spacing: 2em)
 
 #let card = $op("card")$
+#let indicatrix = contents => $thin op(bb(1), limits: #true)_(#contents) thin$
 #let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
 #let exp = $op(bb(E), limits: #true)$
 #let function = (name, input_domain, output_domain, args, body) => $#name : thick thick cases(delim: #none, #input_domain &-> #output_domain, #args &|-> #body)$
@@ -355,6 +356,7 @@ L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir
 
 On peut visualiser ce calcul ainsi:
 
+#let height = 2
 #diagram(
   // Prior path
   node((0, 0))[$dots.c$],
@@ -369,22 +371,22 @@ On peut visualiser ce calcul ainsi:
   edge("->", label-pos: 0%)[$a_t$],
   node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$],
 
-  // Top-branch path
-  node((4.5, +1.5))[$sum^oo dots.c$],
-  edge((), <break>, "<-", bend: 35deg)[$a'_t$],
-
   // Bottom-branch path
-  node((4.5, -1.5))[$sum^oo dots.c$],
-  edge((), <break>, "<-", bend: -35deg)[$a''_t$],
+  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$],
+  edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$],
+
+  // top-branch path
+  node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$],
+  edge(<break>, <top>, "->", bend: 25deg)[$a''_t$],
 
   // Expectation bar V(s)
-  node((5, 1.75)),
+  node((5, height)),
   edge("--"),
-  node((1.85, 1.75)),
+  node((1.85, height)),
   edge("-", label-side: left, label-pos: 75%)[$exp$],
-  node((1.85, -1.75)),
+  node((1.85, -height)),
   edge("--")[$V(s_t)$],
-  node((5, -1.75)),
+  node((5, -height)),
 
   // Expectation bar Q(s, a)
   node((5, 0.5)),
@@ -401,10 +403,10 @@ Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulé
 $
 A_(p, r)(s, a) := 
 underbracket(
-  policyexp(p) bb(1)_(s_0 &= s \ s_1 &= M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+  exp_((s_t, a_t)_(t in NN) op(~) p op(in) cal(S) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
   Q(s, a)
 ) - underbracket(
-  policyexp(p) bb(1)_(s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
+  exp_((s_t, a_t)_(t in NN) op(~) p op(in) cal(S) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
   V(s)
 )
 $
