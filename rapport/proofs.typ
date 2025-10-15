@@ -95,15 +95,15 @@ $
 Et 
 
 $
-bb(P)(S_0 = s_0) = 1
-$ #todo[!!!!]
+bb(P)(S_0 = s_0) = rho_0(s_0)
+$ 
 
 Donc on a
 
 $
 P(C = (c_t)_(t in NN)) 
-&= Q_p (s_0, a_0) product_(t=1)^oo Q_p (s_t, a_t) \
-&= product_(t=0)^oo Q_p (s_t, a_t) \
+&= rho_0(s_0) Q_p (s_0, a_0) product_(t=1)^oo Q_p (s_t, a_t) \
+&= rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t) \
 $
 
 Et ainsi
@@ -111,6 +111,6 @@ Et ainsi
 $
 exp(sum_(t=0)^oo gamma^t r(C_t)) 
 &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C = (c_t)_(t in NN))  \
-&= sum_((c_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r(c_t) product_(t=0)^oo Q_p (s_t, a_t)   \
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t)   \
 &= eta(p, r)  quad qed
 $

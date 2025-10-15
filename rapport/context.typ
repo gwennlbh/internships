@@ -328,6 +328,7 @@ eta(p, r)
 = underbracket(
   sum_((c_t)_(t in NN) in cal(S)) 
   underbracket(
+    rho_0(s_0)
     product_(t=0)^oo Q_p (c_t), "probabilité du chemin"
   )
   quad
@@ -425,6 +426,10 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 #section[Lien entre $eta$ et $A$]
 
 Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p'$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
+
+
+
+
 
 $
 eta(p', r) 
