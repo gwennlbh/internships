@@ -367,11 +367,10 @@ On peut considérer $eta(p, r)$ comme une espérance: soit $C$ une variable alé
 $
 exp(sum_(t=0)^oo gamma^t r(C_t)) 
 &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(sum_(t=0)^oo gamma^t r(C_t) = sum_(t=0)^oo gamma^t r(c_t)) \
-&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C_t = c_t)  \
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C = (c_t)_(t in NN))  \
 &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(inter.big_(t=0)^oo C_t = c_t) \
 &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) product_(t=0)^oo bb(P)(C_t = c_t) \
-&= sum_((s_t, a_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(s_t)) product_(t=0)^oo bb(P)(((C_t)_1 = s_t) inter ((C_t)_2 = a_t )) \
-&= sum_((s_t, a_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(s_t)) product_(t=0)^oo bb(P)(((C_t)_1 = p(a_t)) inter ((C_t)_2 = a_t )) \
+&#[On pose pour tout $t in NN$, $(S_t, A_t) := C_t$.] \ & #[Étant donné la définition de $cal(S)$, les termes $A_t$ et $S_t$] \ & #[dépendent de leur termes précédents, sauf pour $S_0$.] 
 $
 
 
