@@ -531,3 +531,12 @@ trpo-openai:
     date: '2025-10-14'
     value: https://spinningup.openai.com/en/latest/algorithms/trpo.html#background
 
+trpo-advantage-eta-link:
+  type: article
+  title: Approximately Optimal Approximate Reinforcement Learning
+  author: Langford, John
+  date: 2002
+  page-range: 267-274
+  parent:
+    type: periodical
+

@@ -420,10 +420,19 @@ Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en m
   edge("->", corner: right)[$M$],
   node(name: <final>, (2, 0))[$s_(t+1)$],
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
-  edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left)[$Q_cal(P)(s_(t+1), a_(t+1)) <- argmax_(a in A) A_(cal(P), R)(s_(t+1), a)$ #todo[Pas fini, c pas homogène]]
+  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(center, [$Q_cal(P)(s_(t+1), argmax_(a in A) A_(cal(P), R)(s_(t+1), a)) <- A_(cal(P), R) (dots)$ \ Mise à jour]))
+  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$argmax_(a in A) A_(cal(P), R)(s_(t+1), a)$ \ mise à jour de $cal(P)$])
+  edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$Q_cal(P)(s_(t+1), a_(t+1)^*) &= A_(cal(P), R)(s_(t+1), a_(t+1)^*)$ \ mise à jour de $cal(P)$])
 )
 
-Mais #todo[Page 2 trpo]
+Avec 
+
+$
+a_(t+1)^* &:= argmax_(a in A) A_(cal(P), R)(s_(t+1), a) \
+
+$
+
+Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(cal(P), R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(cal(P))$ @trpo
 
 
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
