@@ -219,15 +219,12 @@ On note dans le reste de cette section:
 
 / $A$: l'ensemble des actions
 / $S$: l'ensemble des états possibles de l'environnement
+/ $rho_0: S -> [0, 1]$: la distribution de probabilité de l'état initial de l'environnement. Si l'on initialise l'environnement de manière uniformément aléatoire, $rho_0$ est une équiprobabilité#footnote[i.e. $card rho_0(S) = 1$]
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
 / $cal(P): S -> A$: une politique
 / $cal(P)^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
 / $R: S -> RR^+$: sa fonction de récompense // d'une politique $p$
-/ $Q_p: S times A -> [0, 1]$: sa distribution de probabilité#footnote[
-    On peut facilement définir $cal(P)$ ou $Q$ selon l'autre, 
-    avec $cal(P) = s |-> max_(a in A) Q(s, a)$ 
-    ou $Q = (s, a) |-> proba(cal(P)(s) = a)$
-  ] d'une politique $p$
+/ $Q_p: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_p (s_t, a_t)$ est la probabilité que $p$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
 / $Q$ et $Q^*$: $Q_cal(P)$ et $Q_(cal(P)^*)$, pour alléger les notations
 // $R$: $R_cal(P)$
 
@@ -433,7 +430,7 @@ $
 eta(p', r) 
 &= eta(p, r) + policyexp(p') sum_(t=0)^oo gamma^t A_(p, r)(c_t) \
 &#[Qui se simplifie en @trpo] \
-&= eta(p, r) + sum_s
+&= eta(p, r) + sum
 $
 
 
@@ -468,7 +465,7 @@ Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(cal(P), R)(s_
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
 
 $
-cL_r(p', p) := exp_((s_t, a_t)_(t in NN) in cal(C)) (Q_p (s_t, a_t)) / (Q_p' (s_t, a_t)) A_(p, r)(s_t, a_t)
+cL_r (p', p) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_p (s_t, a_t)) / (Q_p' (s_t, a_t)) A_(p, r)(s_t, a_t)
 $
 
 

@@ -1,4 +1,5 @@
 #import "utils.typ": todo, comment, refneeded
+#show math.equation.where(block: true): set block(spacing: 2em)
 
 == Cas dégénéré de $D_"KL" (Q, Q') = 0$ sans utilisation de $max$ <dkl-zero>
 
@@ -31,8 +32,8 @@ crossout(sum_(a in A - {1, 2})  Q(s, a) log Q(s, a) / (Q(s, a)), #<dkl-zero-else
 + Q(s, 1) log Q(s, 1) / why( 2   Q(s, 1), #<dkl-zero-a1>) 
 + Q(s, 2) log Q(s, 2) / why( 1/2 Q(s, 2), #<dkl-zero-a2>) \
 &= sum_(s in S) 
-Q(s, 1) lr([ log Q(s, 1) - log Q(s, 1) - log 2   ], size: #200%) + 
-Q(s, 2)    [ log Q(s, 2) - log Q(s, 2) - log 1/2 ] \
+Q(s, 1) lr([ log Q(s, 1) - log Q(s, 1) - log 2   ], size: #200%) + \
+& quad quad thick thick Q(s, 2)    [ log Q(s, 2) - log Q(s, 2) - log 1/2 ] \
 &= sum_(s in S) - Q(s, 1) log 2 + Q(s, 2) log 2 \
 &= sum_(s in S) log 2 thin crossout((Q(s, 2) - Q(s, 1)), #<dkl-zero-qeq>) \
 &= sum_(s in S) 0 = 0
@@ -69,8 +70,8 @@ On a alors, pour toute suite $(c_t)_(t in NN) in cal(S)$ :
 $
 P(C = (c_t)_(t in NN))
 &= 
-  bb(P)(S_0 = s_0) bb(P)(A_0 = a_0 | S_0 = s_0)
-  product_(t=1)^oo  
+  bb(P)(S_0 = s_0)bb(P)(A_0 = a_0 | S_0 = s_0) dot \
+  & product_(t=1)^oo  
     // bb(P)(S_t = s_t mid(|) cases(S_(t-1) = s_(t-1), A_(t-1) = a_(t-1))) 
     bb(P)(S_t = s_t mid(|) C_(t-1) = c_(t-1)) 
     bb(P)(A_t = a_t mid(|) S_t = s_t) \
@@ -82,12 +83,34 @@ $
 forall t in NN, quad bb(P)(A_t = a_t mid(|) S_t = s_t) = Q_p (s_t, a_t)
 $
 
-Les autres termes en $bb(P)(dots.c)$ sont égaux à 1: 
+Or
 
 $
 forall t in NN^*, quad
-bb(P)(S_t = s_t | C_(t-1) = c_(t-1)) &= bb(P)(M(C_(t-1)) = M(c_(t-1)) mid(|) C_(t-1) = c_(t-1)) \
-&= bb(P)(C_(t-1) = c_(t-1) mid(|) C_(t-1) = c_(t-1)) \
+bb(P)(S_t = s_t | C_(t-1) = c_(t-1)) &= bb(P)(M(C_(t-1)) = M(c_(t-1)) | C_(t-1) = c_(t-1)) \
+&= bb(P)(C_(t-1) = c_(t-1) | C_(t-1) = c_(t-1)) \
 &= 1
+$
 
+Et 
+
+$
+bb(P)(S_0 = s_0) = 1
+$ #todo[!!!!]
+
+Donc on a
+
+$
+P(C = (c_t)_(t in NN)) 
+&= Q_p (s_0, a_0) product_(t=1)^oo Q_p (s_t, a_t) \
+&= product_(t=0)^oo Q_p (s_t, a_t) \
+$
+
+Et ainsi
+
+$
+exp(sum_(t=0)^oo gamma^t r(C_t)) 
+&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C = (c_t)_(t in NN))  \
+&= sum_((c_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r(c_t) product_(t=0)^oo Q_p (s_t, a_t)   \
+&= eta(p, r)  quad qed
 $
