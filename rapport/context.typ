@@ -341,37 +341,14 @@ eta(p, r)
 ) 
 $
 
-// En considérant chaque $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont ses valeurs, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. 
-//
-On peut considérer $eta(p, r)$ comme une espérance: soit $C$ une variable aléatoire de $cal(S)$.
 
-// $
-// policyexp(p)(X) := sum_((c_t)_(t in NN) in cal(S)) underbrace(exp(X((c_t)_(t in NN))), "espérance sur ce chemin") underbrace( product_(t = 0)^oo Q_p (c_t), #[probabilité du chemin#footnote[la politique ne dépend pas du chemin déjà parcouru]])
-// $
-// 
-// On a
-// 
-// $
-// eta(p, r) = policyexp(p) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
-// $
-//
-// $
-// Q_p (s, a) &= bb(P)(p(s) = a) \
-// eta(p, r) 
-// &= sum_((s_t, a_t)_(t in NN) in cal(S)) product_(t=0)^oo bb(P)(p(s_t) = a_t) sum_(t=0)^oo gamma^t r(s_t) \
-// &= sum_((s_t, a_t)_(t in NN) in cal(S)) bb(P)(inter.big_(t=0)^oo p(s_t) = a_t) sum_(t=0)^oo gamma^t r(s_t) \
-// &= sum_((s_t, a_t)_(t in NN) in cal(S)) bb(P)(p((s_t)_(t in NN)) = (a_t)_(t in NN)) sum_(t=0)^oo gamma^t r(s_t)
-// $
-//
+On peut également exprimer $eta(p, r)$ comme une espérance. Soit $C$ une variable aléatoire de $cal(S)$. On a (cf @proof-eta-esperance)
 
 $
-exp(sum_(t=0)^oo gamma^t r(C_t)) 
-&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(sum_(t=0)^oo gamma^t r(C_t) = sum_(t=0)^oo gamma^t r(c_t)) \
-&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C = (c_t)_(t in NN))  \
-&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(inter.big_(t=0)^oo C_t = c_t) \
-&= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) product_(t=0)^oo bb(P)(C_t = c_t) \
-&#[On pose pour tout $t in NN$, $(S_t, A_t) := C_t$.] \ & #[Étant donné la définition de $cal(S)$, les termes $A_t$ et $S_t$] \ & #[dépendent de leur termes précédents, sauf pour $S_0$.] 
+eta(p, r) = exp( sum_(t=0)^oo gamma^t r(C_t) )
 $
+
+
 
 
 
