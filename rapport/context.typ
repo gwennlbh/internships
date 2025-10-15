@@ -310,10 +310,12 @@ $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour u
 
 Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
 
+#let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(S))$
+
 $
 eta(p, r) 
 // &= exp_((s_t, a_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r(s_t) \
-&= underbracket(
+= underbracket(
   sum_((s_t, a_t)_(t in NN) in cal(S)) 
   underbracket(
     sum_(t=0)^oo 
@@ -323,15 +325,22 @@ eta(p, r)
     "dérouler le chemin"
   ),
   "pour tout chemin possible"
-) \
-#h(1.5em) \
-&#[en considérant les $(c_t)_(t in NN)$ comme des variables aléatoires,] \
-&#[on peut interpréter cela comme une espérance:] \
-#h(1.5em) \
-&= exp_((c_t)_(t in NN) in cal(S)) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
+) 
 $
 
-Avec $p$ une politique, $r$ une fonction de récompense, et 
+En considérant $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont les différents éléments de $cal(S)$, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ à valeurs depuis $S times A$:
+
+$
+policyexp(p)(X) := sum_((c_t)_(t in NN) op(in) cal(S)) X(c_t) Q_(p)(c_t) 
+$
+
+On a
+
+$
+eta(p, r) = policyexp(p) sum_(t=0)^oo gamma^t r((c_(t+1))_1)
+$
+
+
 
 
 #section[Avantage $A$]
@@ -389,10 +398,10 @@ Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulé
 $
 A_(p, r)(s, a) := 
 underbracket(
-  exp_((s_t)_(t in NN) &in cal(S)_p \ s_0 &= s \ s_1 &= M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+  policyexp(p) bb(1)_(s_0 &= s \ s_1 &= M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
   Q(s, a)
 ) - underbracket(
-  exp_((s_t)_(t in NN) in cal(S)_p \ s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
+  policyexp(p) bb(1)_(s_0 = s) sum_(t = 0)^oo gamma^t r(s_t),
   V(s)
 )
 $
@@ -405,6 +414,17 @@ On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'esp
 / pour $Q(s_t, a_t)$: du chemin où l'on a choisi $a_t$
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
+
+#section[Lien entre $eta$ et $A$]
+
+Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p'$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
+
+$
+eta(p', r) 
+&= eta(p, r) + exp_(c in cal(C)_p') sum_(t=0)^oo gamma^t A_(p, r)(s_t, a_t) \
+&#[Qui se simplifie en @trpo] \
+&= eta(p, r) + sum_s
+$
 
 
 #section[_Surrogate advantage_ $cL$]
