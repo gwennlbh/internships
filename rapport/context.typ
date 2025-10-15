@@ -6,6 +6,7 @@
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
+#let card = $op("card")$
 #let argmax = $op("arg" #h(1em/12) "max", limits: #true)$
 #let exp = $op(bb(E), limits: #true)$
 #let function = (name, input_domain, output_domain, args, body) => $#name : thick thick cases(delim: #none, #input_domain &-> #output_domain, #args &|-> #body)$
@@ -228,6 +229,8 @@ On note dans le reste de cette section:
 / $Q$ et $Q^*$: $Q_cal(P)$ et $Q_(cal(P)^*)$, pour alléger les notations
 // $R$: $R_cal(P)$
 
+On suppose $A$ et $S$ dénombrables#footnote[En pratique, $bb(R)$ est discrétisé dans les simulateurs numérique, donc cette hypothèse ne pose pas de problèmes à l'application de la théorie au domaine de la robotique].
+
 
 
 #section[Chemins d'états possibles $cal(C)$]
@@ -331,7 +334,7 @@ $
 En considérant $(c_t)_(t in NN)$ comme une variable aléatoire, dont les réalisations sont les différents éléments de $cal(S)$, et $p$ comme une loi de probabilité basée sur $Q_p$, on peut interpréter cela comme une espérance. En effet, en posant, pour toute variable aléatoire $X$ à valeurs depuis $S times A$:
 
 $
-policyexp(p)(X) := sum_((c_t)_(t in NN) op(in) cal(S)) X(c_t) Q_(p)(c_t) 
+policyexp(p)(X) := exp
 $
 
 On a
@@ -364,7 +367,7 @@ On peut visualiser ce calcul ainsi:
   edge("-")[],
   node((3.5, 0)),
   edge("->", label-pos: 0%)[$a_t$],
-  node((4.5, 0))[$sum^oo dots.c$],
+  node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$],
 
   // Top-branch path
   node((4.5, +1.5))[$sum^oo dots.c$],
