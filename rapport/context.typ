@@ -426,7 +426,7 @@ Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour 
 
 $
 eta(p', r) 
-&= eta(p, r) + exp_(c in cal(C)_p') sum_(t=0)^oo gamma^t A_(p, r)(s_t, a_t) \
+&= eta(p, r) + policyexp(p') sum_(t=0)^oo gamma^t A_(p, r)(c_t) \
 &#[Qui se simplifie en @trpo] \
 &= eta(p, r) + sum_s
 $
