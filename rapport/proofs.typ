@@ -103,7 +103,7 @@ Donc on a
 $
 P(C = (c_t)_(t in NN)) 
 &= rho_0(s_0) Q_p (s_0, a_0) product_(t=1)^oo Q_p (s_t, a_t) \
-&= rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t) \
+&= rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t) 
 $
 
 Et ainsi
@@ -114,3 +114,9 @@ exp(sum_(t=0)^oo gamma^t r(C_t))
 &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t)   \
 &= eta(p, r)  quad qed
 $
+
+== Simplification de l'expression de $L(s, a, cal(P), cal(P)', R)$ dans PPO-Clip <proof-ppo-clip-simplify>
+
+Soit $(s, a) in S times A$, et $cal(P)'$ une politique.
+
+Posons $alpha := A_(cal(P), R) (s, a)$

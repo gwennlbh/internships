@@ -245,7 +245,7 @@ $
 $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
 
 #diagram(
-  node((0, 0))[$s_t$],
+  node((0, 0), $s_t$),
   edge(corner: right, label-pos: 2/8, label-side: left)[choix de l'action],
   edge("->", corner: right, label-pos: 3/8, label-side: left)[$cal(P)$],
   node((1, -1))[$a_t$],
@@ -598,44 +598,57 @@ op("clip") := (x, m, M) |-> cases(
 )
 $
 
-La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif:
+La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif. L'expression se simplifie en séparant les cas (cf @proof-ppo-clip-simplify)
 
 #let named_point = (x, y, shape: "@", color: black, side: right, content) => edge((x, y), shape + "-", (x+0.01, y), label-side: side, stroke: color, text(fill: color, content))
 
-/ Si l'avantage est positif: #fletcher.diagram(
-  spacing: (2.7em, 2em),
-  node((-5, 0))[$0$],
-  edge((-5, 0), "|->", (5, 0),  stroke: luma(150)),
-  edge((-1, 0), "|-|", (1, 0), extrude: (1, -1, 0) ),
-  named_point(-1, 0, shape: "|")[$1-epsilon$],
-  named_point(1, 0, shape: "|")[$1+epsilon$],
-  named_point(0, 0)[$cal(P)$],
-  named_point(-4, 0, color: red, side: left)[$cal(P)'$],
-  named_point(0.5, 0, color: green, side: left)[$cal(P)'$],
-)
-$
+/ Si l'avantage est positif: $a$ est un meilleur choix que $cal(P)(s)$.
+
+#stack(dir: ltr, 
+
+block(width: 70%, math.equation(numbering: none, block: true, $
 L(s, a, cal(P), cal(P)', R) = min(
   (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
   quad 1 + epsilon
   ) A_(cal(P)', R)(s, a)
-$
-/ Si l'avantage est négatif: #fletcher.diagram(
+$)),
+
+diagram(
   spacing: (2.7em, 2em),
-  node((5, 0))[$0$],
-  edge((-5, 0), "<-|", (5, 0),  stroke: luma(150)),
-  edge((-2, 0), "|-|", (2, 0), extrude: (1, -1, 0) ),
-  named_point(-2, 0, shape: "|")[$1-epsilon$],
-  named_point(2, 0, shape: "|")[$1+epsilon$],
+  node((-1, 0))[$cal(P)'$],
+  edge((-1, 0), "->", (3, 0),  stroke: luma(150)),
+  edge((-1, 0), "-|", (1, 0), extrude: (1, -1, 0) ),
+  named_point(1, 0, shape: "|")[$1+epsilon$],
   named_point(0, 0)[$cal(P)$],
-  named_point(-4, 0, color: red, side: left)[$cal(P)'$],
-  named_point(1, 0, color: green, side: left)[$cal(P)'$],
+  named_point(1.5, 0, color: red, side: left)[$times$],
+  named_point(0.5, 0, color: olive, side: left)[$checkmark$],
+),
+
 )
-$ 
+
+/ Si l'avantage est négatif: choisir $a$ est pire que garder $cal(P)(s)$.
+
+#stack(dir: ltr, 
+
+block(width: 70%, math.equation(numbering: none, block:true, $ 
 L(s, a, cal(P), cal(P)', R) = max(
   1 - epsilon, quad
   (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
   ) A_(cal(P)', R)(s, a)
-$
+$)),
+
+diagram(
+  spacing: (2.7em, 2em),
+  node((3, 0))[$cal(P)'$],
+  edge((-1, 0), "<-", (3, 0),  stroke: luma(150)),
+  edge((1, 0), "|-", (3, 0), extrude: (1, -1, 0) ),
+  named_point(1, 0, shape: "|")[$1-epsilon$],
+  named_point(2, 0)[$cal(P)$],
+  named_point(0, 0, color: red, side: left)[$times$],
+  named_point(1.5, 0, color: olive, side: left)[$checkmark$],
+),
+
+)
 
 == Le H1v2 d'_Unitree_
 
