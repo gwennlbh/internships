@@ -95,7 +95,7 @@ Cependant, ces ensembles sont bien souvent prohibitivement grands (e.g. $x in [|
 Dans le cas de la robotique, $E$ est une certaine représentation numérique du monde réel autour du robot, on imagine donc bien qu'il y a beaucoup trop d'états possibles.
 
 
-==== Deep Reinforcement Learning
+=== Deep Reinforcement Learning
 
 Une façon de remédier à ce problème de dimensions est de remplacer le tableau exhaustif par un réseau de neurones:
 
@@ -189,13 +189,13 @@ Bullet @bullet @pybullet
 
 L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
-=== Fonctions coût 
+== Fonctions coût 
 
-=== Mise a jour
+== Mise a jour
 
-#let section = content => [ #v(1em) #h(2em) #emph(content) #v(1em) ]
+#let section = content => pad(y: 1.5em, x: 3em, align(center, grid(align: horizon, columns: 3, gutter: 1em, line(length: 2em, stroke: 0.5pt), content, line(length: 2em, stroke: 0.5pt))))
 
-==== _Q-learning_
+=== _Q-learning_
 
 Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology, est mise à jour avec cette valeur @maxq:
 
@@ -208,7 +208,7 @@ L'expression comporte deux hyperparamètres:
 / Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
 / Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
 
-==== Évaluation de la performance d'une politique
+=== Évaluation de la performance d'une politique
 
 #let cL = $cal(L)$
 #let proba = $bb(P)$
@@ -327,7 +327,7 @@ Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions
 
 $
 eta(p, r) 
-= underbracket(
+ underbracket(
   sum_((c_t)_(t in NN) in cal(S)) 
   underbracket(
     rho_0(s_0)
@@ -481,7 +481,7 @@ $
 
 
 
-==== _Trust Region Policy Optimization_
+=== _Trust Region Policy Optimization_
 
 
 
@@ -565,7 +565,7 @@ $
 
 
 
-==== _Proximal Policy Optimization_
+=== _Proximal Policy Optimization_
 
 La _PPO_ repose sur le même principe de stabilisation de l'entraînement par limitation de l'ampleur des changements de politique à chaque pas. 
 
@@ -585,6 +585,8 @@ $
 L(s, a, cal(P), cal(P'), R) = (Q_cal(P) (s, a)) / (Q_cal(P') (s, a)) A_(cal(P), R) (s, a) - beta D_"KL"(cal(P) || cal(P'))
 $
 
+Avec $beta$ ajusté automatiquement pour 
+
 #section[Par _clipping_ _(PPO-Clip)_]
 
 _PPO-Clip_ utilise une limitation du ratio de probabilités (en minimum et en maximum) @ppo-openai
@@ -601,7 +603,7 @@ L(s, a, cal(P), cal(P'), R) = min(
 )
 $
 
-Avec $epsilon in RR_+^*$ est un paramètre indiquant à quel point l'on peut s'écarter de la politique précédente, et
+Avec $epsilon in RR_+^*$ un paramètre indiquant à quel point l'on peut s'écarter de la politique précédente, et
 
 $
 op("clip") := (x, m, M) |-> cases(
