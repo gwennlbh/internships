@@ -4,6 +4,7 @@
 
 #show figure: set block(spacing: 4em)
 #let diagram = (caption: none, ..args) => figure(caption: caption, fletcher.diagram(..args))
+#let dontbreak = content => block(breakable: false, content)
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
@@ -566,26 +567,38 @@ $
 
 ==== _Proximal Policy Optimization_
 
-La _PPO_ repose sur le même principe de stabilisation de l'entraînement par limitation de l'ampleur des changements de politique à chaque pas.
+La _PPO_ repose sur le même principe de stabilisation de l'entraînement par limitation de l'ampleur des changements de politique à chaque pas. 
+
+Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant un problème d'optimisation sans contraintes @ppo
+
+
+$
+argmax_(cal(P)') & exp_((s, a) in cal(S)) L(s, a, cal(P), cal(P'), R) \
+"s.c." & top
+$
 
 #section[Avec pénalité _(PPO-Penalty)_]
 
-#section[Par _clipping_ _(PPO-Clip)_]
-
-_PPO-Clip_ lève la contraînte du problème d'optimisation.
-
-On préfère changer l'objectif la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant le problème d'optimisation suivant @ppo-openai
+_PPO-Penalty_ soustrait une divergence K-L pondérée à l'avantage:
 
 $
-argmax_(cal(P)') & exp_((s, a) in cal(S)) overbracket(min(
-  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)) A_(cal(P)', R)(s, a), quad
-  op("clip")(
+L(s, a, cal(P), cal(P'), R) = (Q_cal(P) (s, a)) / (Q_cal(P') (s, a)) A_(cal(P), R) (s, a) - beta D_"KL"(cal(P) || cal(P'))
+$
+
+#section[Par _clipping_ _(PPO-Clip)_]
+
+_PPO-Clip_ utilise une limitation du ratio de probabilités (en minimum et en maximum) @ppo-openai
+
+
+$
+L(s, a, cal(P), cal(P'), R) = min(
+  &(Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)) A_(cal(P)', R)(s, a), quad \
+  &op("clip")(
     (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
     1 - epsilon,
     1 + epsilon
   ) A_(cal(P)', R)(s, a)
-), L(s, a, cal(P), cal(P'), R)) \
-"s.c." & top
+)
 $
 
 Avec $epsilon in RR_+^*$ est un paramètre indiquant à quel point l'on peut s'écarter de la politique précédente, et
@@ -602,53 +615,56 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 
 #let named_point = (x, y, shape: "@", color: black, side: right, content) => edge((x, y), shape + "-", (x+0.01, y), label-side: side, stroke: color, text(fill: color, content))
 
+#let equation_and_diagram = (eqn, diagrm) => stack(dir: ltr, 
+  block(width: 70%, math.equation(numbering: none, block: true, eqn)),
+  diagrm
+)
+
+#dontbreak[
+
 / Si l'avantage est positif: $a$ est un meilleur choix que $cal(P)(s)$.
 
-#stack(dir: ltr, 
-
-block(width: 70%, math.equation(numbering: none, block: true, $
-L(s, a, cal(P), cal(P)', R) = min(
-  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
-  quad 1 + epsilon
-  ) A_(cal(P)', R)(s, a)
-$)),
-
-diagram(
-  spacing: (2.7em, 2em),
-  node((-1, 0))[$cal(P)'$],
-  edge((-1, 0), "->", (3, 0),  stroke: luma(150)),
-  edge((-1, 0), "-|", (1, 0), extrude: (1, -1, 0) ),
-  named_point(1, 0, shape: "|")[$1+epsilon$],
-  named_point(0, 0)[$cal(P)$],
-  named_point(1.5, 0, color: red, side: left)[$times$],
-  named_point(0.5, 0, color: olive, side: left)[$checkmark$],
-),
-
+#equation_and_diagram(
+  $
+  L(s, a, cal(P), cal(P)', R) = min(
+    (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
+    quad 1 + epsilon
+    ) A_(cal(P)', R)(s, a)
+  $,
+  diagram(
+    spacing: (2.7em, 2em),
+    node((-1, 0))[$cal(P)'$],
+    edge((-1, 0), "->", (3, 0),  stroke: luma(150)),
+    edge((-1, 0), "-|", (1, 0), extrude: (1, -1, 0) ),
+    named_point(1, 0, shape: "|")[$1+epsilon$],
+    named_point(0, 0)[$cal(P)$],
+    named_point(1.5, 0, color: red, side: left)[$times$],
+    named_point(0.5, 0, color: olive, side: left)[$checkmark$],
+  )
 )
 
 / Si l'avantage est négatif: choisir $a$ est pire que garder $cal(P)(s)$.
 
-#stack(dir: ltr, 
-
-block(width: 70%, math.equation(numbering: none, block:true, $ 
-L(s, a, cal(P), cal(P)', R) = max(
-  1 - epsilon, quad
-  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
-  ) A_(cal(P)', R)(s, a)
-$)),
-
-diagram(
-  spacing: (2.7em, 2em),
-  node((3, 0))[$cal(P)'$],
-  edge((-1, 0), "<-", (3, 0),  stroke: luma(150)),
-  edge((1, 0), "|-", (3, 0), extrude: (1, -1, 0) ),
-  named_point(1, 0, shape: "|")[$1-epsilon$],
-  named_point(2, 0)[$cal(P)$],
-  named_point(0, 0, color: red, side: left)[$times$],
-  named_point(1.5, 0, color: olive, side: left)[$checkmark$],
-),
-
+#equation_and_diagram(
+  $ 
+  L(s, a, cal(P), cal(P)', R) = max(
+    1 - epsilon, quad
+    (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
+    ) A_(cal(P)', R)(s, a)
+  $,
+  diagram(
+    spacing: (2.7em, 2em),
+    node((3, 0))[$cal(P)'$],
+    edge((-1, 0), "<-", (3, 0),  stroke: luma(150)),
+    edge((1, 0), "|-", (3, 0), extrude: (1, -1, 0) ),
+    named_point(1, 0, shape: "|")[$1-epsilon$],
+    named_point(2, 0)[$cal(P)$],
+    named_point(0, 0, color: red, side: left)[$times$],
+    named_point(1.5, 0, color: olive, side: left)[$checkmark$],
+  ),
 )
+
+]
 
 == Le H1v2 d'_Unitree_
 
