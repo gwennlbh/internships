@@ -600,10 +600,18 @@ $
 
 La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif:
 
+#let named_point = (x, y, shape: "@", color: black, side: right, content) => edge((x, y), shape + "-", (x+0.01, y), label-side: side, stroke: color, text(fill: color, content))
+
 / Si l'avantage est positif: #fletcher.diagram(
   spacing: (2.7em, 2em),
-  edge((-5, 0), "->", (5, 0)),
-  edge((-5, 0.25), "-", (-5, -0.25), label-side: left)[$0$]
+  node((-5, 0))[$0$],
+  edge((-5, 0), "|->", (5, 0),  stroke: luma(150)),
+  edge((-1, 0), "|-|", (1, 0), extrude: (1, -1, 0) ),
+  named_point(-1, 0, shape: "|")[$1-epsilon$],
+  named_point(1, 0, shape: "|")[$1+epsilon$],
+  named_point(0, 0)[$cal(P)$],
+  named_point(-4, 0, color: red, side: left)[$cal(P)'$],
+  named_point(0.5, 0, color: green, side: left)[$cal(P)'$],
 )
 $
 L(s, a, cal(P), cal(P)', R) = min(
@@ -613,8 +621,14 @@ L(s, a, cal(P), cal(P)', R) = min(
 $
 / Si l'avantage est négatif: #fletcher.diagram(
   spacing: (2.7em, 2em),
-  edge((-5, 0), "->", (5, 0)),
-  edge((-5, 0.25), "-", (-5, -0.25), label-side: left)[$0$]
+  node((5, 0))[$0$],
+  edge((-5, 0), "<-|", (5, 0),  stroke: luma(150)),
+  edge((-2, 0), "|-|", (2, 0), extrude: (1, -1, 0) ),
+  named_point(-2, 0, shape: "|")[$1-epsilon$],
+  named_point(2, 0, shape: "|")[$1+epsilon$],
+  named_point(0, 0)[$cal(P)$],
+  named_point(-4, 0, color: red, side: left)[$cal(P)'$],
+  named_point(1, 0, color: green, side: left)[$cal(P)'$],
 )
 $ 
 L(s, a, cal(P), cal(P)', R) = max(
