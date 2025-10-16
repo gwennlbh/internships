@@ -26,14 +26,14 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 
 La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec meilleur définit comme "qui minimise le coût" (ou maximise la récompense):
 
-#diagram(
-  node((0, 0))[Agent],
-  edge((0, 0), (1, 0), "->")[Action],
-  node((1, 0))[Environnement],
-  edge((1, 0), (2, 0), "-->")[Fonction coût],
-  node((2, 0))[Score],
+#diagram({
+  node((0, 0))[Agent]
+  edge((0, 0), (1, 0), "->")[Action]
+  node((1, 0))[Environnement]
+  edge((1, 0), (2, 0), "-->")[Fonction coût]
+  node((2, 0))[Score]
   edge((2, 0), (0, 0), "->", bend: 45deg)[Mise à jour]
-)
+})
 
 Cette technique est particulièrement adaptée au problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
 
@@ -361,46 +361,46 @@ L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir
 On peut visualiser ce calcul ainsi:
 
 #let height = 2
-#diagram(
+#diagram({
   // Prior path
-  node((0, 0))[$dots.c$],
-  edge("->")[$a_(t-2)$],
-  node((1, 0))[$s_(t-1)$],
-  edge("->")[$a_(t-1)$],
+  node((0, 0))[$dots.c$]
+  edge("->")[$a_(t-2)$]
+  node((1, 0))[$s_(t-1)$]
+  edge("->")[$a_(t-1)$]
 
   // Main-branch path
-  node((2, 0), name: <break>)[$s_t$],
-  edge("-")[],
-  node((3.5, 0)),
-  edge("->", label-pos: 0%)[$a_t$],
-  node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$],
+  node((2, 0), name: <break>)[$s_t$]
+  edge("-")[]
+  node((3.5, 0))
+  edge("->", label-pos: 0%)[$a_t$]
+  node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$]
 
   // Bottom-branch path
-  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$],
-  edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$],
+  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$]
+  edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$]
 
   // top-branch path
-  node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$],
-  edge(<break>, <top>, "->", bend: 25deg)[$a''_t$],
+  node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$]
+  edge(<break>, <top>, "->", bend: 25deg)[$a''_t$]
 
   // Expectation bar V(s)
-  node((5, height)),
-  edge("--"),
-  node((1.85, height)),
-  edge("-", label-side: left, label-pos: 75%)[$exp$],
-  node((1.85, -height)),
-  edge("--")[$V(s_t)$],
-  node((5, -height)),
+  node((5, height))
+  edge("--")
+  node((1.85, height))
+  edge("-", label-side: left, label-pos: 75%)[$exp$]
+  node((1.85, -height))
+  edge("--")[$V(s_t)$]
+  node((5, -height))
 
   // Expectation bar Q(s, a)
-  node((5, 0.5)),
-  edge("--"),
-  node((3.25, 0.5)),
-  edge("-", label-side: left, label-pos: 75%)[$exp$],
-  node((3.25, -0.5)),
-  edge("--")[$Q(s_t, a_t)$],
-  node((5, -0.5)),
-)
+  node((5, 0.5))
+  edge("--")
+  node((3.25, 0.5))
+  edge("-", label-side: left, label-pos: 75%)[$exp$]
+  node((3.25, -0.5))
+  edge("--")[$Q(s_t, a_t)$]
+  node((5, -0.5))
+})
 
 Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
 
@@ -572,7 +572,7 @@ La _PPO_ repose sur le même principe de stabilisation de l'entraînement par li
 
 #section[Par _clipping_ _(PPO-Clip)_]
 
-_PPO-Clip_ enlève la contraînte sur le problème d'optimisation.
+_PPO-Clip_ lève la contraînte du problème d'optimisation.
 
 On préfère changer l'objectif la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant le problème d'optimisation suivant @ppo-openai
 
@@ -601,7 +601,7 @@ $
 La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif:
 
 / Si l'avantage est positif: #fletcher.diagram(
-  height: 1em,
+  spacing: (2.7em, 2em),
   edge((-5, 0), "->", (5, 0)),
   edge((-5, 0.25), "-", (-5, -0.25), label-side: left)[$0$]
 )
@@ -611,7 +611,12 @@ L(s, a, cal(P), cal(P)', R) = min(
   quad 1 + epsilon
   ) A_(cal(P)', R)(s, a)
 $
-/ Si l'avantage est négatif: $ 
+/ Si l'avantage est négatif: #fletcher.diagram(
+  spacing: (2.7em, 2em),
+  edge((-5, 0), "->", (5, 0)),
+  edge((-5, 0.25), "-", (-5, -0.25), label-side: left)[$0$]
+)
+$ 
 L(s, a, cal(P), cal(P)', R) = max(
   1 - epsilon, quad
   (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
