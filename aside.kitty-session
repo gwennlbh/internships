@@ -1,0 +1,13 @@
+layout tall
+
+new_tab Autopush
+cd ~/internships
+launch fish -c "./autopush.fish"
+
+new_tab Typst
+cd ~/internships
+launch fish -c "typst watch --root . rapport/main.typ"
+
+new_tab Bibliography
+cd ~/internships
+launch fish --interactive
