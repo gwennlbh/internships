@@ -117,6 +117,90 @@ $
 
 == Simplification de l'expression de $L(s, a, cal(P), cal(P)', R)$ dans PPO-Clip <proof-ppo-clip-simplify>
 
+#let clip = $op("clip")$
+
 Soit $(s, a) in S times A$, et $cal(P)'$ une politique.
 
-Posons $alpha := A_(cal(P), R) (s, a)$
+Pour alléger les notations, posons $
+alpha &:= A_(cal(P)', R) (s, a) \
+q &:= Q_cal(P) (s, a) \
+q' &:= Q_cal(P)' (s, a) \
+$ 
+
+#let why = explanation => $\ quad & #[car #explanation]$
+
+#{
+  set math.equation(numbering: none)
+  grid(columns: (1fr, 1fr), row-gutter: 1em,
+[
+
+  *Cas $alpha > 0$ et $q slash q' in [1-epsilon, 1+epsilon]$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R)  \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
+  &= min(q/q', quad q/q') alpha \
+  &= min(q/q' , 1+epsilon) alpha \
+  $
+], [
+
+  *Cas $alpha > 0$ et $q slash q' > 1+epsilon$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R)  \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
+  &= min(q/q', quad 1+epsilon) alpha \
+  $
+
+], [
+
+  *Cas $alpha > 0$ et $q slash q' < 1-epsilon$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R) \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
+  &= min(q/q', quad 1-epsilon) alpha \
+  &= min(q/q', quad 1+epsilon) alpha why(1+epsilon > 1-epsilon > q / q') \
+  $
+
+], [
+
+  *Cas $alpha < 0$ et $q slash q' in [1-epsilon, 1+epsilon]$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R) \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
+  &= max(q/q', quad q/q') alpha \
+  &= max(q/q' , 1-epsilon) alpha \
+  $
+
+], [
+
+  *Cas $alpha < 0$ et $q slash q' > 1+epsilon$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R)  \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
+  &= max(q/q', quad 1+epsilon) alpha \
+  &= max(q/q', quad 1-epsilon) alpha why(1-epsilon < 1+epsilon < q / q') \
+  $
+
+], [
+
+  *Cas $alpha < 0$ et $q slash q' < 1-epsilon$*
+
+  $
+  &L(s, a, cal(P), cal(P'), R)  \
+  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
+  &= max(q/q', quad 1-epsilon) alpha
+  $
+
+])
+
+}
