@@ -137,67 +137,16 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 #comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
 
 
-== Application en robotique
-
-
-Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
-
-Bien évidemment, ce sont des programmes complexes avec souvent des numériques souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
-
-Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
-
-Cet ensemble s'appelle un _simulateur_.
-
-=== Inventaire des simulateurs en robotique 
-
-==== Isaac
-
-Un simulateur développé par NVIDIA @isaacsim, utilisant son propre moteur de rendu, PhysX @physx
-
-==== MuJoCo
-
-Un simulateur initialement propriétaire. Il a été rendu gratuit puis open source par Google DeepMind @mujoco.
-
-Bien que MuJoCo est décrit comme un moteur de simulation physique et non un simulateur, il embarque une commande `simulate` qui le rend fonctionnellement équivalent à un simulateur @mujoco-simulate.
-
-==== Gazebo 
-
-Les intérêts de Gazebo @gazebo sont multiples:
-
-- C'est un logiciel open-source _communautaire_, qui ne dépend pas du financement d'une grande entreprise
-- Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents @gazebo-physics-engines, à l'inverse de MuJoCo.
-
-Gazebo possède des plugins officiels pour:
-
-/ DART: Plugin `gz-physics-dartsim-plugin`, c'est l'implémentation principale, et celle par défaut @gazebo-physics-engines.
-/ Bullet: Plugin `gz-physics-bulletsim-plugin`. En beta @gazebo-physics-engines.
-/ Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta @gazebo-physics-engines.
-
-
-
-=== Inventaire des moteurs de simulation physique 
-
-==== DART
-
-DART, pour Dynamic Animation and Robotics Toolkit @dart, 
-
-==== Bullet
-
-Bullet @bullet @pybullet
-
-==== Bullet avec Featherstone
-
-L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
 == Fonctions coût 
 
 == Mise a jour
 
-#let section = content => pad(y: 1.5em, x: 3em, align(center, grid(align: horizon, columns: 3, gutter: 1em, line(length: 2em, stroke: 0.5pt), content, line(length: 2em, stroke: 0.5pt))))
+// #let section = content => pad(y: 1.5em, x: 3em, align(center, grid(align: horizon, columns: 3, gutter: 1em, line(length: 2em, stroke: 0.5pt), content, line(length: 2em, stroke: 0.5pt))))
 
 === _Q-learning_
 
-Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology, est mise à jour avec cette valeur @maxq:
+Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology, est mis à jour avec cette valeur @maxq:
 
 $
 (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
@@ -239,7 +188,7 @@ forall (s, a) in S times A, forall r in "récompenses", r(s, a) := r(s)
 $
 
 
-#section[Chemins d'états possibles $cal(C)$]
+==== Chemins d'états possibles $cal(C)$
 
 
 
@@ -317,7 +266,7 @@ _Cette formalisation est utile par la suite, \ pour proprement définir certaine
 ]
 #comment[pas sûre de cette phrase]
 
-#section[Récompense attendue $eta$]
+==== Récompense attendue $eta$
 
 $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $p$ avec fonction de récompense $r$. 
 
@@ -352,7 +301,7 @@ $
 
 
 
-#section[Avantage $A$]
+==== Avantage $A$
 
 
 // L'avantage $A_(p, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
@@ -425,7 +374,7 @@ On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'esp
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
 
-#section[Lien entre $eta$ et $A$]
+==== Lien entre $eta$ et $A$
 
 Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p'$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
 
@@ -441,7 +390,7 @@ eta(p', r)
 $
 
 
-#section[_Surrogate advantage_ $cL$]
+==== _Surrogate advantage_ $cL$
 
 Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
 
@@ -499,7 +448,7 @@ $
 
 Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
 
-#section[Distance entre politiques]
+==== Distance entre politiques
 
 Il existe plusieurs manières de mesurer l'écart entre deux distributions de probabilité, dont notamment la _divergence de Kullback-Leibler_, aussi appelée entropie relative @kullback-leibler @kullback-leibler2:
 
@@ -520,7 +469,7 @@ $
 
 En notant $Q_p (s, dot) := a |-> Q_p (s, a)$. On a donc ici "$cal(X) = A$" dans la définition de $D_"KL"$
 
-#section[Pourquoi faire le maximum sur chaque $s in S$ ?]
+==== Pourquoi faire le maximum sur chaque $s in S$ ?
 
 Ce maximum revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
 
@@ -550,7 +499,7 @@ $
 
 On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.  
 
-#section[Région de confiance]
+==== Région de confiance
 
 Cette contrainte définit un ensemble réduit de $cal(P)'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
 
@@ -577,7 +526,7 @@ argmax_(cal(P)') & exp_((s, a) in cal(S)) L(s, a, cal(P), cal(P'), R) \
 "s.c." & top
 $
 
-#section[Avec pénalité _(PPO-Penalty)_]
+==== Avec pénalité _(PPO-Penalty)_
 
 _PPO-Penalty_ soustrait une divergence K-L pondérée à l'avantage:
 
@@ -587,7 +536,7 @@ $
 
 Avec $beta$ ajusté automatiquement pour 
 
-#section[Par _clipping_ _(PPO-Clip)_]
+==== Par _clipping_ _(PPO-Clip)_
 
 _PPO-Clip_ utilise une limitation du ratio de probabilités (en minimum et en maximum) @ppo-openai
 
@@ -667,6 +616,59 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 )
 
 ]
+
+
+== Application en robotique
+
+
+Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
+
+Bien évidemment, ce sont des programmes complexes avec souvent des numériques souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
+
+Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
+
+Cet ensemble s'appelle un _simulateur_.
+
+=== Inventaire des simulateurs en robotique 
+
+==== Isaac
+
+Un simulateur développé par NVIDIA @isaacsim, utilisant son propre moteur de rendu, PhysX @physx
+
+==== MuJoCo
+
+Un simulateur initialement propriétaire. Il a été rendu gratuit puis open source par Google DeepMind @mujoco.
+
+Bien que MuJoCo est décrit comme un moteur de simulation physique et non un simulateur, il embarque une commande `simulate` qui le rend fonctionnellement équivalent à un simulateur @mujoco-simulate.
+
+==== Gazebo 
+
+Les intérêts de Gazebo @gazebo sont multiples:
+
+- C'est un logiciel open-source _communautaire_, qui ne dépend pas du financement d'une grande entreprise
+- Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents @gazebo-physics-engines, à l'inverse de MuJoCo.
+
+Gazebo possède des plugins officiels pour:
+
+/ DART: Plugin `gz-physics-dartsim-plugin`, c'est l'implémentation principale, et celle par défaut @gazebo-physics-engines.
+/ Bullet: Plugin `gz-physics-bulletsim-plugin`. En beta @gazebo-physics-engines.
+/ Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta @gazebo-physics-engines.
+
+
+
+=== Inventaire des moteurs de simulation physique 
+
+==== DART
+
+DART, pour Dynamic Animation and Robotics Toolkit @dart, 
+
+==== Bullet
+
+Bullet @bullet @pybullet
+
+==== Bullet avec Featherstone
+
+L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
 == Le H1v2 d'_Unitree_
 
