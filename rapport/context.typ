@@ -475,6 +475,7 @@ $
 
 
 
+
 ==== _Trust Region Policy Optimization_
 
 
@@ -486,7 +487,7 @@ L'idée de la _TRPO_ est de maximiser le _surrogate advantage_ du nouveau $Q$ to
 
 $
 Q' = & cases(
-  argmax_(q) cL(q, Q),
+  argmax_(q) cL_r (q, Q),
 "s.c.  distance"(Q', Q) < delta
 )
 $
@@ -498,22 +499,25 @@ Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politiqu
 Il existe plusieurs manières de mesurer l'écart entre deux distributions de probabilité, dont notamment la _divergence de Kullback-Leibler_, aussi appelée entropie relative @kullback-leibler @kullback-leibler2:
 
 $
-D_"KL" (P || Q) := sum_(x in cal(X)) P(x) log P(x) / Q(x)
+D_"KL" (P || P') := sum_(x in cal(X)) P(x) log P(x) / P'(x)
 $
 
-Avec $cal(X)$ l'espace des échantillons dont $P$ et $Q$ mesurent la probabilité: dans notre cas, $cal(X) = S times A$.
+Avec $cal(X)$ l'espace des échantillons et $P, P'$ deux distributions de probabilité sur celui-ci. Dans notre cas, $cal(X) = S times A$,
 
 
 
-Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de politiques $Q$ et $Q'$ ayant été restreintes à ${s} times A$, pour tout état $s in S$, c'est-à-dire @trpo
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_cal(P)$ et $Q_cal(P)'$ pour $s in S$ fixé @trpo
 
 $
-max_(s in S) D_"KL" (Q'(s, dot) || Q(s, dot)) < delta
+max_(s in S) D_"KL" (Q_cal(P)' (s, dot) || Q_cal(P) (s, dot)) < delta
 $
 
 
+En notant $Q_p (s, dot) := a |-> Q_p (s, a)$. On a donc ici "$cal(X) = A$" dans la définition de $D_"KL"$
 
-Ce qui revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
+#section[Pourquoi faire le maximum sur chaque $s in S$ ?]
+
+Ce maximum revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
 
 #comment[C'est ma théorie ça, faudrait etre sure que le papier ne donne pas d'explications]
 
@@ -541,17 +545,16 @@ $
 
 On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.  
 
+#section[Région de confiance]
 
-
-Cette contrainte définit un ensemble réduit de $Q'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
+Cette contrainte définit un ensemble réduit de $cal(P)'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
 
 #let ddot = [ #sym.dot #h(-1em/16) #sym.dot ]
 
-En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise donc une approximation de $max_(s in S) D_"KL" (dot || ddot)$, avec l'espérance au lieu du maximum @trpo 
+En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise plutôt l'espérance @trpo 
 
 $
-overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, a) || Q'(s, a))
-
+overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, dot) || Q'(s, dot))
 $
 
 
