@@ -94,7 +94,7 @@
   authors: (
     (
       name: "Gwenn Le Bihan",
-      email: "gwenn.lebihan@etu.inp-n7.fr",
+      email: "gwenn.lebihan7@gmail.com",
       affiliation: "ENSEEIHT",
     ),
   ),

@@ -572,20 +572,55 @@ La _PPO_ repose sur le même principe de stabilisation de l'entraînement par li
 
 #section[Par _clipping_ _(PPO-Clip)_]
 
-_PPO-Clip_ évite le calcul d'une distance K-L#footnote[Kullback-Leibler] et enlève la contraînte sur le problème d'optimisation.
+_PPO-Clip_ enlève la contraînte sur le problème d'optimisation.
 
-On préfère changer la mise à jour de la politique, pour limiter directement dans son expression l'ampleur de la modification à $Q_cal(P) (s_(t+1), a_(t+1)^*)$ (cf @policy-update-loop) 
-
-On utilise cette mise à jour @ppo-openai
+On préfère changer l'objectif la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant le problème d'optimisation suivant @ppo-openai
 
 $
-Q_cal(P) (s_(t+1), a_(t+1)) <- min(
+argmax_(cal(P)') & exp_((s, a) in cal(S)) overbracket(min(
+  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)) A_(cal(P)', R)(s, a), quad
+  op("clip")(
+    (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
+    1 - epsilon,
+    1 + epsilon
+  ) A_(cal(P)', R)(s, a)
+), L(s, a, cal(P), cal(P'), R)) \
+"s.c." & top
+$
 
+Avec $epsilon in RR_+^*$ est un paramètre indiquant à quel point l'on peut s'écarter de la politique précédente, et
+
+$
+op("clip") := (x, m, M) |-> cases(
+  m si x < m,
+  M si x > M,
+  x sinon
 )
 $
 
+La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif:
+
+/ Si l'avantage est positif: 
+#diagram(
+  edge((-5, 0), "->", (5, 0)),
+  edge((-5, 0.25), "-", (-5, -0.25), label-side: left)[$0$]
+)
+$
+L(s, a, cal(P), cal(P)', R) = min(
+  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
+  quad 1 + epsilon
+  ) A_(cal(P)', R)(s, a)
+$
+/ Si l'avantage est négatif: $ 
+L(s, a, cal(P), cal(P)', R) = max(
+  1 - epsilon, quad
+  (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
+  ) A_(cal(P)', R)(s, a)
+$
 
 == Le H1v2 d'_Unitree_
 
 == Reproductibilité logicielle
+
+La reproductibilité est particulièrement complexe dans le champ du reinforcement learning @rl-reproducibility
 
