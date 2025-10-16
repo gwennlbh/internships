@@ -540,3 +540,10 @@ trpo-advantage-eta-link:
   parent:
     type: periodical
 
+ppo-openai:
+  type: web
+  title: Proximal Policy Optimization — Spinning Up  documentation
+  url:
+    date: '2025-10-16'
+    value: https://spinningup.openai.com/en/latest/algorithms/ppo.html
+

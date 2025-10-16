@@ -2,7 +2,8 @@
 #import "@preview/fletcher:0.5.8": node, edge
 #import "@preview/fletcher:0.5.8"
 
-#let diagram = (..args) => pad(y: 3em, align(center, fletcher.diagram(..args)))
+#show figure: set block(spacing: 4em)
+#let diagram = (caption: none, ..args) => figure(caption: caption, fletcher.diagram(..args))
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
@@ -443,7 +444,7 @@ $
 
 Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
 
-#diagram(
+#diagram(caption: [Boucle d'entraînement],
   node((0, 0))[$s_t$],
   edge("-"),
   node(name: <policy>, (0, -1))[$cal(P)$],
@@ -451,11 +452,14 @@ Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en m
   node((1, -2))[$a_t$],
   edge("->", corner: right)[$M$],
   node(name: <final>, (2, 0))[$s_(t+1)$],
-  edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
+  edge(<final>, (0, 0), "-->", label-side: left)[itération],
   // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(center, [$Q_cal(P)(s_(t+1), argmax_(a in A) A_(cal(P), R)(s_(t+1), a)) <- A_(cal(P), R) (dots)$ \ Mise à jour]))
   // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$argmax_(a in A) A_(cal(P), R)(s_(t+1), a)$ \ mise à jour de $cal(P)$])
-  edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$Q_cal(P)(s_(t+1), a_(t+1)^*) &= A_(cal(P), R)(s_(t+1), a_(t+1)^*)$ \ mise à jour de $cal(P)$])
-)
+  edge("d,l,l,l,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(center)[
+ //   mise à jour de $cal(P)$ \
+    $Q_cal(P)(s_(t+1), a_(t+1)^*) <- A_(cal(P), R)(s_(t+1), a_(t+1)^*)$
+  ])
+) <policy-update-loop>
 
 Avec 
 
@@ -499,7 +503,7 @@ Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politiqu
 Il existe plusieurs manières de mesurer l'écart entre deux distributions de probabilité, dont notamment la _divergence de Kullback-Leibler_, aussi appelée entropie relative @kullback-leibler @kullback-leibler2:
 
 $
-D_"KL" (P || P') := sum_(x in cal(X)) P(x) log P(x) / P'(x)
+D_"KL" (P || P') := sum_(x in cal(X)) P(x) log P(x) / (P'(x))
 $
 
 Avec $cal(X)$ l'espace des échantillons et $P, P'$ deux distributions de probabilité sur celui-ci. Dans notre cas, $cal(X) = S times A$,
@@ -562,8 +566,23 @@ $
 
 ==== _Proximal Policy Optimization_
 
+La _PPO_ repose sur le même principe de stabilisation de l'entraînement par limitation de l'ampleur des changements de politique à chaque pas.
 
+#section[Avec pénalité _(PPO-Penalty)_]
 
+#section[Par _clipping_ _(PPO-Clip)_]
+
+_PPO-Clip_ évite le calcul d'une distance K-L#footnote[Kullback-Leibler] et enlève la contraînte sur le problème d'optimisation.
+
+On préfère changer la mise à jour de la politique, pour limiter directement dans son expression l'ampleur de la modification à $Q_cal(P) (s_(t+1), a_(t+1)^*)$ (cf @policy-update-loop) 
+
+On utilise cette mise à jour @ppo-openai
+
+$
+Q_cal(P) (s_(t+1), a_(t+1)) <- min(
+
+)
+$
 
 
 == Le H1v2 d'_Unitree_
