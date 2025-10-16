@@ -80,23 +80,13 @@ $
 On a 
 
 $
-forall t in NN, quad bb(P)(A_t = a_t mid(|) S_t = s_t) = Q_p (s_t, a_t)
-$
-
-Or
-
-$
+bb(P)(S_0 = s_0) &= rho_0(s_0) \
+forall t in NN, quad bb(P)(A_t = a_t mid(|) S_t = s_t) &= Q_p (s_t, a_t) \
 forall t in NN^*, quad
 bb(P)(S_t = s_t | C_(t-1) = c_(t-1)) &= bb(P)(M(C_(t-1)) = M(c_(t-1)) | C_(t-1) = c_(t-1)) \
-&= bb(P)(C_(t-1) = c_(t-1) | C_(t-1) = c_(t-1)) \
-&= 1
+&= bb(P)(C_(t-1) = c_(t-1) | C_(t-1) = c_(t-1)) = 1
 $
 
-Et 
-
-$
-bb(P)(S_0 = s_0) = rho_0(s_0)
-$ 
 
 Donc on a
 
@@ -119,88 +109,93 @@ $
 
 #let clip = $op("clip")$
 
-Soit $(s, a) in S times A$, et $cal(P)'$ une politique.
+Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal(P)', R) (s, a)$, $q slash q' &:= Q_cal(P) (s, a) slash Q_cal(P)' (s, a)$ .
 
-Pour alléger les notations, posons $
-alpha &:= A_(cal(P)', R) (s, a) \
-q &:= Q_cal(P) (s, a) \
-q' &:= Q_cal(P)' (s, a) \
-$ 
-
-#let why = explanation => $\ quad & #[car #explanation]$
+#let why = explanation => $\ & quad quad #[car #explanation]$
 
 #{
+  v(1.5em)
   set math.equation(numbering: none)
+  show math.equation.where(block: true): set align(left)
+  block(breakable: false, 
   grid(columns: (1fr, 1fr), row-gutter: 1em,
-[
 
-  *Cas $alpha > 0$ et $q slash q' in [1-epsilon, 1+epsilon]$*
+  grid.cell(align: center)[ *Cas $alpha > 0$* ],
+  grid.cell(align: center)[ *Cas $alpha < 0$* ], 
+  [
 
-  $
-  &L(s, a, cal(P), cal(P'), R)  \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
-  &= min(q/q', quad q/q') alpha \
-  &= min(q/q' , 1+epsilon) alpha \
-  $
-], [
+    $
+    &L(s, a, cal(P), cal(P'), R)  \
+    &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+    &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha  why(alpha > 0)  \
+    $
+  ],
+  [
 
-  *Cas $alpha > 0$ et $q slash q' > 1+epsilon$*
+    $
+    &L(s, a, cal(P), cal(P'), R)  \
+    &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
+    &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha  why(alpha < 0)  \
+    $
+  ],
 
-  $
-  &L(s, a, cal(P), cal(P'), R)  \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
-  &= min(q/q', quad 1+epsilon) alpha \
-  $
+  grid.hline(stroke: 0.5pt),
+  grid.cell(colspan: 2, align: center, inset: 1em)[*...et $q slash q' in [1-epsilon, 1+epsilon]$*],
+  [
 
-], [
+    $
+    &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha \
+    &= min(q/q', quad q/q') alpha \
+    &= min(q/q' , 1+epsilon) alpha \
+    $
 
-  *Cas $alpha > 0$ et $q slash q' < 1-epsilon$*
 
-  $
-  &L(s, a, cal(P), cal(P'), R) \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha > 0)  \
-  &= min(q/q', quad 1-epsilon) alpha \
-  &= min(q/q', quad 1+epsilon) alpha why(1+epsilon > 1-epsilon > q / q') \
-  $
+  ], [
 
-], [
+    $
+    &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha  \
+    &= max(q/q', quad q/q') alpha \
+    &= max(q/q' , 1-epsilon) alpha \
+    $
 
-  *Cas $alpha < 0$ et $q slash q' in [1-epsilon, 1+epsilon]$*
+  ],
 
-  $
-  &L(s, a, cal(P), cal(P'), R) \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
-  &= max(q/q', quad q/q') alpha \
-  &= max(q/q' , 1-epsilon) alpha \
-  $
+  grid.hline(stroke: 0.5pt),
+  grid.cell(colspan: 2, align: center, inset: 1em)[*...et $q slash q' > 1+epsilon$*],
+  [
 
-], [
+    $
+    &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha \
+    &= min(q/q', quad 1+epsilon) alpha \
+    $
 
-  *Cas $alpha < 0$ et $q slash q' > 1+epsilon$*
+  ], [
 
-  $
-  &L(s, a, cal(P), cal(P'), R)  \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
-  &= max(q/q', quad 1+epsilon) alpha \
-  &= max(q/q', quad 1-epsilon) alpha why(1-epsilon < 1+epsilon < q / q') \
-  $
+    $
+    &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha  \
+    &= max(q/q', quad 1+epsilon) alpha \
+    &= max(q/q', quad 1-epsilon) alpha why(1-epsilon < 1+epsilon < q / q') \
+    $
 
-], [
+  ],
 
-  *Cas $alpha < 0$ et $q slash q' < 1-epsilon$*
+  grid.hline(stroke: 0.5pt),
+  grid.cell(colspan: 2, align: center, inset: 1em)[*...et $q slash q' < 1-epsilon$*],
+  [
 
-  $
-  &L(s, a, cal(P), cal(P'), R)  \
-  &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha)  \
-  &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha why(alpha < 0)  \
-  &= max(q/q', quad 1-epsilon) alpha
-  $
+    $
+    &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha   \
+    &= min(q/q', quad 1-epsilon) alpha \
+    &= min(q/q', quad 1+epsilon) alpha why(1+epsilon > 1-epsilon > q / q') \
+    $
 
-])
+  ], [
 
+
+    $
+    &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha \
+    &= max(q/q', quad 1-epsilon) alpha
+    $ 
+
+  ])) 
 }
