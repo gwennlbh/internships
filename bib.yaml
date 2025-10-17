@@ -73,14 +73,9 @@ unitree_sdk2:
     value: https://github.com/unitreerobotics/unitree_sdk2
     date: 2025-06-06
 
-h1:
-  type: web
-  url:
-    value: https://www.unitree.com/h1/
-    date: 2025-06-06
-
 h1v2:
   type: web
+  title: Unitree H1 / H1-2
   url:
     value: https://www.unitree.com/h1/
     date: 2025-06-30

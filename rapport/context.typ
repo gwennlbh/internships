@@ -650,7 +650,7 @@ Le score (récompense ou coût) dépend de la tâche pour laquelle on veut entra
 En robotique, il est commun d'inclure dans la récompense les éléments suivants:
 
 - Puissance maximale sur les commandes envoyées au moteurs
-- 
+- #todo[]
 
 
 ==== Apprentissage par des exemples
@@ -700,8 +700,14 @@ Bullet @bullet @pybullet
 
 L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
-== Le H1v2 d'_Unitree_
+== Le _H1v2_ d'Unitree
 
+Le _H1v2_ est un modèle de robot humanoïde créé par la société Unitree. 
+
+Il possède plus de 26 degrés de liberté, dont
+
+- 6 dans chaque jambe (3 à la hanche, 2 au talon et un au genou), 
+- 7 dans chaque bras (3 à l'épaule, 3 au poignet et un au coude) @h1v2
 
 
 == Reproductibilité logicielle
