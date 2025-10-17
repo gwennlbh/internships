@@ -32,15 +32,6 @@ jobs:
       - name: Compile rapport
         run: typst compile rapport/main.typ
 
-      - name: Install PDF tools
-        run: sudo apt-get update && sudo apt-get install -y poppler-utils
-
-      - name: Count pages and create pages_count file
-        run: |
-          PAGE_COUNT=$(pdfinfo rapport/main.pdf | grep "Pages:" | awk '{print $2}')
-          echo "$PAGE_COUNT" > pages_count
-          echo "PDF has $PAGE_COUNT pages"
-
       - name: Commit and push changes
         uses: EndBug/add-and-commit@v9
         with:
