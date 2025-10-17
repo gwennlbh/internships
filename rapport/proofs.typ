@@ -117,7 +117,7 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
   v(0.5em)
   set math.equation(numbering: none)
   show math.equation.where(block: true): set align(left)
-  block(breakable: false, stroke: 0.5pt+black,
+  block(breakable: false, //stroke: 0.5pt+black,
   grid(columns: (1fr, 1fr), row-gutter: 1em,
 
   grid.cell(align: center)[ *Cas $alpha > 0$* ],
