@@ -114,10 +114,10 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
 #let why = explanation => $\ & quad quad #[car #explanation]$
 
 #{
-  v(1.5em)
+  v(0.5em)
   set math.equation(numbering: none)
   show math.equation.where(block: true): set align(left)
-  block(breakable: false, 
+  block(breakable: false, stroke: 0.5pt+black,
   grid(columns: (1fr, 1fr), row-gutter: 1em,
 
   grid.cell(align: center)[ *Cas $alpha > 0$* ],
@@ -146,7 +146,7 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
     $
     &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha \
     &= min(q/q', quad q/q') alpha \
-    &= min(q/q' , 1+epsilon) alpha \
+    &= min(q/q' , 1+epsilon) alpha why(1+epsilon > q/q') \
     $
 
 
@@ -155,7 +155,7 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
     $
     &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon) ) alpha  \
     &= max(q/q', quad q/q') alpha \
-    &= max(q/q' , 1-epsilon) alpha \
+    &= max(q/q' , 1-epsilon) alpha why(1-epsilon < q/q') \
     $
 
   ],

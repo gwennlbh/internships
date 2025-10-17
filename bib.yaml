@@ -737,8 +737,45 @@ lowcmd_hpp:
   type: repository
   author: Unitree
   publisher: Github
-  title: unitree_sdk2/include/unitree/idl/hg/LowCmd_.hpp at main@{2025-10-17}
+  title: unitree_sdk2/include/unitree/idl/hg/LowCmd_.hpp at main@{2025-10-17}, lines 33 to 63
   url:
     date: '2025-10-17'
-    value: https://github.com/unitreerobotics/unitree_sdk2/blob/main@%7B2024-10-17%7D/include/unitree/idl/hg/LowCmd_.hpp#L33-L63
+    value: https://github.com/unitreerobotics/unitree_sdk2/blob/main@%7B2025-10-17%7D/include/unitree/idl/hg/LowCmd_.hpp#L33-L63
+
+dds-benchmark:
+  type: article
+  title: A Performance Study on the Throughput and Latency of Zenoh, MQTT, Kafka,
+    and DDS
+  author:
+    - Liang, Wen-Yew
+    - Yuan, Yuyuan
+    - Lin, Hsiang-Jui
+  date: 2023-03
+  page-rage: 10
+  url:
+    value: http://arxiv.org/abs/2303.09419v1
+    date: '2025-10-17'
+  serial-number:
+    arxiv: 2303.09419v1
+  abstract: In this study, we compare the performance of the new-generation communication
+    protocol Zenoh with the widely-used MQTT, Kafka, and DDS. Two performance indexes
+    were evaluated, including throughput and latency. A brief description of each
+    protocol is introduced in this article. The experiment configuration and the testing
+    scenarios are described in detail. The results show that Zenoh outperforms the
+    others with impressive performance numbers.
+  parent:
+    type: periodical
+
+
+
+
+unitree_mujoco:
+  type: web
+  title: unitree_mujoco
+  publisher: GitHub
+  author: Unitree Robotics
+  url:
+    date: '2025-10-17'
+    value: https://github.com/unitreerobotics/unitree_mujoco
+  date: '2021-11-01'
 

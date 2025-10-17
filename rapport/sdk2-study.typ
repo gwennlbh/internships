@@ -4,14 +4,11 @@ Unitree met à disposition du public un _SDK_#footnote[Kit de développement log
 
 == Canaux DDS
 
-Pour communiquer avec le robot via le réseau, Unitree utilise CycloneDDS, une implémentation par Oracle du standard DDS#footnote[pour Data Distribution Service] @cyclonedds, une technologie de communication bidirectionnelle#footnote[dite "_pub-sub_" pour _publish_/_subscribe_ ] en temps réel, standardisée par l'Object Management Group, OMG @dds.
-
-DDS fonctionne sur la base de _topics_. Les messages sont échangés sur un topic de la manière suivante
-
-/ Lecture: En s'abonnant au topic, on reçoit en temps réel les messages qui sont envoyés dessus
-/ Écriture: En publiant des messages sur le topic, on les rend disponibles aux abonnés en 
+Pour communiquer avec le robot via le réseau, Unitree utilise CycloneDDS, une implémentation par Oracle du standard DDS#footnote[pour Data Distribution Service] @cyclonedds, une technologie de communication bidirectionnelle#footnote[dite "_pub-sub_" pour _publish_/_subscribe_ ] en temps réel, standardisée par l'Object Management Group, OMG @dds. Les messages sont envoyées sur le réseau via UDP et IP.
 
 Les données contenues dans chacun des messages sont spécifiées via un autre format, IDL, également  standardisé par l'OMG @omgidl.
+
+L'intérêt d'un format indépendant du langage de programmation est que l'on peut générer du code décrivant ces données pour plusieurs langages, ce que fait Unitree en distribuant du code C++ et Python.
 
 Par exemple, les messages permettant de contrôler les moteurs du H1v2 sont définis ainsi
 
@@ -39,6 +36,18 @@ struct Cmd
 };
 ```
 )
+
+DDS groupe les mesages dans des _topics_. Les messages sont échangés sur un topic de la manière suivante
+
+/ Lecture: En s'abonnant au topic, on reçoit en temps réel les messages qui sont envoyés dessus
+/ Écriture: En publiant des messages sur le topic, on les rend disponibles aux abonnés
+
+#import "@preview/unify:0.7.1": qty
+
+CycloneDDS est capable d'un débit d'environ #qty("1", "GB/s"), pour des messages d'environ #qty("1", "kB") chacun @dds-benchmark. On remarque, en pratique, des messages entre #qty("0.9", "kB") et #qty("1.3", "kB") dans le cas des échanges commandes/état avec le robot
+
+Et enfin, les _topics_ peuvent être isolés d'autres topics via des _domain_#[s].
+
 
 == Une base de code partiellement open-source
 
@@ -151,9 +160,8 @@ Ces particularités laissent planner quelques doutes sur la nature open-source d
 
 Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK2, via _Ghidra_ @ghidra.
  
-Cependant, l'existance d'une implémentation existante d'un bridge SDK $arrows.lr$ Mujoco a rendu cette piste non nécéssaire.
+Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mujoco @unitree_mujoco a rendu cette piste non nécéssaire.
 
 == Un autre bridge existant: `unitree_mujoco`
 
-
-
+Unitree propose 

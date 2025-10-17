@@ -19,7 +19,7 @@ function cite-github
 	  publisher: "GitHub", 
 	  author: .owner.name, 
 	  url: { date: $today, value: .url }, 
-	  date: .createdAt | sub("T.+$", "")
+	  date: .createdAt | sub("T.+$"; "")
 	} }' 
 
 
