@@ -647,3 +647,37 @@ rewards-from-examples:
   parent:
     type: periodical
 
+lockfiles:
+  type: article
+  title: The Design Space of Lockfiles Across Package Managers
+  author:
+    - Gamage, Yogya
+    - Tiwari, Deepika
+    - Monperrus, Martin
+    - Baudry, Benoit
+  date: 2025-05
+  url:
+    value: http://arxiv.org/abs/2505.04834v2
+    date: '2025-10-17'
+  serial-number:
+    arxiv: 2505.04834v2
+  abstract: Software developers reuse third-party packages that are hosted in package
+    registries. At build time, a package manager resolves and fetches the direct and
+    indirect dependencies of a project. Most package managers also generate a lockfile,
+    which records the exact set of resolved dependency versions. Lockfiles are used
+    to reduce build times; to verify the integrity of resolved packages; and to support
+    build reproducibility across environments and time. Despite these beneficial features,
+    developers often struggle with their maintenance, usage, and interpretation. In
+    this study, we unveil the major challenges related to lockfiles, such that future
+    researchers and engineers can address them. We perform the first comprehensive
+    study of lockfiles across 7 popular package managers, npm, pnpm, Cargo, Poetry,
+    Pipenv, Gradle, and Go. First, we highlight the wide variety of design decisions
+    that package managers make, regarding the generation process as well as the content
+    of lockfiles. Next, we conduct a qualitative analysis based on semi-structured
+    interviews with 15 developers. We capture first-hand insights about the benefits
+    that developers perceive in lockfiles, as well as the challenges they face to
+    manage these files. Following these observations, we make 5 recommendations to
+    further improve lockfiles, for a better developer experience.
+  parent:
+    type: periodical
+

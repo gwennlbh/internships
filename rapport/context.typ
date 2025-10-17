@@ -709,3 +709,9 @@ La reproductibilité est particulièrement complexe dans le champ du reinforceme
 
 En plus des difficultés de reproductibilité sur l'algorithme lui-même, le paysage logiciel et matériel est riche en dépendances à des bibliothèques, qui elle aussi dépendent d'autres bibliothèques.
 
+#figure(
+  caption: [Arbre des dépendances pour _Gepetto/h1v2-Isaac_],
+  todo[Demander à qqn de faire `uv pip deptree`, il me manque de drivers nvidia...]
+)
+
+Bien que toutes ces dépendances puissent être spécifiées à des versions de manière stricte @lockfiles
