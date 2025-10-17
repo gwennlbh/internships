@@ -717,3 +717,10 @@ cmake-imported-location:
     date: '2025-10-17'
     value: https://cmake.org/cmake/help/latest/prop_tgt/IMPORTED_LOCATION.html
 
+ghidra:
+  type: web
+  title: Ghidra - Powerful Open-Source Reverse Engineering Tool
+  url:
+    date: '2025-10-17'
+    value: https://ghidralite.com/
+

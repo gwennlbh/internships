@@ -111,9 +111,9 @@ thirdparty/include/dds
 
 Ces particularités laissent planner quelques doutes sur la nature open-source du code: ces binaires requis sont-ils seulement présent pour améliorer l'expérience développeur en accélererant la compilation, ou "cachent"-ils du code non public? 
 
-== Rétroingénierie des binaires
-
-Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK2.
+Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK2, via _Ghidra_ @ghidra.
+ 
+Cependant, l'existance d'une implémentation existante d'un bridge SDK $arrow.lr$ Mujoco a rendu 
 
 == Canaux DDS bas niveau
 
