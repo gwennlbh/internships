@@ -138,9 +138,9 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 
 
 
-== Fonctions coût 
+== Entraînement par _curriculum_
 
-== Mise a jour
+== Mise à jour de la politique
 
 // #let section = content => pad(y: 1.5em, x: 3em, align(center, grid(align: horizon, columns: 3, gutter: 1em, line(length: 2em, stroke: 0.5pt), content, line(length: 2em, stroke: 0.5pt))))
 
@@ -633,9 +633,30 @@ Dans le contexte de la robotique, le calcul de l'état post-action de l'environn
 
 Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
 
+On est donc dans un cas où il est très utile de 
+
 Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 
 Cet ensemble s'appelle un _simulateur_.
+
+
+=== Spécification de la tâche
+
+==== Définition explicite de la fonction coût
+
+Le score (récompense ou coût) dépend de la tâche pour laquelle on veut entraîner l'agent.
+
+En robotique, il est commun d'inclure dans la récompense les éléments suivants:
+
+- Puissance maximale sur les commandes envoyées au moteurs
+- 
+
+
+==== Apprentissage par des exemples
+
+#todo[Déterminer si je parle de ça, en fonction de cmb de pages il reste après avoir fait le reste, ça fera ptet trop...]
+
+Il est possible d'éviter la définition manuelle de la fonction coût, ce qui requiert d'instrumentaliser l'environnement avec des capteurs supplémentaires, en fournissant à la place 
 
 === Inventaire des simulateurs en robotique 
 
@@ -680,7 +701,11 @@ L'algorithme de Featherstone @featherstone, servant d'implémentation alternativ
 
 == Le H1v2 d'_Unitree_
 
+
+
 == Reproductibilité logicielle
 
-La reproductibilité est particulièrement complexe dans le champ du reinforcement learning @rl-reproducibility
+La reproductibilité est particulièrement complexe dans le champ du reinforcement learning @rl-reproducibility.
+
+En plus des difficultés de reproductibilité sur l'algorithme lui-même, le paysage logiciel et matériel est riche en dépendances à des bibliothèques, qui elle aussi dépendent d'autres bibliothèques.
 
