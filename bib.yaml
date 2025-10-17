@@ -89,6 +89,7 @@ mujoco:
 omgidl:
   type: reference
   title: Interface Definition Language Specification Version 4.2
+  author: Object Management Group
   url:
     value: https://www.omg.org/spec/IDL/4.2/About-IDL
     date: 2025-06-18
@@ -96,6 +97,7 @@ omgidl:
 dds:
   type: reference
   title: DDS Interoperability Wire Protocol Specification Version 2.5
+  author: Object Management Group
   url:
     value: https://www.omg.org/spec/DDSI-RTPS/
     date: 2025-06-24
@@ -723,4 +725,20 @@ ghidra:
   url:
     date: '2025-10-17'
     value: https://ghidralite.com/
+
+cyclonedds:
+  type: web
+  title: Eclipse Cyclone DDS - Home
+  url:
+    date: '2025-10-17'
+    value: https://cyclonedds.io/
+
+lowcmd_hpp:
+  type: repository
+  author: Unitree
+  publisher: Github
+  title: unitree_sdk2/include/unitree/idl/hg/LowCmd_.hpp at main@{2025-10-17}
+  url:
+    date: '2025-10-17'
+    value: https://github.com/unitreerobotics/unitree_sdk2/blob/main@%7B2024-10-17%7D/include/unitree/idl/hg/LowCmd_.hpp#L33-L63
 

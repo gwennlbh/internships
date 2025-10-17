@@ -2,6 +2,44 @@
 
 Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de contrôler ses robots (dont le H1v2). 
 
+== Canaux DDS
+
+Pour communiquer avec le robot via le réseau, Unitree utilise CycloneDDS, une implémentation par Oracle du standard DDS#footnote[pour Data Distribution Service] @cyclonedds, une technologie de communication bidirectionnelle#footnote[dite "_pub-sub_" pour _publish_/_subscribe_ ] en temps réel, standardisée par l'Object Management Group, OMG @dds.
+
+DDS fonctionne sur la base de _topics_. Les messages sont échangés sur un topic de la manière suivante
+
+/ Lecture: En s'abonnant au topic, on reçoit en temps réel les messages qui sont envoyés dessus
+/ Écriture: En publiant des messages sur le topic, on les rend disponibles aux abonnés en 
+
+Les données contenues dans chacun des messages sont spécifiées via un autre format, IDL, également  standardisé par l'OMG @omgidl.
+
+Par exemple, les messages permettant de contrôler les moteurs du H1v2 sont définis ainsi
+
+#figure(
+  caption: [`LowCmd.idl`, traduit depuis sa conversion en C++ @lowcmd_hpp],
+```c
+struct MotorCmd
+{
+  uint8 mode;
+  float q;
+  float dq;
+  float tau;
+  float kp;
+  float kd;
+  unsigned long reserve;
+};
+
+struct Cmd
+{
+  uint8 mode_pr;
+  uint8 mode_machine;
+  MotorCmd motor_cmd[35];
+  unsigned long reserve[4];
+  unsigned long crc;
+};
+```
+)
+
 == Une base de code partiellement open-source
 
 Le code source du SDK d'unitree est disponible sur Github @sdk2_source_today. Cependant, le dépôt git comprend des fichiers binaires déjà compilés:
@@ -113,9 +151,9 @@ Ces particularités laissent planner quelques doutes sur la nature open-source d
 
 Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK2, via _Ghidra_ @ghidra.
  
-Cependant, l'existance d'une implémentation existante d'un bridge SDK $arrow.lr$ Mujoco a rendu 
-
-== Canaux DDS bas niveau
+Cependant, l'existance d'une implémentation existante d'un bridge SDK $arrows.lr$ Mujoco a rendu cette piste non nécéssaire.
 
 == Un autre bridge existant: `unitree_mujoco`
+
+
 
