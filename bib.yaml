@@ -701,3 +701,19 @@ laas-h1v2-annonce:
     date: '2025-10-17'
     value: https://www.laas.fr/fr/actualites/h1-nouveau-robot-humano%C3%AFde-du-laas/
 
+sdk2_source_today:
+  type: repository
+  title: unitreerobotics/unitree_sdk2, main@{2025-10-17}
+  author: Unitree
+  publisher: Github
+  url:
+    value: https://github.com/unitreerobotics/unitree_sdk2/tree/main@%7B2025-10-17%7D
+    date: 2025-10-17
+
+cmake-imported-location:
+  type: web
+  title: IMPORTED_LOCATION — CMake 4.2.0-rc1 Documentation
+  url:
+    date: '2025-10-17'
+    value: https://cmake.org/cmake/help/latest/prop_tgt/IMPORTED_LOCATION.html
+

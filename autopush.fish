@@ -2,7 +2,7 @@
 git reset --hard rapport/main.pdf
 git pull --rebase --autostash
 while true
-	git add rapport/*.typ bib.yaml *.fish
+	git add rapport/*.typ bib.yaml *.fish rapport/*.dot
 	git commit --quiet -m "Continue rapport"
 	git push --quiet --force
 	echo Pushed at (date)
