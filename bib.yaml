@@ -246,7 +246,7 @@ nixos-impatient:
     value: https://borretti.me/article/nixos-for-the-impatient
 
 sdk2-in-source-binaries:
-  type: web
+  type: repository
   title: unitreerobotics/unitree_sdk2, main branch, lib/x86_64
   publisher: Github
   url:
@@ -254,7 +254,7 @@ sdk2-in-source-binaries:
     value: https://github.com/unitreerobotics/unitree_sdk2/tree/c8a71e281093593f4dcc7bceb3b3b529ff0e36b4/lib/x86_64
 
 gz-sim-overlay-update-msgs-issue:
-  type: web
+  type: thread
   title: "update gz-msgs · Issue #2 · muellerbernd/gazebo-sim-overlay"
   publisher: Github
   url:
@@ -271,7 +271,7 @@ xvfb:
     value: https://www.x.org/archive/X11R7.7/doc/man/man1/Xvfb.1.xhtml
 
 unitree-mujoco:
-  type: web
+  type: repository
   title: Unitree mujoco
   publisher: Github
   author: Unitree Robotics
@@ -318,7 +318,7 @@ featherstone:
     isbn: 978-1-4757-6437
 
 bullet:
-  type: web
+  type: repository
   title: bullet3
   publisher: GitHub
   author: Bullet Physics SDK
@@ -328,7 +328,7 @@ bullet:
   date: '2011-04-12'
 
 dart-github:
-  type: web
+  type: repository
   title: dart
   publisher: GitHub
   author: 'DART: Dynamic Animation and Robotics Toolkit'
@@ -770,7 +770,7 @@ dds-benchmark:
 
 
 unitree_mujoco:
-  type: web
+  type: repository
   title: unitree_mujoco
   publisher: GitHub
   author: Unitree Robotics

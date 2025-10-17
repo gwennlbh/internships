@@ -14,7 +14,7 @@ function cite-github
 	  }'
 
 	set citation '{ $id: { 
-	  type: "web", 
+	  type: "repository", 
 	  title: .name,
 	  publisher: "GitHub", 
 	  author: .owner.name, 
