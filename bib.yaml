@@ -681,3 +681,28 @@ lockfiles:
   parent:
     type: periodical
 
+cpp-python:
+  type: article
+  title: 'AutoWIG : automatisation de l''encapsulation de librairies C++ en Python
+    et en R'
+  author: Fernique, Pierre
+  date: 2016-05
+  url:
+    value: https://inria.hal.science/hal-01316276
+    date: '2025-10-17'
+  parent:
+    type: proceedings
+    title: '48èmes Journées de Statistique de la SFdS Montpellier'
+    publisher:
+      name: null
+      location: Montpellier, France
+
+laas-h1v2-annonce:
+  type: web
+  title: H1, nouveau robot humanoïde du LAAS
+  publisher: LAAS-CNRS
+  author: Olivier Stasse
+  url:
+    date: '2025-10-17'
+    value: https://www.laas.fr/fr/actualites/h1-nouveau-robot-humano%C3%AFde-du-laas/
+

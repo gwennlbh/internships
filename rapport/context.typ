@@ -1,6 +1,7 @@
 #import "utils.typ": todo, comment, refneeded
 #import "@preview/fletcher:0.5.8": node, edge
 #import "@preview/fletcher:0.5.8"
+#import "@preview/diagraph:0.3.2"
 
 #show figure: set block(spacing: 4em)
 #let diagram = (caption: none, ..args) => figure(caption: caption, fletcher.diagram(..args))
@@ -711,7 +712,7 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
 
 #figure(
   caption: [Arbre des dépendances pour _Gepetto/h1v2-Isaac_],
-  todo[Demander à qqn de faire `uv pip deptree`, il me manque de drivers nvidia...]
+  scale(10%, reflow: true, diagraph.render(read("./isaac-deptree.dot")))
 )
 
-Bien que toutes ces dépendances puissent être spécifiées à des versions de manière stricte @lockfiles
+Bien que toutes ces dépendances puissent être spécifiées à des versions strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ à l'installation pour des raisons de performance @cpp-python. Des problèmes de reproductibilité peuvent donc subsister à l'installation des dépendances, étant donné la dépendance du processus de compilation à la machine compilant le code.
