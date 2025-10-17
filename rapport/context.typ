@@ -531,10 +531,10 @@ $
 _PPO-Penalty_ soustrait une divergence K-L pondérée à l'avantage:
 
 $
-L(s, a, cal(P), cal(P'), R) = (Q_cal(P) (s, a)) / (Q_cal(P') (s, a)) A_(cal(P), R) (s, a) - beta D_"KL"(cal(P) || cal(P'))
+L(s, a, cal(P), cal(P'), R) = (Q_cal(P) (s, a)) / (Q_cal(P') (s, a)) A_(cal(P), R) (s, a) - beta D_"KL" (cal(P) || cal(P'))
 $
 
-Avec $beta$ ajusté automatiquement pour 
+Avec $beta$ ajusté automatiquement pour être dans la même échelle que l'autre terme de la soustraction.
 
 ==== Par _clipping_ _(PPO-Clip)_
 
@@ -617,13 +617,21 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 
 ]
 
+// L'algorithme de mise à jour est le suivant @ppo-openai:
+// 
+// 1. Mise à jour de la politique:
+// 
+// $
+// cal(P') = argmax_p 1/T sum_(t=1)^T L(s, a, cal(P), p, R)
+// $
+
 
 == Application en robotique
 
 
 Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
 
-Bien évidemment, ce sont des programmes complexes avec souvent des numériques souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
+Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
 
 Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 
