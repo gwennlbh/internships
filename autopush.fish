@@ -1,8 +1,6 @@
 #!/usr/bin/env fish
+git reset --hard rapport/main.pdf
 git pull --rebase --autostash
-git reset    rapport/main.pdf
-git checkout rapport/main.pdf
-git add      rapport/main.pdf
 while true
 	git add rapport/*.typ bib.yaml *.fish
 	git commit --quiet -m "Continue rapport"
