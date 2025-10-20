@@ -141,7 +141,7 @@ Unitree SDK library for the architecture is not found
   )
 }
 
-Les logs montrent aussi que les recettes de compilation dépendent de versions précompilées de LibDDSC et LibDDSCXX, dont le code source semble cependant être fourni dans le code source:
+Les logs montrent aussi que les recettes de compilation dépendent de versions précompilées de LibDDSC et LibDDSCXX, dont le code source semble cependant être fourni avec _unitree\_sdk2_:
 
 ```sh-session
 thirdparty/include/dds
@@ -164,4 +164,4 @@ Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mu
 
 == Un autre bridge existant: `unitree_mujoco`
 
-Unitree propose 
+Unitree propose un "bridge" officiel pour utiliser son SDK avec Mujoco, et ainsi faire du reinforcement learning avec H1v2 en utilisant Mujoco.
