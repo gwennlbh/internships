@@ -1,3 +1,4 @@
+#import "./utils.typ": todo
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 
 #show figure: set block(spacing: 3em)
@@ -230,4 +231,24 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
   edge((2, 1), (3, 1), "|-|", stroke: blue + 1.25pt, label-side: right, text(fill: blue)[*API de Gazebo*])
 }))
 
-Le bridge de Mujoco fonctionne en 
+Le bridge de Mujoco fonctionne en interceptant les messages sur les canaux `rt/lowcmd` et `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) renvoyé par le robot. Le `low` indique que ce sont des messages bas-niveau: par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, et non pas à des messages plus avancés du type "avancer de $x$ mètres" #todo[ces messages plus haut-niveau = sport mode non? dire quand ils servent]
+
+Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujoco pour mettre à jour l'état du robot simulé, et de messages `rt/lowstate` sont créés à partir des données fournies par Mujoco
+
+#figure(caption: [Cycle de vie de la simulation avec le bridge], diagram({
+  node(name: <sdk>, (0, 0))[SDK]
+  node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(fill: blue)[Canaux \ DDS])
+  node(name: <lowcmd>, (1, 1))[`rt/lowcmd`]
+  node(name: <lowstate>, (-1, 1) )[`rt/lowstate`]
+  node(name: <bridge>, enclose: ((1, 2), (-1, 2)), stroke: black, inset: 10pt)[Bridge]
+  node(name: <mujoco>, (0, 3))[Mujoco]
+
+
+  edge(<sdk>, <lowcmd>, "->", bend: 30deg)[pub]
+  edge(<lowcmd>, (1, 2), "..>", bend: 20deg)[sub]
+  edge((1, 2), <mujoco>, "->", bend: 20deg, todo[])
+
+  edge(<sdk>, <lowstate>, "<..", bend: -30deg)[sub]
+  edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
+  edge((-1, 2), <mujoco>, "<-", bend: -20deg, todo[])
+}))
