@@ -1,3 +1,5 @@
+#import "@preview/fletcher:0.5.8": diagram, node, edge
+
 #show figure: set block(spacing: 3em)
 
 Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de contrôler ses robots (dont le H1v2). 
@@ -164,4 +166,56 @@ Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mu
 
 == Un autre bridge existant: `unitree_mujoco`
 
-Unitree propose un "bridge" officiel pour utiliser son SDK avec Mujoco, et ainsi faire du reinforcement learning avec H1v2 en utilisant Mujoco.
+Unitree propose un bridge officiel pour utiliser son SDK avec Mujoco.
+
+Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simulateur pour lequel on l'écrit: il s'agit d'envoyer l'état du robot au simulateur, et de réagir quand le simulateur envoie des ordres de commandes.
+
+#figure(caption: "Fonctionnement usuel du SDK", diagram({
+  node((0, 0), "Politique")
+  node((1, 0), "SDK")
+  node((2, 0), "Robot")
+
+  for i in range(0, 2) {
+    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres];  
+    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état];  
+  }
+}))
+
+
+#figure(caption: [Fonctionnement via _unitree\_mujoco_ du SDK], diagram({
+  node((0, 0), "Politique")
+  node((1, 0), "SDK")
+  node((2, 0))[`unitree_mujoco`]
+  node((3, 0), "Mujoco")
+
+  for i in range(0, 3) {
+    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres]
+    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état]  
+  }
+
+  edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
+  edge((2, 1), (3, 1), "|-|", label-side: right)[API de Mujoco]
+}))
+
+Le but est de faire la même chose avec notre propre bridge. Le code du bridge Mujoco existant est utile car un bridge, se situant par définition à la frontière entre deux APIs, fait usage des deux APIs.
+
+Écrire un bridge Gazebo pour le même SDK implique donc de changer "API de Mujoco" par "API de Gazebo", mais le code faisant usage du SDK d'Unitree reste le même.
+
+
+#figure(caption: [Fonctionnement via _gz-unitree_ du SDK], diagram({
+  node((0, 0), "Politique")
+  node((1, 0), "SDK")
+  node((2, 0))[*`gz-unitree`*]
+  node((3, 0))[*Gazebo*]
+
+  for i in range(0, 2) {
+    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres]
+    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état]  
+  }
+
+  edge((2, 0), (2+1, 0), "->", bend: 30deg, extrude: (-1, 0, 1))[*ordres*]
+  edge((2, 0), (2+1, 0), "<-", bend: -30deg, extrude: (-1, 0, 1))[*état*]  
+
+  edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
+  edge((2, 1), (3, 1), "|-|", label-side: right)[*API de Gazebo*]
+}))
