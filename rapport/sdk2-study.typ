@@ -227,7 +227,7 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
   }
 
   edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
-  edge((2, 1), (3, 1), "|-|", stroke: blue + 1.25pt, label-side: right, text(fill: blue)[API de Gazebo])
+  edge((2, 1), (3, 1), "|-|", stroke: blue + 1.25pt, label-side: right, text(fill: blue)[*API de Gazebo*])
 }))
 
 Le bridge de Mujoco fonctionne en 
