@@ -171,26 +171,35 @@ Unitree propose un bridge officiel pour utiliser son SDK avec Mujoco.
 Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simulateur pour lequel on l'écrit: il s'agit d'envoyer l'état du robot au simulateur, et de réagir quand le simulateur envoie des ordres de commandes.
 
 #figure(caption: "Fonctionnement usuel du SDK", diagram({
-  node((0, 0), "Politique")
+  node((0, 0), $cal(P)$)
   node((1, 0), "SDK")
   node((2, 0), "Robot")
 
+  edge((0,0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
+  edge((2.25,0), (2.25, 0), "->", bend: -130deg, loop-angle: -180deg)[]
+
+
   for i in range(0, 2) {
-    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres];  
-    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état];  
+    edge((i, 0), (i+1, 0), "->", shift: 3pt)[ordres]
+    edge((i, 0), (i+1, 0), "<-", shift: -3pt, label-side: right)[état]
   }
 }))
 
+Un bridge se substitue au Robot physique, interceptant les ordres du SDK et les traduisants en des appels de fonctions utilisant l'API du simulateur, et symmétriquement pour les envois d'états au SDK. On peut apparenter le fonctionnement d'un bridge à celui d'une attaque informatique de type "Man in the Middle" (MitM).
+
 
 #figure(caption: [Fonctionnement via _unitree\_mujoco_ du SDK], diagram({
-  node((0, 0), "Politique")
+  node((0, 0), $cal(P)$)
   node((1, 0), "SDK")
   node((2, 0))[`unitree_mujoco`]
   node((3, 0), "Mujoco")
 
+  edge((0,0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
+  edge((3.25,0), (3.25, 0), "->", bend: -130deg, loop-angle: -180deg)[]
+
   for i in range(0, 3) {
-    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres]
-    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état]  
+    edge((i, 0), (i+1, 0), "->", shift: 3pt)[ordres]
+    edge((i, 0), (i+1, 0), "<-", shift: -3pt, label-side: right)[état]
   }
 
   edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
@@ -203,19 +212,22 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
 
 
 #figure(caption: [Fonctionnement via _gz-unitree_ du SDK], diagram({
-  node((0, 0), "Politique")
+  node((0, 0), $cal(P)$)
   node((1, 0), "SDK")
-  node((2, 0))[*`gz-unitree`*]
-  node((3, 0))[*Gazebo*]
+  node((2, 0))[`gz-unitree`]
+  node((3, 0), text(fill: blue)[Gazebo])
 
-  for i in range(0, 2) {
-    edge((i, 0), (i+1, 0), "->", bend: 30deg)[ordres]
-    edge((i, 0), (i+1, 0), "<-", bend: -30deg)[état]  
+  edge((0,0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
+  edge((3.25,0), (3.25, 0), "->", bend: -130deg, loop-angle: -180deg, stroke: blue)[]
+
+  for i in range(0, 3) {
+    let col = if i == 2 { blue } else { black }
+    edge((i, 0), (i+1, 0), "->", shift: 3pt, stroke: col, text(fill: col)[ordres])
+    edge((i, 0), (i+1, 0), "<-", shift: -3pt, stroke: col, label-side: right, text(fill: col)[état])
   }
 
-  edge((2, 0), (2+1, 0), "->", bend: 30deg, extrude: (-1, 0, 1))[*ordres*]
-  edge((2, 0), (2+1, 0), "<-", bend: -30deg, extrude: (-1, 0, 1))[*état*]  
-
   edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
-  edge((2, 1), (3, 1), "|-|", label-side: right)[*API de Gazebo*]
+  edge((2, 1), (3, 1), "|-|", stroke: blue + 1.25pt, label-side: right, text(fill: blue)[API de Gazebo])
 }))
+
+Le bridge de Mujoco fonctionne en 
