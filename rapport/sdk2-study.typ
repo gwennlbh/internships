@@ -231,11 +231,15 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
   edge((2, 1), (3, 1), "|-|", stroke: blue + 1.25pt, label-side: right, text(fill: blue)[*API de Gazebo*])
 }))
 
-Le bridge de Mujoco fonctionne en interceptant les messages sur les canaux `rt/lowcmd` et `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) renvoyé par le robot. Le `low` indique que ce sont des messages bas-niveau: par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, et non pas à des messages plus avancés du type "avancer de $x$ mètres" #todo[ces messages plus haut-niveau = sport mode non? dire quand ils servent]
+Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) renvoyé par le robot. 
+
+Le `low` indique que ce sont des messages bas-niveau: par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, et non pas à des messages plus avancés du type "avancer de $x$ mètres" #todo[ces messages plus haut-niveau = sport mode non? dire quand ils servent]
 
 Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujoco pour mettre à jour l'état du robot simulé, et de messages `rt/lowstate` sont créés à partir des données fournies par Mujoco
 
-#figure(caption: [Cycle de vie de la simulation avec le bridge], diagram({
+Étant donné le modèle _pub/sub_ de DDS, on parle de _pub(lication)_ de message, et de _sub(scription)_#footnote[abonnement] aux messages d'un canal (pour les recevoir)
+
+#figure(caption: [Cycle de vie de la simulation avec le bridge pour Mujoco], diagram({
   node(name: <sdk>, (0, 0))[SDK]
   node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(fill: blue)[Canaux \ DDS])
   node(name: <lowcmd>, (1, 1))[`rt/lowcmd`]
@@ -245,10 +249,14 @@ Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujo
 
 
   edge(<sdk>, <lowcmd>, "->", bend: 30deg)[pub]
-  edge(<lowcmd>, (1, 2), "..>", bend: 20deg)[sub]
-  edge((1, 2), <mujoco>, "->", bend: 20deg, todo[])
+  edge(<lowcmd>, (1, 2), "..>", bend: 20deg)[via sub]
+  edge((1, 2), <mujoco>, "->", bend: 20deg, `data->ctrl[i] = ...`)
 
-  edge(<sdk>, <lowstate>, "<..", bend: -30deg)[sub]
+  edge(<sdk>, <lowstate>, "<..", bend: -30deg)[via sub]
   edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
-  edge((-1, 2), <mujoco>, "<-", bend: -20deg, todo[])
+  edge((-1, 2), <mujoco>, "<-", bend: -20deg, `... = data->sensordata[i]`)
+
+  edge(<mujoco>, <mujoco>, "->", bend: 130deg, loop-angle: -90deg, `mj_step(model, data)`)
 }))
+
+Le but est donc de reproduire un cycle de vie équivalent, mais en remplaçant la partie spécifique à Mujoco par une partie adaptée à Gazebo.
