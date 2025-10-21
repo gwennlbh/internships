@@ -1,3 +1,5 @@
+En se basant sur _unitree\_mujoco_, il a donc été possible de réaliser un bridge pour Gazebo.
+
 == Établissement du contact
 
 == Réception des commandes
