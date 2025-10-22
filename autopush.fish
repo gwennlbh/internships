@@ -1,5 +1,5 @@
 #!/usr/bin/env fish
-git reset --hard rapport/main.pdf
+git checkout -- rapport/main.pdf
 git pull --rebase --autostash
 while true
 	pdfinfo rapport/main.pdf | rg ^Pages: | awk '{print $2}' > pages_count

@@ -10,71 +10,71 @@ En se basant sur _unitree\_mujoco_, il a donc été possible de réaliser un bri
 
 Une première tentative a été de suivre la documentation de CycloneDDS pour écouter sur le canal @cyclonedds-helloworld `rt/lowcmd`, en récupérant les définitions IDL des messages, disponibles sur le dépot `unitree_ros2`#footnote[`unitree_mujoco` n'avait pas encore été découvert] @unitree_ros2
 
-On commence par importer la bibliothèque DDS et les définitions IDL de `rt/lowcmd`
-
-```cpp
-#include "messages/LowCmd_.hpp"
-#include "dds/dds.h"
-...
-
-int main (int argc, char ** argv)
-{
-```
-
-On initialise les différents objets permettant de lire sur un canal
-
-```cpp
-  dds_entity_t participant, topic, reader;
-  LowCmd_ *msg;
-  void *samples[MAX_SAMPLES];
-  ...
-
-  participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
-
-  topic = dds_create_topic(participant, &LowCmd__desc, "HelloWorldData_Msg", NULL, NULL);
-
-  qos = dds_create_qos();
-  dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE, DDS_SECS (10));
-
-  reader = dds_create_reader(participant, topic, qos, NULL);
-
-  dds_delete_qos(qos);
-
-  samples[0] = LowCmd___alloc();
-```
-
-Et on attend qu'un message arrive sur le canal, pour l'afficher
-
-```cpp
-  /* Poll until data has been read. */
-  while (true)
-  {
-    rc = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
-
-    /* Check if we read some data and it is valid. */
-    if ((rc > 0) && (infos[0].valid_data))
-    {
-      /* Print Message. */
-      msg = (LowCmd_*) samples[0];
-      printf("=== [Subscriber] Received : ");
-      fflush(stdout);
-      break;
-    }
-    else
-    {
-      dds_sleepfor(DDS_MSECS(20));
-    }
-  }
-```
-
-Enfin, on libère les ressources avant la terminaison du programme
-
-```cpp
-  LowCmd__free(samples[0], DDS_FREE_ALL);
-  dds_delete(participant);
-  return EXIT_SUCCESS;
-}
-```
+// On commence par importer la bibliothèque DDS et les définitions IDL de `rt/lowcmd`
+// 
+// ```cpp
+// #include "messages/LowCmd_.hpp"
+// #include "dds/dds.h"
+// ...
+// 
+// int main (int argc, char ** argv)
+// {
+// ```
+// 
+// On initialise les différents objets permettant de lire sur un canal
+// 
+// ```cpp
+//   dds_entity_t participant, topic, reader;
+//   LowCmd_ *msg;
+//   void *samples[MAX_SAMPLES];
+//   ...
+// 
+//   participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
+// 
+//   topic = dds_create_topic(participant, &LowCmd__desc, "HelloWorldData_Msg", NULL, NULL);
+// 
+//   qos = dds_create_qos();
+//   dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE, DDS_SECS (10));
+// 
+//   reader = dds_create_reader(participant, topic, qos, NULL);
+// 
+//   dds_delete_qos(qos);
+// 
+//   samples[0] = LowCmd___alloc();
+// ```
+// 
+// Et on attend qu'un message arrive sur le canal, pour l'afficher
+// 
+// ```cpp
+//   /* Poll until data has been read. */
+//   while (true)
+//   {
+//     rc = dds_read(reader, samples, infos, MAX_SAMPLES, MAX_SAMPLES);
+// 
+//     /* Check if we read some data and it is valid. */
+//     if ((rc > 0) && (infos[0].valid_data))
+//     {
+//       /* Print Message. */
+//       msg = (LowCmd_*) samples[0];
+//       printf("=== [Subscriber] Received : ");
+//       fflush(stdout);
+//       break;
+//     }
+//     else
+//     {
+//       dds_sleepfor(DDS_MSECS(20));
+//     }
+//   }
+// ```
+// 
+// Enfin, on libère les ressources avant la terminaison du programme
+// 
+// ```cpp
+//   LowCmd__free(samples[0], DDS_FREE_ALL);
+//   dds_delete(participant);
+//   return EXIT_SUCCESS;
+// }
+// ```
 
 Malheureusement, cette solution s'est avérée infructueuse, à cause de (ce qui sera compris bien plus tard) un problème de numéro de domaine DDS.
 
