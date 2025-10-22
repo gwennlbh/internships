@@ -817,3 +817,10 @@ gz-system-plugin-path:
     date: '2025-10-22'
     value: https://gazebosim.org/api/sim/8/resources.html#:~:text=All%20paths%20on%20the%20GZ_SIM_SYSTEM_PLUGIN_PATH%20environment%20variable
 
+wireshark:
+  type: web
+  title: Protocols/rtps - Wireshark Wiki
+  url:
+    date: '2025-10-22'
+    value: https://wiki.wireshark.org/Protocols/rtps
+
