@@ -69,9 +69,9 @@ On a alors, pour toute suite $(c_t)_(t in NN) in cal(S)$ :
 
 $
 P(C = (c_t)_(t in NN))
-&= 
-  bb(P)(S_0 = s_0)bb(P)(A_0 = a_0 | S_0 = s_0) dot \
-  & product_(t=1)^oo  
+= \
+  bb(P)(S_0 = s_0)bb(P)(A_0 = a_0 | S_0 = s_0) 
+   product_(t=1)^oo  
     // bb(P)(S_t = s_t mid(|) cases(S_(t-1) = s_(t-1), A_(t-1) = a_(t-1))) 
     bb(P)(S_t = s_t mid(|) C_(t-1) = c_(t-1)) 
     bb(P)(A_t = a_t mid(|) S_t = s_t) \

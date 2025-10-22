@@ -1,6 +1,7 @@
 #let comment = content => text(fill: gray)[(Note: #content)]
 #let todo = content => text(fill: red)[(TODO: #content)]
 #let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
+#let dontbreak = content => block(breakable: false, content)
 
 
 #let cut-lines = (

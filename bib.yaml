@@ -779,3 +779,41 @@ unitree_mujoco:
     value: https://github.com/unitreerobotics/unitree_mujoco
   date: '2021-11-01'
 
+unitree_ros2:
+  type: repository
+  title: unitree_ros2
+  publisher: GitHub
+  author: Unitree Robotics
+  url:
+    date: '2025-10-22'
+    value: https://github.com/unitreerobotics/unitree_ros2
+  date: '2023-10-20'
+
+cyclonedds-helloworld:
+  type: web
+  title: HelloWorld source code — Eclipse Cyclone DDS, 0.11.0
+  url:
+    date: '2025-10-22'
+    value: https://cyclonedds.io/docs/cyclonedds/latest/getting_started/helloworld/helloworld_source_code.html
+
+sdf-plugin:
+  type: web
+  title: SDFormat Specification, world.plugin element
+  url:
+    date: '2025-10-22'
+    value: 'http://sdformat.org/spec?ver=1.12&elem=world#world_plugin'
+
+sdf-plugin-filename:
+  type: web
+  title: SDFormat Specification, world.plugin.filename element
+  url:
+    date: '2025-10-22'
+    value: 'http://sdformat.org/spec?ver=1.12&elem=world#plugin_filename'
+
+gz-system-plugin-path:
+  type: web
+  title: 'Gazebo Sim: Finding resources'
+  url:
+    date: '2025-10-22'
+    value: https://gazebosim.org/api/sim/8/resources.html#:~:text=All%20paths%20on%20the%20GZ_SIM_SYSTEM_PLUGIN_PATH%20environment%20variable
+

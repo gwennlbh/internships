@@ -102,6 +102,7 @@
     #stack(
       dir: ltr,
       spacing: 2em,
+      image("../gepetto.png", height: 10em),
       image("../laas.jpeg", height: 10em),
       image(
         "../enseeiht.png",
