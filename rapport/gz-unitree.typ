@@ -1,7 +1,7 @@
 #import "@preview/zebraw:0.5.5"
 #import "@preview/fletcher:0.5.8": diagram, node, edge
 #import "@preview/cetz:0.4.2"
-#import "./utils.typ": dontbreak
+#import "./utils.typ": dontbreak, todo
 #show figure: set block(spacing: 2em)
 #let zebraw = (..args) => zebraw.zebraw(lang: false, background-color: luma(255).opacify(0%), ..args)
 
@@ -92,7 +92,7 @@ namespace gz_unitree
         ~UnitreePlugin() override;
     public:
         void PreUpdate(const gz::sim::UpdateInfo &_info,
-                       gz::sim::EntityComponentManager &_ecm) override;
+                       gz::sim::EntityComponentManager &ecm) override;
     };
 }
 ```
@@ -236,19 +236,43 @@ Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il
 Pour appliquer la commande, on calcule la force effective que le moteur doit appliquer:
 
 #grid(
-  columns: (2fr, 3fr),
-  $
-    tau = tau_"ff" + K_p Delta q + K_d Delta d q
-  $,
+  columns: 2,
+  gutter: 1em,
+  [
+    #math.equation(block: true, numbering: none, $
+      tau = 
+      underbracket(K_p Delta q, "proportional") + 
+      underbracket(tau_"ff", "integrative") + 
+      underbracket(K_d Delta dot(q), "derivative")
+    $)
+
+    Avec 
+
+    / $tau$: pour _torque_, la force à donner au moteur
+    / $tau_"ff"$: le $tau$ "feed-forward", #todo[I de PID ou pas?]
+    / $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
+    / $Delta dot(q)$: écart de vitesse (instantanée) de rotation du moteur entre la consigne et l'état actuel
+    / $K_p$, $K_d$: coefficients modulant la prépondérance de $Delta dot(q)$ et $Delta dot(q)$
+  ],
+  text(size: 0.9em, 
   ```cpp
   // Avec i l'indice du moteur 
-  auto force = cmdbuf->tau_ff.at(i) +
-               cmdbuf->kp.at(i) * (cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()) +
-               cmdbuf->kd.at(i) * (cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq());
+  auto force = 
+    cmdbuf->tau_ff.at(i) +
+     cmdbuf->kp.at(i) * (
+       cmdbuf->q_target.at(i) - 
+       lowstate.motor_state().at(i).q()
+     ) +
+     cmdbuf->kd.at(i) * (
+       cmdbuf->dq_target.at(i) - 
+       lowstate.motor_state().at(i).dq()
+     );
 
   std::vector<double> torque = {force};
   joint.SetForce(ecm, torque);
-  ```,
+  ```),
+  "",
+  align(center)[Implémentation]
 )
 
 #architecture([Phase de réception des commandes], {

@@ -824,3 +824,17 @@ wireshark:
     date: '2025-10-22'
     value: https://wiki.wireshark.org/Protocols/rtps
 
+h1-rt-lowstate:
+  type: web
+  title: rt/lowState topic Descirption -  宇树科技 文档中心
+  url:
+    date: '2025-10-23'
+    value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-4
+
+h1-rt-lowcmd:
+  type: web
+  title: rt/lowCmd topic Description -  宇树科技 文档中心
+  url:
+    date: '2025-10-23'
+    value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-1
+
