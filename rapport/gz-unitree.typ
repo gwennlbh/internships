@@ -228,9 +228,12 @@ Cette initialisation est faite à l'initialisation du plugin par Gazebo, en la f
 
 En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePlugin` et ainsi passer des méthodes de la classe comme des simples fonctions 
 
-#figure(
+#grid(
+  columns: 2,
+  gutter: 1em,
+figure(
   caption: [Création d'un _subscriber_ à `rt/lowcmd` dans `UnitreePlugin::Configure`],
-```cpp
+  text(size: 0.8em, ```cpp
 auto subscriber = ChannelSubscriberPtr<LowCmd_>(
   new ChannelSubscriber<LowCmd_>("rt/lowcmd")
 );
@@ -242,17 +245,36 @@ auto handler = std::bind(
 )
 
 subscriber->InitChannel(handler, 1);
-```
+
+.
+```)
+),
+
+figure(
+  caption: [Création du _publisher_ pour `rt/lowstate` dans `UnitreePlugin::Configure`],
+text(size: 0.8em, ```cpp
+auto publisher = ChannelPublisherPtr<LowState_>(
+  new ChannelPublisher<LowState_>("rt/lowstate")
+);
+
+publisher->InitChannel();
+
+this->publisher_thread = CreateRecurrentThreadEx(
+  "low_state_writer", 
+  UT_CPU_ID_NONE, 
+  500, 
+  &UnitreePlugin::LowStateWriter, 
+  this
+);
+```)
+)
 )
 
-== Réception des commandes <receive-lowcmd>
+== `rt/lowcmd`
 
-Lorsqu'un message, publié par $cal(P)$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
+=== Calcul des nouvelles forces des moteurs
 
-
-Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
-
-Pour appliquer la commande, on calcule la force effective que le moteur doit appliquer:
+Pour appliquer une commande à un moteur, on calcule la force effective que le moteur doit appliquer:
 
 $
 tau = 
@@ -304,6 +326,14 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
   std::vector<double> torque = {force};
   joint.SetForce(ecm, torque);
 ```
+
+=== Réception des commandes <receive-lowcmd>
+
+Lorsqu'un message, publié par $cal(P)$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
+
+
+Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
+
 
 #architecture([Phase de réception des commandes], {
   edge(<policy>, (2, -1), (2, 0), "-->", label-pos: 10%)[(1A) publish]
@@ -383,14 +413,42 @@ On notera que (1B) s'exécute _parallèlement_ au reste des étapes: la boucle d
 // ]
 
 
-== Émission de l'état <send-lowstate>
+== `rt/lowstate`
+
+=== Construction d'un message `rt/lowstate`
+
+La documentation d'Unitree liste l'ensemble des champs disponibles dans un message `rt/lowstate`, c'est-à-dire l'ensemble des données que l'on doit récupérer afin de construire nos messages d'état @h1-rt-lowstate:
+
+#table(
+  columns: (1.5fr, 0.5fr, 3fr, 2fr),
+  stroke: none,
+  inset: 8pt,
+
+  "Champ", "Type", "Description", "Où récupérer la valeur",
+  table.hline(),
+
+  `version`, $NN^2$, [Tuple représentation la version d'Unitree], [],
+  `mode_pr`, ${0, 1}$,  [Défini sur 0 par défaut], [],
+  `mode_machine`, ${4, 6}$, [Défini sur 6 par défaut], [],
+  `tick`, $NN$, [Non documenté], [],
+  `wireless_remote`, ${0, 1}^(40)$, [Non documenté], [],
+  `reserve`, $NN^4$, [Non documenté], [],
+  `crc`, $NN$, [Somme de contrôle du message, utilisant _CRC32_. Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` et de `unitree_mujoco` #todo[Mettre en annexe ?]], [Copié-collé de l'implémentation d'Unitree],
+  `imu_state`, `IMUState`, [Valeurs des capteurs intertiels du robot],
+  `imu_state.quaternion`, $RR^4$, [Posture dans l'espace du robot, dans l'ordre $(w, x, y, z)$],
+  `imu_state.rpy`, $RR^3$, [Angle d'Euler du robot, dans l'ordre $(r, p, y)$],
+  `imu_state.gyroscope`, $$
+)
+
+
+=== Émission de l'état <send-lowstate>
 
 Avant de démarrer un nouveau pas de simulation, la méthode `::PreUpdate` vient mettre à jour l'état du robot simulé en modifiant le _State buffer_ interne au plugin (1A).
 
-Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $cal(P)$ (4), qui (on le suppose) poss-de une subscription sur `rt/lowstate`
+Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $cal(P)$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`
+
 
 #let transparent = luma(0).opacify(0%)
-
 
 #architecture([Phase d'envoi de l'état], {
   edge(<preupdate>, "d,d,r", <statebuf>, "->")[(1A)]
@@ -418,6 +476,7 @@ Similairement à la réception de commandes:
 ]) $cal(P)$ sera moins grande
 / Si `::PreUpdate` est moins fréquente: $cal(P)$ reçevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
 
+
 == Désynchronisations
 
 Dans un même appel de `::PreUpdate`, on effectue d'abord la mise à jour du _State buffer_, puis on lit dans le _Commands buffer_. 
@@ -426,13 +485,13 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
 
 - Celle de la simulation (en bleu), qui doit englober l'entièreté d'un cycle
 - Celle du `ChannelPublisher` (en rouge)
-- Celle de $cal(P)$ (en rose)
+- Celle de $cal(P)$ (en vert)
 
 #architecture([Cycle complet. Un cycle commence avec la flèche "update" partant de `::PreUpdate`], {
   let colored-edge = (color, label, ..args) => edge(stroke: color, label: text(fill: color, label), ..args)
   let sim-edge = (label, ..args) => colored-edge(blue, label, ..args)
   let publisher-edge = (label, ..args) => colored-edge(red, label, ..args)
-  let policy-edge = (label, ..args) => colored-edge(fuchsia, label, ..args)
+  let policy-edge = (label, ..args) => colored-edge(olive.darken(30%), label, ..args)
 
   // Simulation loop
   sim-edge("read",  <preupdate>, "d,d,r,r", <cmdbuf>, "<-@")
@@ -463,7 +522,7 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 == Amélioration des performances <perf>
 
-Les premiers essais montrent un 
+Les premiers essais affichent un 
 
 == Enregistrement de vidéos <video>
 
