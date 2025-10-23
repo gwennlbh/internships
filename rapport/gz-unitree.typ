@@ -197,8 +197,8 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
 
     node(name: <lowstate>, (1, 2), `::LowStateWriter`)
     node(name: <lowcmd>, (2, 2), `::CmdHandler`)
-    node(name: <statebuf>, (1, 3))[State buffer]
-    node(name: <cmdbuf>, (2, 3))[Commands buffer]
+    node(name: <statebuf>, (1, 3), subtitled("State buffer", `statebuf`))
+    node(name: <cmdbuf>, (2, 3), subtitled("Commands buffer", `cmdbuf`))
     group((<lowstate>, <lowcmd>, <statebuf>, <cmdbuf>))[Plugin internals]
 
     node(name: <policy>, (0, -1), $cal(P)$)
@@ -213,8 +213,8 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
   edge(<configure>, "u", <channelfactory>, "->", label-side: left, label-pos: 50%)[appelle]
   edge(<channelfactory>, "->", <publisher>)[initialise]
   edge(<channelfactory>, "->", <subscriber>)[initialise]
-  edge(<publisher>, "<->", <lowstate>)[associés]
-  edge(<subscriber>, "<->", <lowcmd>)[associés]
+  edge(<publisher>, "<->", <lowstate>)[`std::bind`]
+  edge(<subscriber>, "<->", <lowcmd>)[`std::bind`]
 })
 
 On commence par instancier un contrôleur dans le domaine DDS n°1, sur l'interface réseau `lo`#footnote[interface dite "loopback", qui est locale à l'ordinateur: ici, le simulateur et la politique de contrôle tournent sur la même machine, donc les messages DDS n'ont pas besoin de "sortir" de celle-ci]
@@ -226,6 +226,25 @@ On lui associe:
 
 Cette initialisation est faite à l'initialisation du plugin par Gazebo, en la faisant dans la méhode `::Configure` du plugin.
 
+En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePlugin` et ainsi passer des méthodes de la classe comme des simples fonctions 
+
+#figure(
+  caption: [Création d'un _subscriber_ à `rt/lowcmd` dans `UnitreePlugin::Configure`],
+```cpp
+auto subscriber = ChannelSubscriberPtr<LowCmd_>(
+  new ChannelSubscriber<LowCmd_>("rt/lowcmd")
+);
+
+auto handler = std::bind(
+  &UnitreePlugin::CmdHandler,
+  this,
+  std::placeholders::_1
+)
+
+subscriber->InitChannel(handler, 1);
+```
+)
+
 == Réception des commandes <receive-lowcmd>
 
 Lorsqu'un message, publié par $cal(P)$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
@@ -235,45 +254,56 @@ Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il
 
 Pour appliquer la commande, on calcule la force effective que le moteur doit appliquer:
 
-#grid(
-  columns: 2,
-  gutter: 1em,
-  [
-    #math.equation(block: true, numbering: none, $
-      tau = 
-      underbracket(K_p Delta q, "proportional") + 
-      underbracket(tau_"ff", "integrative") + 
-      underbracket(K_d Delta dot(q), "derivative")
-    $)
+$
+tau = 
+  underbracket(K_p Delta q, "proportional") + 
+  underbracket(tau_"ff", "integrative") + 
+  underbracket(K_d Delta dot(q), "derivative")
+$
 
-    Avec 
+Avec 
 
-    / $tau$: pour _torque_, la force à donner au moteur
-    / $tau_"ff"$: le $tau$ "feed-forward", #todo[I de PID ou pas?]
-    / $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
-    / $Delta dot(q)$: écart de vitesse (instantanée) de rotation du moteur entre la consigne et l'état actuel
-    / $K_p$, $K_d$: coefficients modulant la prépondérance de $Delta dot(q)$ et $Delta dot(q)$
-  ],
-  text(size: 0.9em, 
-  ```cpp
+/ $tau$: pour _torque_, la force à donner au moteur
+/ $tau_"ff"$: le $tau$ "feed-forward", #todo[I de PID ou pas?]
+/ $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
+/ $Delta dot(q)$: vitesse de changement de la consigne#footnote[
+
+#let ddt = derivee => $ ( op("d") #derivee ) / ( op("d") t ) $
+
+On a bien $ddt(Delta q) = Delta dot(q)$ par linéarité de la dérivation temporelle:
+
+$
+ddt(Delta q) = ddt(q_"new" - q_"old") = ddt(q_"new") - ddt(q_"old") = Delta ddt(q) = Delta dot(q)
+$
+
+]
+/ $K_p$: prépondérance de la partie proportionelle
+/ $K_p$: prépondérance de la partie dérivée
+
+Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la nouvelle consigne, en prenant en compte
+
+- L'erreur sur l'angle $Delta q$ (partie "proportional")
+- L'erreur sur la vitesse de changement de $Delta q$ (partie "derivative")
+
+Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs @control-pid.
+
+On contrôle la proportion de chaque terme dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
+
+En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$ proviennent de l'état du moteur, accessible dans `rt/lowstate` avec les champs `q` et `dq` du moteur en question @h1-rt-lowstate
+
+```cpp
   // Avec i l'indice du moteur 
-  auto force = 
-    cmdbuf->tau_ff.at(i) +
-     cmdbuf->kp.at(i) * (
-       cmdbuf->q_target.at(i) - 
-       lowstate.motor_state().at(i).q()
-     ) +
-     cmdbuf->kd.at(i) * (
-       cmdbuf->dq_target.at(i) - 
-       lowstate.motor_state().at(i).dq()
+  auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
+     cmdbuf->kp.at(i) * (                                           // K_p
+       cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()    // Delta q
+     ) + 
+     cmdbuf->kd.at(i) * (                                           // K_d
+       cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq()  // Delta q.
      );
 
   std::vector<double> torque = {force};
   joint.SetForce(ecm, torque);
-  ```),
-  "",
-  align(center)[Implémentation]
-)
+```
 
 #architecture([Phase de réception des commandes], {
   edge(<policy>, (2, -1), (2, 0), "-->", label-pos: 10%)[(1A) publish]

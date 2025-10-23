@@ -825,16 +825,43 @@ wireshark:
     value: https://wiki.wireshark.org/Protocols/rtps
 
 h1-rt-lowstate:
-  type: web
+  type: reference
   title: rt/lowState topic Descirption -  宇树科技 文档中心
   url:
     date: '2025-10-23'
     value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-4
 
 h1-rt-lowcmd:
-  type: web
+  type: reference
   title: rt/lowCmd topic Description -  宇树科技 文档中心
   url:
     date: '2025-10-23'
     value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-1
+
+control-pid:
+  type: anthos
+  title: PID Control
+  author: Araki, Mituhiko
+  date: 2009
+  editor:
+    name: Life Support Systems (EOLSS)
+    given-name: Encyclopedia
+    prefix: of
+  url:
+    value: http://www.eolss.net/ebooks/Sample%20Chapters/C18/E6-43-03-03.pdf
+    date: '2025-10-23'
+  note: 'Available online: http://www.eolss.net/ebooks/Sample Chapters/C18/E6-43-03-03.pdf
+    (accessed on December 2021)'
+  parent:
+    type: anthology
+    title: Control Systems, Robotics, and Automation
+    volume: 2
+
+cpp-bind:
+  type: reference
+  author: cplusplus.com
+  title: std::bind
+  url:
+    date: '2025-10-23'
+    value: https://cplusplus.com/reference/functional/bind/
 
