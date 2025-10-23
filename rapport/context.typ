@@ -1,7 +1,7 @@
 #import "utils.typ": todo, comment, refneeded
 #import "@preview/fletcher:0.5.8": node, edge
 #import "@preview/fletcher:0.5.8"
-#import "@preview/diagraph:0.3.2"
+#import "@preview/diagraph:0.3.6"
 
 #show figure: set block(spacing: 4em)
 #let diagram = (caption: none, ..args) => figure(caption: caption, fletcher.diagram(..args))
