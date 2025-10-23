@@ -5,6 +5,9 @@
 #show figure: set block(spacing: 2em)
 #let zebraw = (..args) => zebraw.zebraw(lang: false, background-color: luma(255).opacify(0%), ..args)
 
+// Utile: message marquant le début du dev de gz-unitree, 23 juin 2025
+// https://matrix.to/#/!MmlaUevGqfiZYSHREv:laas.fr/$omjzydhckQuIVkcNBw0LTYVT7Td1C9UeLqbIisJAnFg?via=laas.fr
+
 En se basant sur _unitree\_mujoco_, il a donc été possible de réaliser un bridge pour Gazebo.
 
 == Établissement du contact
@@ -230,6 +233,24 @@ Lorsqu'un message, publié par $cal(P)$ (1A) et contenant des ordres pour les mo
 
 Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
 
+Pour appliquer la commande, on calcule la force effective que le moteur doit appliquer:
+
+#grid(
+  columns: (2fr, 3fr),
+  $
+    tau = tau_"ff" + K_p Delta q + K_d Delta d q
+  $,
+  ```cpp
+  // Avec i l'indice du moteur 
+  auto force = cmdbuf->tau_ff.at(i) +
+               cmdbuf->kp.at(i) * (cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()) +
+               cmdbuf->kd.at(i) * (cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq());
+
+  std::vector<double> torque = {force};
+  joint.SetForce(ecm, torque);
+  ```,
+)
+
 #architecture([Phase de réception des commandes], {
   edge(<policy>, (2, -1), (2, 0), "-->", label-pos: 10%)[(1A) publish]
   edge(<policy>, (2, -1), (2, 0), stroke: none, label-pos: 60%, label-side: left)[(1A) subscription]
@@ -380,11 +401,17 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
 
 Ces désynchronisations pourraient expliquer les problèmes de performance recontrés (cf @perf)
 
-== Essai sur des politiques réelles
+== Vérification sur des politiques réelles
+
+Après avoir testé le bridge sur les politiques d'examples fournies par Unitree, il a été testé sur une politique en cours de développement au sein de l'équipe de robotique du LAAS, Gepetto.
+
+L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportement du robot est similaire à celui sur Isaac.
 
 == Amélioration des performances <perf>
 
-== Enregistrement de vidéos
+Les premiers essais montrent un 
+
+== Enregistrement de vidéos <video>
 
 === Contrôle programmatique de l'enregistrement
 
