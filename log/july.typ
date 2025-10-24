@@ -5,7 +5,7 @@
 == 7-11 Juillet
 
 - Capteur IMU rajouté
-- Ajout du tick (temps) de simulation 
+- Ajout du tick (temps) de simulation
 - Essais d'utilisation de gz-unitree avec les politiques RL#footnote[Reinforcement Learning] de Gepetto
 
 == 14-18 Juillet

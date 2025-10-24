@@ -2,7 +2,11 @@
 #show: arkheion.with(
   title: "Stage au LAAS",
   authors: (
-    (name: "Gwenn Le Bihan", email: "gwenn.lebihan@etu.inp-n7.fr", affiliation: "ENSEEIHT"),
+    (
+      name: "Gwenn Le Bihan",
+      email: "gwenn.lebihan@etu.inp-n7.fr",
+      affiliation: "ENSEEIHT",
+    ),
   ),
   date: datetime.today(),
   logo: "enseeiht.jpeg",
@@ -25,7 +29,7 @@
 = Journal de bord
 
 #for month in ("may", "june", "july", "august", "september", "november") {
-	include("log/" + month + ".typ")
+  include ("log/" + month + ".typ")
 }
 
 #bibliography("bib.yaml")

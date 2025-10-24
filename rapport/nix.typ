@@ -1,4 +1,4 @@
-#import "utils.typ": todo, comment, refneeded
+#import "utils.typ": comment, refneeded, todo
 
 == Reproductibilité
 
@@ -84,7 +84,8 @@ Une autre caractéristique que l'on trouve souvent dans la famille de langages f
   )
   ```,
 
-  [ *Python* (`if` et `else` sont des instructions) ], [ *OCaml* (`if` et `else` forment une expression) ],
+  [ *Python* (`if` et `else` sont des instructions) ],
+  [ *OCaml* (`if` et `else` forment une expression) ],
 )
 
 Afin de décrire les dépendances d'un programme, l'environnement de compilation, et les étapes pour le compiler (en somme, afin de définir le $f in "bin"^"src"$), Nix comprend un langage d'expressions @nix-language. Un fichier `.nix` définit une fonction, que Nix sait exécuter pour compiler le code source.
@@ -181,6 +182,6 @@ Ici, NixOS assure que toute modification de la configuration d'un système est _
 
 Ici encore, cela apporte un gain en terme de reproductibilité: l'état de configuration de l'OS sur lequel est déployé le programme du robot est, lui aussi, rendu reproductible.
 
-== Packaging Nix pour _gz-unitree_ 
+== Packaging Nix pour _gz-unitree_
 
 #todo[Faire cette partie]

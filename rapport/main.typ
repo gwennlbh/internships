@@ -8,11 +8,9 @@
 )
 
 #show terms: it => grid(
-    columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
-    ..it.children.map(item =>
-      (strong(item.term), item.description)
-    ).flatten()
-  )
+  columns: 2, row-gutter: 1em, column-gutter: (15pt, 0pt), align: (left, left),
+  ..it.children.map(item => (strong(item.term), item.description)).flatten()
+)
 
 
 #let imagefigure(path, caption, size: 100%) = figure(
@@ -67,16 +65,24 @@
 #show ref: it => {
   let eq = math.equation
   let el = it.element
-  let appendix_root = if el == none { 0 } else { counter("appendices").at(el.location()).at(0) }
+  let appendix_root = if el == none { 0 } else {
+    counter("appendices").at(el.location()).at(0)
+  }
   if el != none and el.func() == eq {
     // Override equation references.
     numbering(
       el.numbering,
-      ..counter(eq).at(el.location())
+      ..counter(eq).at(el.location()),
     )
   } else if el != none and appendix_root != 0 {
-    let letter = numbering(el.numbering, counter("appendices").at(el.location()).at(0))
-    let heading_path = numbering("1.1", ..counter(heading).at(el.location()).slice(1))
+    let letter = numbering(
+      el.numbering,
+      counter("appendices").at(el.location()).at(0),
+    )
+    let heading_path = numbering(
+      "1.1",
+      ..counter(heading).at(el.location()).slice(1),
+    )
     let path = letter + "." + heading_path
     if appendix_root == 1 {
       [preuve en #path]
@@ -117,7 +123,7 @@
 
 #pagebreak()
 
-= Remerciements 
+= Remerciements
 
 #outline()
 
@@ -125,7 +131,7 @@
 
 #include "context.typ"
 
-= Packaging reproductible avec Nix 
+= Packaging reproductible avec Nix
 
 
 #include "nix.typ"
