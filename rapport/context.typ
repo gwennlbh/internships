@@ -507,10 +507,10 @@ et
 
 $
   Q' := (s, a) |-> cases(
-    Q(s, a) dot 2 si a = 1 \
-    Q(s, a) dot 1/2 si a = 2 \
+    Q(s, a) dot 2 si a = 1,
+    Q(s, a) dot 1/2 si a = 2,
     Q(s, a) sinon
-  ) \
+  )
 $
 
 On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.
