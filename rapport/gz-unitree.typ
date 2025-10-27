@@ -183,7 +183,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
     edge-corner-radius: 6pt,
     {
       if show-legend {
-        node((2, 4.5), stroke: none, width: 15em, legend(
+        node((0, 5), stroke: none, width: 15em, legend(
           ("--", "Message DDS"),
           ("@->", "Désynchronisation"),
         ))
@@ -219,6 +219,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
         alignment: top + center,
       )
 
+
       node(
         name: <channelfactory>,
         enclose: ((1, 0), (2, 0)),
@@ -240,11 +241,13 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
       )[SDK d'Unitree]
 
 
+      node(name: <gzclock>, (1, 5), subtitled(`::TickHandler`, [topic Gazebo `/clock`]))
+      node(name: <gzimu>, (2, 5), subtitled(`::IMUHandler`, [topic Gazebo `/imu`]))
       node(name: <lowstate>, (1, 2), `::LowStateWriter`)
       node(name: <lowcmd>, (2, 2), `::CmdHandler`)
       node(name: <statebuf>, (1, 3), subtitled("State buffer", `statebuf`))
       node(name: <cmdbuf>, (2, 3), subtitled("Commands buffer", `cmdbuf`))
-      group((<lowstate>, <lowcmd>, <statebuf>, <cmdbuf>))[Plugin internals]
+      group((<lowstate>, <lowcmd>, <statebuf>, <cmdbuf>, <gzclock>, <gzimu>))[Plugin internals]
 
       node(name: <policy>, (0, -1), $cal(P)$)
 
@@ -268,6 +271,8 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
   edge(<channelfactory>, "->", <subscriber>)[initialise]
   edge(<publisher>, "<->", <lowstate>)[`std::bind`]
   edge(<subscriber>, "<->", <lowcmd>)[`std::bind`]
+  edge(<configure>, "d,d,d,r", <gzclock>, "->")[]
+  edge(<configure>, "d,d,d,r,r", <gzimu>, "->",  label-pos: 75%)[démarre]
 })
 
 On commence par instancier un contrôleur dans le domaine DDS n°1, sur l'interface réseau `lo`#footnote[interface dite "loopback", qui est locale à l'ordinateur: ici, le simulateur et la politique de contrôle tournent sur la même machine, donc les messages DDS n'ont pas besoin de "sortir" de celle-ci]
@@ -490,8 +495,8 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `version`,
   $NN^2$,
-  [Tuple représentant la version d'Unitree],
-  [Expérimentalement],
+  [_Non documenté_],
+  [_Laissé vide_],
 
   `mode_pr`, ${0, 1}$, [Défini sur 0 par défaut], [0],
 
@@ -499,12 +504,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `tick`,
   $NN quad ("ms")$,
-  [Non documenté, proablement le temps écoulé depuis le début de la simulation],
+  [_Non documenté_, proablement le temps écoulé depuis le début de la simulation],
   [Messages `gz::msgs::Clock` sur le topic Gazebo `/clock` ],
 
-  `wireless_remote`, ${0, 1}^(40)$, [Non documenté], [_Laissé vide_],
+  `wireless_remote`, ${0, 1}^(40)$, [_Non documenté_], [_Laissé vide_],
 
-  `reserve`, $NN^4$, [Non documenté], [_Laissé vide_],
+  `reserve`, $NN^4$, [_Non documenté_], [_Laissé vide_],
 
   `crc`,
   $NN$,
@@ -516,7 +521,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   `imu_state…`,
   "struct.",
   [Valeurs des capteurs intertiels du robot],
-  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu`],
+  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu` (nécéssite d'avoir un capteur IMU#footnote[Inertial Measurement Unit, appelée "Centrale intertielle" en français] sur le modèle],
 
   `  .quaternion`,
   $RR^4$,
@@ -530,17 +535,20 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `  .gyroscope`,
   $RR^3$,
-  todo[],
-  $"atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) )) \ "asin"(2 (w y - z x)) \ "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2))$,
+  [Gyroscope],
+  [
+    En utilisant les valeurs de `.orientation()`: \
+    $"atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) )) \ "asin"(2 (w y - z x)) \ "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2))$
+  ],
 
-  `  .accelerometer`, $RR^3$, [Accélération selon les 3 axes], `.angular_velocity()`,
+  `  .accelerometer`, $RR^3$, [Accéléromètre], `.angular_velocity()`,
 
   `motor_state…`,
   [$"struct."^(35)$],
   [Etat de chaque moteur],
   `gz::sim::Model(…)→joints`,
 
-  `  .mode`, ${0, 1}$, [$0$ pour "Brake" et $1$ pour "FOC" #todo[]], [0],
+  `  .mode`, ${0, 1}$, [$0$ pour "Brake" et $1$ pour "FOC#footnote[Field-Oriented Control]", deux modes de contrôle pour le moteur électrique], [0],
 
   `  .q`,
   $RR quad ("rad")$,
@@ -559,7 +567,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `  .tau_est`,
   $RR quad ("N" dot "m")$,
-  [Estimation de la torque #todo[]],
+  [Estimation de la torque exercée par le moteur],
   [_Laissé vide_],
 )
 
@@ -574,11 +582,14 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 #let transparent = luma(0).opacify(0%)
 
 #architecture([Phase d'envoi de l'état], {
-  edge(<preupdate>, "d,d,r", <statebuf>, "->")[(1A)]
+  // #todo[Fix wonky starting segment of arrow because of shift]
+  edge(<preupdate>, "d,d,r", <statebuf>, "->", shift: -5pt)[(1A)]
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
   edge(<publisher>, "->", (1, 0))[(3)]
   edge(<policy>, (1, -1), (1, 0), "<--", label-pos: 20%)[(4) subscription]
+  edge(<gzclock>, "->", <statebuf>, label-pos: 30%)[(1C)]
+  edge(<gzimu>, "u,l", <statebuf>, "->", shift: 5pt)[(1D)]
   edge(
     <policy>,
     (1, -1),
@@ -627,6 +638,8 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
     )
     let sim-edge = (label, ..args) => colored-edge(blue, label, ..args)
     let publisher-edge = (label, ..args) => colored-edge(red, label, ..args)
+    let imu-edge = (label, ..args) => colored-edge(fuchsia, label, ..args)
+    let clock-edge = (label, ..args) => colored-edge(orange, label, ..args)
     let policy-edge = (label, ..args) => colored-edge(
       olive.darken(30%),
       label,
@@ -673,6 +686,12 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
     policy-edge("", <channelfactory.east>, (2, 0), <subscriber>, "->")
     policy-edge("", <subscriber>, "-", <lowcmd>)
     policy-edge("update", <lowcmd>, "->", <cmdbuf>)
+
+    // imu loop
+    imu-edge("update", <gzimu>, (2, 4.5), (1, 4.5), <statebuf>, "@->", shift: 5pt)
+
+    // clock loop
+    clock-edge("update", <gzclock>, <statebuf>, "@->", shift: 5pt, label-pos: 25%)
   },
 )
 
