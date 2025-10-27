@@ -182,13 +182,6 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
     node-stroke: 0.5pt,
     edge-corner-radius: 6pt,
     {
-      if show-legend {
-        node((0, 5), stroke: none, width: 15em, legend(
-          ("--", "Message DDS"),
-          ("@->", "Désynchronisation"),
-        ))
-      }
-
       let group = (
         nodes,
         label,
@@ -197,7 +190,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
       ) => node(
         name: name,
         enclose: nodes,
-        snap: false,
+        snap: if name == none { false } else { 1 },
         inset: group-inset,
         stroke: group-color.lighten(75%) + 2pt,
         align(alignment, move(
@@ -214,6 +207,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
       node(name: <configure>, (0, 1), `::Configure`)
       node(name: <preupdate>, (0, 2), `::PreUpdate`)
       group(
+        name: <gz>,
         (<configure>, <preupdate>),
         `gz::sim::System`,
         alignment: top + center,
@@ -254,6 +248,15 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
       for e in edges.pos() {
         e
       }
+
+
+      if show-legend {
+        node((0, 5), stroke: none, width: 15em, fill: white, legend(
+          ("--", "Message DDS"),
+          ("..", "Message Gazebo"),
+          ("@->", "Désynchronisation"),
+        ))
+      }
     },
   ),
 ))
@@ -271,8 +274,8 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
   edge(<channelfactory>, "->", <subscriber>)[initialise]
   edge(<publisher>, "<->", <lowstate>)[`std::bind`]
   edge(<subscriber>, "<->", <lowcmd>)[`std::bind`]
-  edge(<configure>, "d,d,d,r", <gzclock>, "->")[]
-  edge(<configure>, "d,d,d,r,r", <gzimu>, "->",  label-pos: 75%)[démarre]
+  edge(<configure>, "d,d,d,r", <gzclock>, "->", label-pos: 85%)[démarre]
+  edge(<configure>, "d,d", (0, 3.75), "r,r", <gzimu>, "->", label-pos: 75%)[démarre]
 })
 
 On commence par instancier un contrôleur dans le domaine DDS n°1, sur l'interface réseau `lo`#footnote[interface dite "loopback", qui est locale à l'ordinateur: ici, le simulateur et la politique de contrôle tournent sur la même machine, donc les messages DDS n'ont pas besoin de "sortir" de celle-ci]
@@ -582,14 +585,15 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 #let transparent = luma(0).opacify(0%)
 
 #architecture([Phase d'envoi de l'état], {
-  // #todo[Fix wonky starting segment of arrow because of shift]
-  edge(<preupdate>, "d,d,r", <statebuf>, "->", shift: -5pt)[(1A)]
+  edge(<preupdate>, "d", <statebuf.west>, "->", label-pos: 70%)[(1A): Joints]
+  edge(<gz>, "d,d,d,d,d,r", <gzclock>, "@..>", label-pos: 30%)[(1D)]
+  edge(<gz>, "d,d,d,d,d,r,r", <gzimu>, "@..>", label-pos: 30%)[(1C)]
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
   edge(<publisher>, "->", (1, 0))[(3)]
-  edge(<policy>, (1, -1), (1, 0), "<--", label-pos: 20%)[(4) subscription]
-  edge(<gzclock>, "->", <statebuf>, label-pos: 30%)[(1C)]
-  edge(<gzimu>, "u,l", <statebuf>, "->", shift: 5pt)[(1D)]
+  edge(<policy>, (1, -1), (1, 0), "<--@", label-pos: 20%)[(4) subscription]
+  edge(<gzclock>, "@->", <statebuf>, label-pos: 30%, label-side: right)[(1C): Tick]
+  edge(<gzimu.west>, (1.5, 5), (1.5, 3), <statebuf.east>, "->", label-pos: 40%)[(2D): IMU]
   edge(
     <policy>,
     (1, -1),
@@ -638,10 +642,10 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
     )
     let sim-edge = (label, ..args) => colored-edge(blue, label, ..args)
     let publisher-edge = (label, ..args) => colored-edge(red, label, ..args)
-    let imu-edge = (label, ..args) => colored-edge(fuchsia, label, ..args)
+    let imu-edge = (label, ..args) => colored-edge(olive.darken(30%), label, ..args)
     let clock-edge = (label, ..args) => colored-edge(orange, label, ..args)
     let policy-edge = (label, ..args) => colored-edge(
-      olive.darken(30%),
+      fuchsia,
       label,
       ..args,
     )
@@ -688,10 +692,12 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
     policy-edge("update", <lowcmd>, "->", <cmdbuf>)
 
     // imu loop
-    imu-edge("update", <gzimu>, (2, 4.5), (1, 4.5), <statebuf>, "@->", shift: 5pt)
+    imu-edge("", <gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 45%)
+    imu-edge("update", <gzimu>, (1.5, 5), (1.5, 3), <statebuf>, "->", label-pos: 45%)
 
     // clock loop
-    clock-edge("update", <gzclock>, <statebuf>, "@->", shift: 5pt, label-pos: 25%)
+    clock-edge("", <gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 45%)
+    clock-edge("update", <gzclock>, <statebuf>, "->", label-pos: 25%, label-side: right)
   },
 )
 
