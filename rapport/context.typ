@@ -163,7 +163,7 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 
 
 
-#todo[== Entraînement par _curriculum_]
+// Si jamais ya le time: == Entraînement par _curriculum_
 
 == Évaluation de la performance d'une politique
 
@@ -241,8 +241,8 @@ $
   cal(C)_pi := setbuilder(
     (s_t, a_t)_(t in NN) " avec "
     cases(
-      & a_0 & = p(s_0),
-      forall t in NN quad & a_(t+1) & = p(s_t),
+      & a_0 & = pi(s_0),
+      forall t in NN quad & a_(t+1) & = pi(s_t),
       forall t in NN quad & s_(t+1) & = M(s_t, a_t)
     ),
     s_0 in S
@@ -285,7 +285,7 @@ Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions
 #let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(S))$
 
 $
-  eta(p, r) :=
+  eta(pi, r) :=
   underbracket(
     sum_((c_t)_(t in NN) in cal(S))
     underbracket(
@@ -302,7 +302,7 @@ $
 On peut également exprimer $eta(p, r)$ comme une espérance. Soit $C$ une variable aléatoire de $cal(S)$. On a (cf @proof-eta-esperance)
 
 $
-  eta(p, r) = exp(sum_(t=0)^oo gamma^t r(C_t))
+  eta(pi, r) = exp(sum_(t=0)^oo gamma^t r(C_t))
 $
 
 
@@ -365,10 +365,10 @@ Pour calculer $A_(pi, r)(s, a)$, on regarde l'espérance des récompenses cumul�
 $
   A_(pi, r)(s, a) :=
   underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) p op(in) cal(S) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(S) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
     Q(s, a)
   ) - underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) p op(in) cal(S) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(S) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
     V(s)
   )
 $
@@ -384,16 +384,16 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 
 === Lien entre $eta$ et $A$
 
-Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
+Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $pi$ en fonction de la valeur de $eta$ pour une autre politique $pi'$ @trpo-advantage-eta-link
 
 
 
 
 
 $
-  eta(p', r) & = eta(p, r) + policyexp(p') sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
+  eta(pi', r) & = eta(pi, r) + policyexp(pi') sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
              & #[Qui se simplifie en @trpo] \
-             & = eta(p, r) + sum
+             & = eta(pi, r) + sum
 $
 
 
@@ -482,9 +482,7 @@ En notant $Q_pi (s, dot) := a |-> Q_pi (s, a)$. On a donc ici "$cal(X) = A$" dan
 
 Ce maximum revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chacune de ses actions_.
 
-#comment[C'est ma théorie ça, faudrait etre sure que le papier ne donne pas d'explications]
-
-Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause de modifications se "compensant" #refneeded. Par exemple, avec
+Ceci permet d'éviter d'avoir deux politiques jugées similaires par $D_"KL"$ à cause de modifications se "compensant". Par exemple, avec
 
 #let si = $& quad "si"$
 #let sinon = $& quad "sinon"$
@@ -699,6 +697,7 @@ Les intérêts de Gazebo @gazebo sont multiples:
 
 - C'est un logiciel open-source _communautaire_, qui ne dépend pas du financement d'une grande entreprise
 - Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents @gazebo-physics-engines, à l'inverse de MuJoCo.
+- C'est un _simulateur système_, qui est capable de simuler la partie logicielle du robot en plus de la physique du son modèle 3D.
 
 Gazebo possède des plugins officiels pour:
 
