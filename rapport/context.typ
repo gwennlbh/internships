@@ -122,10 +122,13 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 / Coûts associés: deviennent les neurones des couches cachées
 / Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
 
+=== Difficultés liées à l'implémentation de la fonction coût
 
-=== Tendances à la "tricherie" des agents
+==== Tendances à la "tricherie" des agents
 
 Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement #refneeded: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
+
+Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste. 
 
 ==== Sous-spécification de la fonction coût
 
@@ -668,9 +671,9 @@ Bien évidemment, ce sont des programmes complexes avec des résolutions souvent
 
 On est donc dans un cas où il est très utile de
 
-Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
+Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions, on fait donc une émulation de la partie logicielle du robot), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 
-Cet ensemble s'appelle un _simulateur_. Quand le simulateur simule égalment la partie logicielle, on parle de _simulateur système_.
+Cet ensemble s'appelle un _simulateur système_.
 
 
 === Spécification de la tâche
