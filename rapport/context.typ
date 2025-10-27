@@ -55,8 +55,6 @@ En robotique, on a des correspondances claires pour ces quatres notions:
 
 === L'entraînement
 
-#todo[Expliquer exploration vs exploitation et $gamma$]
-
 Une fois que ce cadre est posé, il reste à savoir _comment_ l'on va trouver la fonction qui associe un état de l'environnement à une action.
 
 Une première approche naïve, mais suffisante dans certains cas, consiste à faire une recherche exhaustive et à stocker dans un simple tableau la meilleure action à faire en fonction d'un état de l'environnement:
@@ -88,7 +86,7 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #exhaustive_memory_table(
   filled: false,
-)[ Exemple d'agent à mémoire exhaustive pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
+)[ Mémoire exhaustive initiale pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible.
 
@@ -119,8 +117,21 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 
 / État actuel: devient la couche d'entrée
 / Meilleure action: devient la couche de sortie
-/ Coûts associés: deviennent les neurones des couches cachées
+/ Coûts associés: la fonction à optimiser par le réseau. Il peut s'agir d'une fonction qui permet au réseau de neurones d'approximer une autre fonction par supervision.
 / Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
+
+==== Mise à jour (_Q-learning_)
+
+Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
+
+$
+  (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
+$
+
+L'expression comporte deux hyperparamètres:
+
+/ Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
+/ Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
 
 === Difficultés liées à l'implémentation de la fonction coût
 
@@ -136,14 +147,7 @@ Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut d
 
 Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense (une fonction à maximiser au lieu de minimiser) "le nombre de trombones existant sur Terre", finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
 
-==== Bug dans l'implémentation de l'environnement
-
-
-Bien évidemment, pour l'agent, tant qu'un bug n'est pas explicitement découragé par sa prise en compte dans la fonction coût. Si une action est favorable à l'amélioration du score, l'agent la prendra.
-
-
 ==== La validation comme méthode de mitigation <why_multiple_simulators>
-#comment[ça se dit mitigation en français?]
 
 Comme ces bugs sont des comportements non voulus, il est très probables qu'ils ne soient pas exactement les mêmes d'implémentation à implémentation du même environnement.
 
@@ -159,26 +163,9 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 
 
 
-== Entraînement par _curriculum_
+#todo[== Entraînement par _curriculum_]
 
-== Mise à jour de la politique
-
-// #let section = content => pad(y: 1.5em, x: 3em, align(center, grid(align: horizon, columns: 3, gutter: 1em, line(length: 2em, stroke: 0.5pt), content, line(length: 2em, stroke: 0.5pt))))
-
-=== _Q-learning_
-
-Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
-
-$
-  (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
-$
-
-L'expression comporte deux hyperparamètres:
-
-/ Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
-/ Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
-
-=== Évaluation de la performance d'une politique
+== Évaluation de la performance d'une politique
 
 #let cL = $cal(L)$
 #let proba = $bb(P)$
@@ -196,7 +183,7 @@ On note dans le reste de cette section:
 / $Pi: S -> A$: une politique
 / $Pi^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
 / $R: S -> RR^+$: sa fonction de récompense // d'une politique $p$
-/ $Q_p: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_p (s_t, a_t)$ est la probabilité que $p$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
+/ $Q_pi: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_pi (s_t, a_t)$ est la probabilité que $pi$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
 / $Q$ et $Q^*$: $Q_Pi$ et $Q_(Pi^*)$, pour alléger les notations
 // $R$: $R_Pi$
 
@@ -209,7 +196,7 @@ $
 $
 
 
-==== Chemins d'états possibles $cal(C)$
+=== Chemins d'états possibles $cal(C)$
 
 
 
@@ -251,7 +238,7 @@ Un chemin se modélise aisément par une suite d'éléments de $S times A$. Ains
 
 
 $
-  cal(C)_p := setbuilder(
+  cal(C)_pi := setbuilder(
     (s_t, a_t)_(t in NN) " avec "
     cases(
       & a_0 & = p(s_0),
@@ -280,7 +267,7 @@ $
 
 On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
 
-On note aussi que $cal(C)$ (et donc $cal(C)_p$ aussi) est dénombrable, étant construit à partir de $(S times A)^NN$ et $S$, $A$ et $NN$ étant aussi dénombrables#footnote[
+On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant construit à partir de $(S times A)^NN$ et $S$, $A$ et $NN$ étant aussi dénombrables#footnote[
   On a $card cal(C) <= card((S times A)^NN) = card(S times A)^(card NN) = (card S card A)^(card NN) <= (aleph_0)^(card NN) = attach(aleph_0, tl: 2) = aleph_0$
 ]
 
@@ -289,9 +276,9 @@ On note aussi que $cal(C)$ (et donc $cal(C)_p$ aussi) est dénombrable, étant c
 ]
 #comment[pas sûre de cette phrase]
 
-==== Récompense attendue $eta$
+=== Récompense attendue $eta$
 
-$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $p$ avec fonction de récompense $r$.
+$eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $pi$ avec fonction de récompense $r$.
 
 Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
 
@@ -303,7 +290,7 @@ $
     sum_((c_t)_(t in NN) in cal(S))
     underbracket(
       rho_0(s_0)
-      product_(t=0)^oo Q_p (c_t), "probabilité du chemin"
+      product_(t=0)^oo Q_pi (c_t), "probabilité du chemin"
     )
     quad
     underbracket(sum_(t=0)^oo gamma^t r(c_t), "récompense associée"),
@@ -322,12 +309,12 @@ $
 
 
 
-==== Avantage $A$
+=== Avantage $A$
 
 
-// L'avantage $A_(p, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
+// L'avantage $A_(pi, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
 
-L'avantage $A_(p, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $p$, avec "préférable" au sens de $(r(S), >=)$)
+L'avantage $A_(pi, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $pi$, avec "préférable" au sens de $(r(S), >=)$)
 
 On peut visualiser ce calcul ainsi:
 
@@ -373,10 +360,10 @@ On peut visualiser ce calcul ainsi:
   node((5, -0.5))
 })
 
-Pour calculer $A_(p, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
+Pour calculer $A_(pi, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
 
 $
-  A_(p, r)(s, a) :=
+  A_(pi, r)(s, a) :=
   underbracket(
     exp_((s_t, a_t)_(t in NN) op(~) p op(in) cal(S) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
     Q(s, a)
@@ -395,7 +382,7 @@ On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'esp
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
 
-==== Lien entre $eta$ et $A$
+=== Lien entre $eta$ et $A$
 
 Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
 
@@ -404,13 +391,13 @@ Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour 
 
 
 $
-  eta(p', r) & = eta(p, r) + policyexp(p') sum_(t=0)^oo gamma^t A_(p, r)(c_t) \
+  eta(p', r) & = eta(p, r) + policyexp(p') sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
              & #[Qui se simplifie en @trpo] \
              & = eta(p, r) + sum
 $
 
 
-==== _Surrogate advantage_ $cL$
+=== _Surrogate advantage_ $cL$
 
 Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
 
@@ -446,11 +433,11 @@ Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(Pi, R)(s_(t+1
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
 
 $
-  cL_r (p', p) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_p (s_t, a_t)) / (Q_p' (s_t, a_t)) A_(p, r)(s_t, a_t)
+  cL_r (pi', pi) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) A_(pi, r)(s_t, a_t)
 $
 
 
-
+== Méthodes d'optimisation de politique
 
 === _Trust Region Policy Optimization_
 
@@ -489,7 +476,7 @@ $
 $
 
 
-En notant $Q_p (s, dot) := a |-> Q_p (s, a)$. On a donc ici "$cal(X) = A$" dans la définition de $D_"KL"$
+En notant $Q_pi (s, dot) := a |-> Q_pi (s, a)$. On a donc ici "$cal(X) = A$" dans la définition de $D_"KL"$
 
 ==== Pourquoi faire le maximum sur chaque $s in S$ ?
 
