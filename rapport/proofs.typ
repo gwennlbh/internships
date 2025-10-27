@@ -105,11 +105,11 @@ $
   &= eta(p, r) quad qed
 $
 
-== Simplification de l'expression de $L(s, a, cal(P), cal(P)', R)$ dans PPO-Clip <proof-ppo-clip-simplify>
+== Simplification de l'expression de $L(s, a, Pi, Pi', R)$ dans PPO-Clip <proof-ppo-clip-simplify>
 
 #let clip = $op("clip")$
 
-Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal(P)', R) (s, a)$, $q slash q' &:= Q_cal(P) (s, a) slash Q_cal(P)' (s, a)$ .
+Soit $(s, a) in S times A$, et $Pi'$ une politique. Posons $alpha &:= A_(Pi', R) (s, a)$, $q slash q' &:= Q_Pi (s, a) slash Q_Pi' (s, a)$ .
 
 #let why = explanation => $\ & quad quad #[car #explanation]$
 
@@ -128,7 +128,7 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
       [
 
         $
-          &L(s, a, cal(P), cal(P'), R) \
+          &L(s, a, Pi, Pi', R) \
           &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha) \
           &= min(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon)) alpha why(alpha > 0) \
         $
@@ -136,7 +136,7 @@ Soit $(s, a) in S times A$, et $cal(P)'$ une politique. Posons $alpha &:= A_(cal
       [
 
         $
-          &L(s, a, cal(P), cal(P'), R) \
+          &L(s, a, Pi, Pi', R) \
           &= min(q/q' alpha, quad clip(q/q', thick 1-epsilon, thick 1+epsilon) alpha) \
           &= max(q/q', quad clip(q/q', thick 1-epsilon, thick 1+epsilon)) alpha why(alpha < 0) \
         $

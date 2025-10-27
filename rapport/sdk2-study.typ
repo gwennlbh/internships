@@ -177,7 +177,7 @@ Unitree propose un bridge officiel pour utiliser son SDK avec Mujoco.
 Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simulateur pour lequel on l'écrit: il s'agit d'envoyer l'état du robot au simulateur, et de réagir quand le simulateur envoie des ordres de commandes.
 
 #figure(caption: "Fonctionnement usuel du SDK", diagram({
-  node((0, 0), $cal(P)$)
+  node((0, 0), $Pi$)
   node((1, 0), "SDK")
   node((2, 0), "Robot")
 
@@ -195,7 +195,7 @@ Un bridge se substitue au Robot physique, interceptant les ordres du SDK et les 
 
 
 #figure(caption: [Fonctionnement via _unitree\_mujoco_ du SDK], diagram({
-  node((0, 0), $cal(P)$)
+  node((0, 0), $Pi$)
   node((1, 0), "SDK")
   node((2, 0))[`unitree_mujoco`]
   node((3, 0), "Mujoco")
@@ -218,7 +218,7 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
 
 
 #figure(caption: [Fonctionnement via _gz-unitree_ du SDK], diagram({
-  node((0, 0), $cal(P)$)
+  node((0, 0), $Pi$)
   node((1, 0), "SDK")
   node((2, 0))[`gz-unitree`]
   node((3, 0), text(fill: blue)[Gazebo])

@@ -152,7 +152,7 @@ Le plugin consiste en trois parties distinctes:
 2. L'interaction avec les canaux DDS du SDK d'Unitree
 3. Les données et méthodes internes au plugin
 
-En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui interagit via les canaux DDS avec le robot (qu'il soit réel, ou simulé)
+En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit via les canaux DDS avec le robot (qu'il soit réel, ou simulé)
 
 #let legend = (
   ..descriptions,
@@ -243,7 +243,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $cal(P)$, qui
       node(name: <cmdbuf>, (2, 3), subtitled("Commands buffer", `cmdbuf`))
       group((<lowstate>, <lowcmd>, <statebuf>, <cmdbuf>, <gzclock>, <gzimu>))[Plugin internals]
 
-      node(name: <policy>, (0, -1), $cal(P)$)
+      node(name: <policy>, (0, -1), $Pi$)
 
       for e in edges.pos() {
         e
@@ -388,7 +388,7 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
 
 === Réception des commandes <receive-lowcmd>
 
-Lorsqu'un message, publié par $cal(P)$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
+Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
 
 
 Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
@@ -579,7 +579,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
 Avant de démarrer un nouveau pas de simulation, la méthode `::PreUpdate` vient mettre à jour l'état du robot simulé en modifiant le _State buffer_ interne au plugin (1A).
 
-Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $cal(P)$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`
+Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $Pi$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`
 
 
 #let transparent = luma(0).opacify(0%)
@@ -613,15 +613,15 @@ Ici, il y a en plus non pas deux, mais _trois_ boucles indépendantes qui sont e
 
 - La boucle de simulation de Gazebo (fréquence d'appel de `::PreUpdate`),
 - La boucle du `ChannelPublisher` (fréquence d'appel de `::LowStateWriter`), et
-- La boucle de réception de $cal(P)$ (à quelle fréquence $cal(P)$ est-elle capable de reçevoir des messages)
+- La boucle de réception de $Pi$ (à quelle fréquence $Pi$ est-elle capable de reçevoir des messages)
 
 
 Similairement à la réception de commandes:
 
 / Si `::PreUpdate` est plus fréquente: On perdra des états intermédiaires, la résolution temporelle de l'évolution de l'état du robot disponible pour (ou acceptable par#footnote[
-    En fonction de si `::LowStateWriter` est plus fréquente que $cal(P)$ (dans ce cas là, c'est ce qui est acceptable par $cal(P)$ qui est limitant) ou inversement (dans ce cas, c'est ce que la boucle du publisher met à disposition de $cal(P)$ qui est limitant)
-  ]) $cal(P)$ sera moins grande
-/ Si `::PreUpdate` est moins fréquente: $cal(P)$ reçevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
+    En fonction de si `::LowStateWriter` est plus fréquente que $Pi$ (dans ce cas là, c'est ce qui est acceptable par $Pi$ qui est limitant) ou inversement (dans ce cas, c'est ce que la boucle du publisher met à disposition de $Pi$ qui est limitant)
+  ]) $Pi$ sera moins grande
+/ Si `::PreUpdate` est moins fréquente: $Pi$ reçevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
 
 
 == Désynchronisations
@@ -632,7 +632,7 @@ Un cycle correspond donc à cinq boucles indépendantes, représentées ci-aprè
 
 / Bleu: Simulation, qui doit englober l'entièreté d'un cycle
 / Rouge: `ChannelPublisher` 
-/ Rose: Politique $cal(P)$ 
+/ Rose: Politique $Pi$ 
 / Vert: Mise à jour de l'IMU 
 / Orange: Mise à jour du tick de simulation 
 

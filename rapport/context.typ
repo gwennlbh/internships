@@ -190,12 +190,12 @@ On note dans le reste de cette section:
 / $S$: l'ensemble des états possibles de l'environnement
 / $rho_0: S -> [0, 1]$: la distribution de probabilité de l'état initial de l'environnement. Si l'on initialise l'environnement de manière uniformément aléatoire, $rho_0$ est une équiprobabilité#footnote[i.e. $card rho_0(S) = 1$]
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
-/ $cal(P): S -> A$: une politique
-/ $cal(P)^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
+/ $Pi: S -> A$: une politique
+/ $Pi^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
 / $R: S -> RR^+$: sa fonction de récompense // d'une politique $p$
 / $Q_p: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_p (s_t, a_t)$ est la probabilité que $p$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
-/ $Q$ et $Q^*$: $Q_cal(P)$ et $Q_(cal(P)^*)$, pour alléger les notations
-// $R$: $R_cal(P)$
+/ $Q$ et $Q^*$: $Q_Pi$ et $Q_(Pi^*)$, pour alléger les notations
+// $R$: $R_Pi$
 
 On suppose $A$ et $S$ dénombrables#footnote[En pratique, $bb(R)$ est discrétisé dans les simulateurs numérique, donc cette hypothèse ne pose pas de problèmes à l'application de la théorie au domaine de la robotique].
 
@@ -210,12 +210,12 @@ $
 
 
 
-$M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $cal(P)$ à jour à chaque tour de boucle) ou l'utiliser:
+$M$ et $Pi$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $Pi$ à jour à chaque tour de boucle) ou l'utiliser:
 
 #diagram(
   node((0, 0), $s_t$),
   edge(corner: right, label-pos: 2 / 8, label-side: left)[choix de l'action],
-  edge("->", corner: right, label-pos: 3 / 8, label-side: left)[$cal(P)$],
+  edge("->", corner: right, label-pos: 3 / 8, label-side: left)[$Pi$],
   node((1, -1))[$a_t$],
   edge("->", corner: right, label-pos: 5 / 8, label-side: left)[$M$],
   edge(corner: right, label-pos: 6 / 8, label-side: left)[simulation],
@@ -223,7 +223,7 @@ $M$ et $cal(P)$ forment en fait tout se qui se passe pendant un pas de temps, c'
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
 )
 
-Quand on "déroule" $cal(P)$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions:
+Quand on "déroule" $Pi$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions:
 
 #diagram(
   $
@@ -236,7 +236,7 @@ Pour tout pas de temps $t in NN$, on a:
 
 $
   cases(
-    a_t & = cal(P)(s_t),
+    a_t & = Pi(s_t),
     s_(t+1) & = M(s_t, a_t),
   )
 $
@@ -415,29 +415,29 @@ Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en m
   caption: [Boucle d'entraînement],
   node((0, 0))[$s_t$],
   edge("-"),
-  node(name: <policy>, (0, -1))[$cal(P)$],
+  node(name: <policy>, (0, -1))[$Pi$],
   edge("->", corner: right),
   node((1, -2))[$a_t$],
   edge("->", corner: right)[$M$],
   node(name: <final>, (2, 0))[$s_(t+1)$],
   edge(<final>, (0, 0), "-->", label-side: left)[itération],
-  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(center, [$Q_cal(P)(s_(t+1), argmax_(a in A) A_(cal(P), R)(s_(t+1), a)) <- A_(cal(P), R) (dots)$ \ Mise à jour]))
-  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$argmax_(a in A) A_(cal(P), R)(s_(t+1), a)$ \ mise à jour de $cal(P)$])
+  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(center, [$Q_Pi(s_(t+1), argmax_(a in A) A_(Pi, R)(s_(t+1), a)) <- A_(Pi, R) (dots)$ \ Mise à jour]))
+  // edge("d,d,l,l,l,u,u,u", <policy>, "->", label-pos: 37%, label-side: left, align(center)[$argmax_(a in A) A_(Pi, R)(s_(t+1), a)$ \ mise à jour de $Pi$])
   edge("d,l,l,l,u,u", <policy>, "->", label-pos: 33%, label-side: left, align(
     center,
   )[
-    //   mise à jour de $cal(P)$ \
-    $Q_cal(P)(s_(t+1), a_(t+1)^*) <- A_(cal(P), R)(s_(t+1), a_(t+1)^*)$
+    //   mise à jour de $Pi$ \
+    $Q_Pi(s_(t+1), a_(t+1)^*) <- A_(Pi, R)(s_(t+1), a_(t+1)^*)$
   ]),
 ) <policy-update-loop>
 
 Avec
 
 $
-  a_(t+1)^* & := argmax_(a in A) A_(cal(P), R)(s_(t+1), a) \
+  a_(t+1)^* & := argmax_(a in A) A_(Pi, R)(s_(t+1), a) \
 $
 
-Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(cal(P), R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(cal(P))$ @trpo
+Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(Pi, R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(Pi)$ @trpo
 
 
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
@@ -479,10 +479,10 @@ Avec $cal(X)$ l'espace des échantillons et $P, P'$ deux distributions de probab
 
 
 
-Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_cal(P)$ et $Q_cal(P)'$ pour $s in S$ fixé @trpo
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_Pi$ et $Q_Pi'$ pour $s in S$ fixé @trpo
 
 $
-  max_(s in S) D_"KL" (Q_cal(P)' (s, dot) || Q_cal(P) (s, dot)) < delta
+  max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) < delta
 $
 
 
@@ -519,7 +519,7 @@ On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification tr
 
 ==== Région de confiance
 
-Cette contrainte définit un ensemble réduit de $cal(P)'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
+Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
 
 #let ddot = [ #sym.dot #h(-1em / 16) #sym.dot ]
 
@@ -540,7 +540,7 @@ Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, po
 
 
 $
-  argmax_(cal(P)') & exp_((s, a) in cal(S)) L(s, a, cal(P), cal(P'), R) \
+  argmax_(Pi') & exp_((s, a) in cal(S)) L(s, a, Pi, Pi', R) \
             "s.c." & top
 $
 
@@ -549,7 +549,7 @@ $
 _PPO-Penalty_ soustrait une divergence K-L pondérée à l'avantage:
 
 $
-  L(s, a, cal(P), cal(P'), R) = (Q_cal(P) (s, a)) / (Q_cal(P') (s, a)) A_(cal(P), R) (s, a) - beta D_"KL" (cal(P) || cal(P'))
+  L(s, a, Pi, Pi', R) = (Q_Pi (s, a)) / (Q_Pi' (s, a)) A_(Pi, R) (s, a) - beta D_"KL" (Pi || Pi')
 $
 
 Avec $beta$ ajusté automatiquement pour être dans la même échelle que l'autre terme de la soustraction.
@@ -560,13 +560,13 @@ _PPO-Clip_ utilise une limitation du ratio de probabilités (en minimum et en ma
 
 
 $
-  L(s, a, cal(P), cal(P'), R) = min(
-    & (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)) A_(cal(P)', R)(s, a), quad \
+  L(s, a, Pi, Pi', R) = min(
+    & (Q_Pi' (s, a)) / (Q_Pi (s, a)) A_(Pi', R)(s, a), quad \
     &op("clip")(
-      (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
+      (Q_Pi' (s, a)) / (Q_Pi (s, a)),
       1 - epsilon,
       1 + epsilon
-    ) A_(cal(P)', R)(s, a)
+    ) A_(Pi', R)(s, a)
   )
 $
 
@@ -580,7 +580,7 @@ $
   )
 $
 
-La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(cal(P)', R) (s, a)$ peut être négatif. L'expression se simplifie en séparant les cas (cf @proof-ppo-clip-simplify)
+La complexité de l'expression, et la présence d'un $min$ au lieu de simplement un $op("clip")$ est dûe au fait que l'avantage $A_(Pi', R) (s, a)$ peut être négatif. L'expression se simplifie en séparant les cas (cf @proof-ppo-clip-simplify)
 
 #let named_point = (
   x,
@@ -606,43 +606,43 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 
 #dontbreak[
 
-  / Si l'avantage est positif: $a$ est un meilleur choix que $cal(P)(s)$.
+  / Si l'avantage est positif: $a$ est un meilleur choix que $Pi(s)$.
 
   #equation_and_diagram(
     $
-      L(s, a, cal(P), cal(P)', R) = min(
-        (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a)),
+      L(s, a, Pi, Pi', R) = min(
+        (Q_Pi' (s, a)) / (Q_Pi (s, a)),
         quad 1 + epsilon
-      ) A_(cal(P)', R)(s, a)
+      ) A_(Pi', R)(s, a)
     $,
     diagram(
       spacing: (2.7em, 2em),
-      node((-1, 0))[$cal(P)'$],
+      node((-1, 0))[$Pi'$],
       edge((-1, 0), "->", (3, 0), stroke: luma(150)),
       edge((-1, 0), "-|", (1, 0), extrude: (1, -1, 0)),
       named_point(1, 0, shape: "|")[$1+epsilon$],
-      named_point(0, 0)[$cal(P)$],
+      named_point(0, 0)[$Pi$],
       named_point(1.5, 0, color: red, side: left)[$times$],
       named_point(0.5, 0, color: olive, side: left)[$checkmark$],
     ),
   )
 
-  / Si l'avantage est négatif: choisir $a$ est pire que garder $cal(P)(s)$.
+  / Si l'avantage est négatif: choisir $a$ est pire que garder $Pi(s)$.
 
   #equation_and_diagram(
     $
-      L(s, a, cal(P), cal(P)', R) = max(
+      L(s, a, Pi, Pi', R) = max(
         1 - epsilon, quad
-        (Q_cal(P)' (s, a)) / (Q_cal(P) (s, a))
-      ) A_(cal(P)', R)(s, a)
+        (Q_Pi' (s, a)) / (Q_Pi (s, a))
+      ) A_(Pi', R)(s, a)
     $,
     diagram(
       spacing: (2.7em, 2em),
-      node((3, 0))[$cal(P)'$],
+      node((3, 0))[$Pi'$],
       edge((-1, 0), "<-", (3, 0), stroke: luma(150)),
       edge((1, 0), "|-", (3, 0), extrude: (1, -1, 0)),
       named_point(1, 0, shape: "|")[$1-epsilon$],
-      named_point(2, 0)[$cal(P)$],
+      named_point(2, 0)[$Pi$],
       named_point(0, 0, color: red, side: left)[$times$],
       named_point(1.5, 0, color: olive, side: left)[$checkmark$],
     ),
@@ -655,7 +655,7 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 // 1. Mise à jour de la politique:
 //
 // $
-// cal(P') = argmax_p 1/T sum_(t=1)^T L(s, a, cal(P), p, R)
+// Pi' = argmax_p 1/T sum_(t=1)^T L(s, a, Pi, p, R)
 // $
 
 
