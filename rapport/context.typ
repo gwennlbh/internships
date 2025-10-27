@@ -269,7 +269,7 @@ $
   setbuilder(
     cases(
       & c_0 & = (s_0, a_0),
-      forall t in NN quad & c_(t+1) & = M(c_t)
+      forall t in NN quad & c_(t+1) & = (M(c_t), a_t)
     ),
     (s_0, a) in S times A^NN
   )
@@ -670,7 +670,7 @@ On est donc dans un cas où il est très utile de
 
 Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 
-Cet ensemble s'appelle un _simulateur_.
+Cet ensemble s'appelle un _simulateur_. Quand le simulateur simule égalment la partie logicielle, on parle de _simulateur système_.
 
 
 === Spécification de la tâche
