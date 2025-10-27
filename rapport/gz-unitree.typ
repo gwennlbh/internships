@@ -697,7 +697,7 @@ Un cycle correspond donc à cinq boucles indépendantes, représentées ci-aprè
 
     // imu loop
     imu-edge("update", <gzimu>, (1.5, 5), (1.5, 3), <statebuf>, "->", label-pos: 45%)
-    for _ in range(3) { // XXX hack to increase thickness of dotted line
+    for _ in range(2) { // XXX hack to increase thickness of dotted line
       imu-edge("", <gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 45%)
     }
 
