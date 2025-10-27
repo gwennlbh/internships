@@ -644,15 +644,11 @@ Un cycle correspond donc à cinq boucles indépendantes, représentées ci-aprè
       label: text(fill: color, label),
       ..args,
     )
-    let sim-edge = (label, ..args) => colored-edge(blue, label, ..args)
-    let publisher-edge = (label, ..args) => colored-edge(red, label, ..args)
-    let imu-edge = (label, ..args) => colored-edge(olive.darken(30%), label, ..args)
-    let clock-edge = (label, ..args) => colored-edge(orange, label, ..args)
-    let policy-edge = (label, ..args) => colored-edge(
-      fuchsia,
-      label,
-      ..args,
-    )
+    let sim-edge = (..args) => colored-edge(blue, ..args)
+    let publisher-edge = (..args) => colored-edge(red, ..args)
+    let imu-edge = (..args) => colored-edge(olive.darken(30%), ..args)
+    let clock-edge = (..args) => colored-edge(orange, ..args)
+    let policy-edge = (..args) => colored-edge(fuchsia, ..args)
 
     // Simulation loop
     sim-edge("read", <preupdate>, "d,d,r,r", <cmdbuf>, "<-@")
