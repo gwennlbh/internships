@@ -528,6 +528,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   [Etat de chaque moteur],
   `gz::sim::Model(…)→joints`,
   `  .mode`, ${0, 1}$, [$0$ pour "Brake" et $1$ pour "FOC" #todo[]], [0],
+<<<<<<< Updated upstream
   `  .q`,
   $RR quad ("rad")$,
   [Angle en radians de rotation du moteur],
@@ -544,6 +545,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   $RR quad ("N" dot "m")$,
   [Estimation de la torque #todo[]],
   [_Laissé vide_],
+=======
+  `  .q`, $RR quad ("rad")$, [Angle de rotation du moteur], `.Position()`,
+  `  .dq`, $RR quad ("rad" dot "s"^(-1))$, [Angle de rotation du moteur], `.Velocity()`,
+  `  .ddq`, $RR quad ("rad" dot "s"^(-2))$, [Angle de rotation du moteur], [_Laissé vide_],
+  `  .tau_est`, $RR quad ("N" dot "m")$, [Estimation de la torque #todo[]], [_Laissé vide_],
+>>>>>>> Stashed changes
 )
 
 
