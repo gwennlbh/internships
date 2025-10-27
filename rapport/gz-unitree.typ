@@ -586,13 +586,15 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 
 #architecture([Phase d'envoi de l'état], {
   edge(<preupdate>, "d", <statebuf.west>, "->", label-pos: 70%)[(1A): Joints]
-  edge(<gz>, "d,d,d,d,d,r", <gzclock>, "@..>", label-pos: 30%)[(1D)]
-  edge(<gz>, "d,d,d,d,d,r,r", <gzimu>, "@..>", label-pos: 30%)[(1C)]
+  edge(<gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 25%)[(1D)]
+  edge(<gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 25%)[(1C)]
+  // edge(<gz>, "d,d,d,d,d,r", <gzclock>, "@..>", label-pos: 30%)[(1D)]
+  // edge(<gz>, "d,d,d,d,d,r,r", <gzimu>, "@..>", label-pos: 30%)[(1C)]
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
   edge(<publisher>, "->", (1, 0))[(3)]
   edge(<policy>, (1, -1), (1, 0), "<--@", label-pos: 20%)[(4) subscription]
-  edge(<gzclock>, "@->", <statebuf>, label-pos: 30%, label-side: right)[(1C): Tick]
+  edge(<gzclock>, "@->", <statebuf>, label-pos: 30%, label-side: right)[(2C): Tick]
   edge(<gzimu.west>, (1.5, 5), (1.5, 3), <statebuf.east>, "->", label-pos: 40%)[(2D): IMU]
   edge(
     <policy>,
@@ -626,11 +628,13 @@ Similairement à la réception de commandes:
 
 Dans un même appel de `::PreUpdate`, on effectue d'abord la mise à jour du _State buffer_, puis on lit dans le _Commands buffer_.
 
-Un cycle correspond donc à trois boucles indépendantes, représentées ci-après:
+Un cycle correspond donc à cinq boucles indépendantes, représentées ci-après:
 
-- Celle de la simulation (en bleu), qui doit englober l'entièreté d'un cycle
-- Celle du `ChannelPublisher` (en rouge)
-- Celle de $cal(P)$ (en vert)
+/ Bleu: Simulation, qui doit englober l'entièreté d'un cycle
+/ Rouge: `ChannelPublisher` 
+/ Rose: Politique $cal(P)$ 
+/ Vert: Mise à jour de l'IMU 
+/ Orange: Mise à jour du tick de simulation 
 
 #architecture(
   [Cycle complet. Un cycle commence avec la flèche "update" partant de `::PreUpdate`],
@@ -692,12 +696,16 @@ Un cycle correspond donc à trois boucles indépendantes, représentées ci-apr�
     policy-edge("update", <lowcmd>, "->", <cmdbuf>)
 
     // imu loop
-    imu-edge("", <gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 45%)
     imu-edge("update", <gzimu>, (1.5, 5), (1.5, 3), <statebuf>, "->", label-pos: 45%)
+    for _ in range(3) { // XXX hack to increase thickness of dotted line
+      imu-edge("", <gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 45%)
+    }
 
     // clock loop
-    clock-edge("", <gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 45%)
     clock-edge("update", <gzclock>, <statebuf>, "->", label-pos: 25%, label-side: right)
+    for _ in range(3) { // XXX hack to increase thickness of dotted line
+      clock-edge("", <gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 45%)
+    }
   },
 )
 
