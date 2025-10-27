@@ -531,7 +531,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 <<<<<<< Updated upstream
   `  .q`,
   $RR quad ("rad")$,
-  [Angle en radians de rotation du moteur],
+  [Angle de rotation du moteur],
   `.Position()`,
   `  .dq`,
   $RR quad ("rad" dot "s"^(-1))$,
