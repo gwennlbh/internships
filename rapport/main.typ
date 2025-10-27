@@ -95,7 +95,7 @@
 }
 
 #show: arkheion.with(
-  title: [_gz-unitree_: Reinforcement learning en robotique avec validation par moteurs de physique multiples pour le H1v2 d'Unitree],
+  title: [_gz-unitree_: Reinforcement learning en robotique avec validation par moteurs de physique multiples pour le robot H1v2 d'Unitree],
   headertitle: "gz-unitree",
   authors: (
     (

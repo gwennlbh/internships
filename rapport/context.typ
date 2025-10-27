@@ -44,12 +44,14 @@ La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, que
 
 Cette technique est particulièrement adaptée au problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
 
+En robotique, une approche similaire explore l'espace d'action (en général un courant à envoyer aux moteurs) de façon à optimiser le coût. 
+
 En robotique, on a des correspondances claires pour ces quatres notions:
 
 / Agent: Robot pour lequel on développe le programme de contrôle (appelée une _politique_)
-/ Actions: Envoi d'ordres aux moteurs // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécéssaire au microcontrolleurs sur le robot même]
+/ Actions: Envoi d'ordres aux moteurs, souvent le courant électrique à appliquer // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécéssaire au microcontrolleurs sur le robot même]
 / Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la multiplicité des implémentations est importante, voir @why_multiple_simulators
-/ Coût: un ensemble de contraintes ("ne pas endommager le robot"), dont la plupart dépendent de l'objectif de la politique
+/ Coût: un ensemble de contraintes ("ne pas endommager le robot") et d'évaluations spécifiques à la tâche à effectuer ("s'est déplacé de 5m en avant selon l'axe $x$).
 
 === L'entraînement
 
@@ -293,7 +295,7 @@ Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions
 #let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(S))$
 
 $
-  eta(p, r)
+  eta(p, r) :=
   underbracket(
     sum_((c_t)_(t in NN) in cal(S))
     underbracket(
@@ -392,7 +394,7 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 
 ==== Lien entre $eta$ et $A$
 
-Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p'$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
+Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $p$ en fonction de la valeur de $eta$ pour une autre politique $p'$ @trpo-advantage-eta-link
 
 
 
@@ -488,7 +490,7 @@ En notant $Q_p (s, dot) := a |-> Q_p (s, a)$. On a donc ici "$cal(X) = A$" dans 
 
 ==== Pourquoi faire le maximum sur chaque $s in S$ ?
 
-Ce maximum revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chaqune de ses actions_.
+Ce maximum revient à limiter non pas la simple distance entre les deux politiques, mais _limiter la modification de la politique sur chacune de ses actions_.
 
 #comment[C'est ma théorie ça, faudrait etre sure que le papier ne donne pas d'explications]
 
@@ -730,9 +732,9 @@ Bullet @bullet @pybullet
 
 L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
-== Le _H1v2_ d'Unitree
+== Le robot _H1v2_ d'Unitree
 
-Le _H1v2_ est un modèle de robot humanoïde créé par la société Unitree.
+_H1v2_ est un modèle de robot humanoïde créé par la société Unitree.
 
 Il possède plus de 26 degrés de liberté, dont
 
