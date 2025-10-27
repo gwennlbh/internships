@@ -235,13 +235,26 @@ En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui int
       )[SDK d'Unitree]
 
 
-      node(name: <gzclock>, (1, 5), subtitled(`::TickHandler`, [topic Gazebo `/clock`]))
-      node(name: <gzimu>, (2, 5), subtitled(`::IMUHandler`, [topic Gazebo `/imu`]))
+      node(name: <gzclock>, (1, 5), subtitled(
+        `::TickHandler`,
+        [topic Gazebo `/clock`],
+      ))
+      node(name: <gzimu>, (2, 5), subtitled(
+        `::IMUHandler`,
+        [topic Gazebo `/imu`],
+      ))
       node(name: <lowstate>, (1, 2), `::LowStateWriter`)
       node(name: <lowcmd>, (2, 2), `::CmdHandler`)
       node(name: <statebuf>, (1, 3), subtitled("State buffer", `statebuf`))
       node(name: <cmdbuf>, (2, 3), subtitled("Commands buffer", `cmdbuf`))
-      group((<lowstate>, <lowcmd>, <statebuf>, <cmdbuf>, <gzclock>, <gzimu>))[Plugin internals]
+      group((
+        <lowstate>,
+        <lowcmd>,
+        <statebuf>,
+        <cmdbuf>,
+        <gzclock>,
+        <gzimu>,
+      ))[Plugin internals]
 
       node(name: <policy>, (0, -1), $Pi$)
 
@@ -275,7 +288,15 @@ En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui int
   edge(<publisher>, "<->", <lowstate>)[`std::bind`]
   edge(<subscriber>, "<->", <lowcmd>)[`std::bind`]
   edge(<configure>, "d,d,d,r", <gzclock>, "->", label-pos: 85%)[démarre]
-  edge(<configure>, "d,d", (0, 3.75), "r,r", <gzimu>, "->", label-pos: 75%)[démarre]
+  edge(
+    <configure>,
+    "d,d",
+    (0, 3.75),
+    "r,r",
+    <gzimu>,
+    "->",
+    label-pos: 75%,
+  )[démarre]
 })
 
 On commence par instancier un contrôleur dans le domaine DDS n°1, sur l'interface réseau `lo`#footnote[interface dite "loopback", qui est locale à l'ordinateur: ici, le simulateur et la politique de contrôle tournent sur la même machine, donc les messages DDS n'ont pas besoin de "sortir" de celle-ci]
@@ -551,7 +572,10 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   [Etat de chaque moteur],
   `gz::sim::Model(…)→joints`,
 
-  `  .mode`, ${0, 1}$, [$0$ pour "Brake" et $1$ pour "FOC#footnote[Field-Oriented Control]", deux modes de contrôle pour le moteur électrique], [0],
+  `  .mode`,
+  ${0, 1}$,
+  [$0$ pour "Brake" et $1$ pour "FOC#footnote[Field-Oriented Control]", deux modes de contrôle pour le moteur électrique],
+  [0],
 
   `  .q`,
   $RR quad ("rad")$,
@@ -586,16 +610,44 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 
 #architecture([Phase d'envoi de l'état], {
   edge(<preupdate>, "d", <statebuf.west>, "->", label-pos: 70%)[(1A): Joints]
-  edge(<gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 25%)[(1D)]
-  edge(<gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 25%)[(1C)]
+  edge(
+    <gz.west>,
+    (-0.75, 1.5),
+    (-0.75, 6),
+    (2, 6),
+    <gzimu>,
+    "@..>",
+    label-pos: 25%,
+  )[(1D)]
+  edge(
+    <gz.east>,
+    (0.5, 1.5),
+    (0.5, 5),
+    <gzclock.west>,
+    "@..>",
+    label-pos: 25%,
+  )[(1C)]
   // edge(<gz>, "d,d,d,d,d,r", <gzclock>, "@..>", label-pos: 30%)[(1D)]
   // edge(<gz>, "d,d,d,d,d,r,r", <gzimu>, "@..>", label-pos: 30%)[(1C)]
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
   edge(<publisher>, "->", (1, 0))[(3)]
   edge(<policy>, (1, -1), (1, 0), "<--@", label-pos: 20%)[(4) subscription]
-  edge(<gzclock>, "@->", <statebuf>, label-pos: 30%, label-side: right)[(2C): Tick]
-  edge(<gzimu.west>, (1.5, 5), (1.5, 3), <statebuf.east>, "->", label-pos: 40%)[(2D): IMU]
+  edge(
+    <gzclock>,
+    "@->",
+    <statebuf>,
+    label-pos: 30%,
+    label-side: right,
+  )[(2C): Tick]
+  edge(
+    <gzimu.west>,
+    (1.5, 5),
+    (1.5, 3),
+    <statebuf.east>,
+    "->",
+    label-pos: 40%,
+  )[(2D): IMU]
   edge(
     <policy>,
     (1, -1),
@@ -631,10 +683,10 @@ Dans un même appel de `::PreUpdate`, on effectue d'abord la mise à jour du _St
 Un cycle correspond donc à cinq boucles indépendantes, représentées ci-après:
 
 / Bleu: Simulation, qui doit englober l'entièreté d'un cycle
-/ Rouge: `ChannelPublisher` 
-/ Rose: Politique $Pi$ 
-/ Vert: Mise à jour de l'IMU 
-/ Orange: Mise à jour du tick de simulation 
+/ Rouge: `ChannelPublisher`
+/ Rose: Politique $Pi$
+/ Vert: Mise à jour de l'IMU
+/ Orange: Mise à jour du tick de simulation
 
 #architecture(
   [Cycle complet. Un cycle commence avec la flèche "update" partant de `::PreUpdate`],
@@ -692,15 +744,49 @@ Un cycle correspond donc à cinq boucles indépendantes, représentées ci-aprè
     policy-edge("update", <lowcmd>, "->", <cmdbuf>)
 
     // imu loop
-    imu-edge("update", <gzimu>, (1.5, 5), (1.5, 3), <statebuf>, "->", label-pos: 45%)
-    for _ in range(2) { // XXX hack to increase thickness of dotted line
-      imu-edge("", <gz.west>, (-0.75, 1.5), (-0.75, 6), (2,6), <gzimu>, "@..>", label-pos: 45%)
+    imu-edge(
+      "update",
+      <gzimu>,
+      (1.5, 5),
+      (1.5, 3),
+      <statebuf>,
+      "->",
+      label-pos: 45%,
+    )
+    for _ in range(2) {
+      // XXX hack to increase thickness of dotted line
+      imu-edge(
+        "",
+        <gz.west>,
+        (-0.75, 1.5),
+        (-0.75, 6),
+        (2, 6),
+        <gzimu>,
+        "@..>",
+        label-pos: 45%,
+      )
     }
 
     // clock loop
-    clock-edge("update", <gzclock>, <statebuf>, "->", label-pos: 25%, label-side: right)
-    for _ in range(3) { // XXX hack to increase thickness of dotted line
-      clock-edge("", <gz.east>, (0.5, 1.5), (0.5, 5), <gzclock.west>, "@..>", label-pos: 45%)
+    clock-edge(
+      "update",
+      <gzclock>,
+      <statebuf>,
+      "->",
+      label-pos: 25%,
+      label-side: right,
+    )
+    for _ in range(3) {
+      // XXX hack to increase thickness of dotted line
+      clock-edge(
+        "",
+        <gz.east>,
+        (0.5, 1.5),
+        (0.5, 5),
+        <gzclock.west>,
+        "@..>",
+        label-pos: 45%,
+      )
     }
   },
 )

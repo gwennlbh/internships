@@ -44,7 +44,7 @@ La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, que
 
 Cette technique est particulièrement adaptée au problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
 
-En robotique, une approche similaire explore l'espace d'action (en général un courant à envoyer aux moteurs) de façon à optimiser le coût. 
+En robotique, une approche similaire explore l'espace d'action (en général un courant à envoyer aux moteurs) de façon à optimiser le coût.
 
 En robotique, on a des correspondances claires pour ces quatres notions:
 
@@ -139,7 +139,7 @@ L'expression comporte deux hyperparamètres:
 
 Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement #refneeded: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
-Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste. 
+Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste.
 
 ==== Sous-spécification de la fonction coût
 
@@ -529,7 +529,7 @@ Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, po
 
 $
   argmax_(Pi') & exp_((s, a) in cal(S)) L(s, a, Pi, Pi', R) \
-            "s.c." & top
+        "s.c." & top
 $
 
 ==== Avec pénalité _(PPO-Penalty)_
