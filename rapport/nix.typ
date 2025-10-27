@@ -38,7 +38,7 @@ Il existe donc depuis longtemps des langages de programmation dits _fonctionnels
 
 En robotique, pour donner des ordres au matériel, on intéragit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel.
 
-De fait, les langages employés sont communément C, C++ ou Python#footnote[Il arrive assez communément d'utiliser Python, un langage haut-niveau, mais c'est dans ce cas   à but de prototypage, et le code contrôlant les moteurs est écrit dans un langage bas niveau puis appelé par Python par FFI.] @programming-languages-robotics, des langages bien plus impératifs que fonctionnels @imperative-languages.
+De fait, les langages employés sont communément C, C++ ou Python#footnote[Il arrive assez communément d'utiliser Python, un langage haut-niveau, mais c'est dans ce cas   à but de prototypage. Le code contrôlant les moteurs est écrit dans un langage bas niveau, mais appelé par Python via FFI.] @programming-languages-robotics, des langages bien plus impératifs que fonctionnels @imperative-languages.
 
 L'idée de s'affranchir d'effets de bords pour rendre les programmes dans la recherche en robotique reproductibles est donc plus utopique que réaliste.
 

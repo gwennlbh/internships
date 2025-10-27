@@ -97,7 +97,7 @@
             "wm_class_instance": "neovide",
             "cmd": [
                 "neovide",
-                "/home/glebihan/internships/rapport/context.typ"
+                "/home/glebihan/internships/rapport/"
             ],
             "process_create_time": "jeu. oct. 16 08:51:09 2025",
             "window_state": {

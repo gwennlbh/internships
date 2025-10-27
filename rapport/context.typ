@@ -167,7 +167,7 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 
 === _Q-learning_
 
-Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology, est mis à jour avec cette valeur @maxq:
+Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
 
 $
   (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )

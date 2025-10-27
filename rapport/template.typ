@@ -14,7 +14,7 @@
   // Set the document's basic properties.
   set document(author: authors.map(a => a.name), title: title)
   set page(
-    margin: (left: 25mm, right: 25mm, top: 25mm, bottom: 30mm),
+    margin: (left: 20mm, right: 20mm, top: 25mm, bottom: 30mm),
     numbering: "1 ⁄ 1",
     header: text(
       fill: luma(30%),

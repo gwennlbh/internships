@@ -865,3 +865,20 @@ cpp-bind:
     date: '2025-10-23'
     value: https://cplusplus.com/reference/functional/bind/
 
+actionvalue:
+  type: book
+  title: 'Reinforcement Learning: An Introduction'
+  author:
+    - Sutton, R.S.
+    - Barto, A.G.
+  date: 1998
+  publisher: MIT Press
+  url:
+    value: https://books.google.fr/books?id=CAFR6IBF4xYC
+    date: '2025-10-27'
+  serial-number:
+    isbn: '9780262193986'
+  parent:
+    type: book
+    title: A Bradford book
+
