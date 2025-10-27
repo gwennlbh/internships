@@ -492,54 +492,71 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   $NN^2$,
   [Tuple représentant la version d'Unitree],
   [Expérimentalement],
+
   `mode_pr`, ${0, 1}$, [Défini sur 0 par défaut], [0],
+
   `mode_machine`, ${4, 6}$, [Défini sur 6 par défaut], [6],
+
   `tick`,
   $NN quad ("ms")$,
   [Non documenté, proablement le temps écoulé depuis le début de la simulation],
   [Messages `gz::msgs::Clock` sur le topic Gazebo `/clock` ],
+
   `wireless_remote`, ${0, 1}^(40)$, [Non documenté], [_Laissé vide_],
+
   `reserve`, $NN^4$, [Non documenté], [_Laissé vide_],
+
   `crc`,
   $NN$,
   [Somme de contrôle du message, utilisant _CRC32_. ],
   [Implémentation de CRC32 par Unitree #footnote[
       Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` et de `unitree_mujoco` #todo[Mettre en annexe ?] #refneeded
     ]],
+
   `imu_state…`,
   "struct.",
   [Valeurs des capteurs intertiels du robot],
   [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu`],
+
   `  .quaternion`,
   $RR^4$,
   [Posture dans l'espace du robot, dans l'ordre $(w, x, y, z)$],
   [$w$, $x$, $y$ et $z$ sur  `.orientation()`],
+
   `  .rpy`,
   $RR^3$,
   [Angle d'Euler du robot, dans l'ordre $(r, p, y)$],
   `.linear_acceleration()`,
+
   `  .gyroscope`,
   $RR^3$,
   todo[],
   $"atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) )) \ "asin"(2 (w y - z x)) \ "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2))$,
-  `  .accelerometer`, $RR^3$, todo[], `.angular_velocity()`,
+
+  `  .accelerometer`, $RR^3$, [Accélération selon les 3 axes], `.angular_velocity()`,
+
   `motor_state…`,
   [$"struct."^(35)$],
   [Etat de chaque moteur],
   `gz::sim::Model(…)→joints`,
+
   `  .mode`, ${0, 1}$, [$0$ pour "Brake" et $1$ pour "FOC" #todo[]], [0],
+
   `  .q`,
   $RR quad ("rad")$,
   [Angle de rotation du moteur],
   `.Position()`,
+
   `  .dq`,
   $RR quad ("rad" dot "s"^(-1))$,
   [Angle de rotation du moteur],
   `.Velocity()`,
+
   `  .ddq`,
   $RR quad ("rad" dot "s"^(-2))$,
   [Angle de rotation du moteur],
   [_Laissé vide_],
+
   `  .tau_est`,
   $RR quad ("N" dot "m")$,
   [Estimation de la torque #todo[]],
