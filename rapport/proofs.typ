@@ -40,9 +40,9 @@ $
   &= sum_(s in S) 0 = 0
 $
 
-== $eta(p, r)$ comme une espérance <proof-eta-esperance>
+== $eta(pi, r)$ comme une espérance <proof-eta-esperance>
 
-Soit $r$ une fonction récompense et $p$ une politique. Soit $C$ une variable aléatoire à valeurs dans $cal(S)$, dont la loi de probabilité suit celle de $p$.
+Soit $r$ une fonction récompense et $pi$ une politique. Soit $C$ une variable aléatoire à valeurs dans $cal(S)$, dont la loi de probabilité suit celle de $pi$.
 
 
 On a
@@ -81,7 +81,7 @@ On a
 
 $
   bb(P)(S_0 = s_0) &= rho_0(s_0) \
-  forall t in NN, quad bb(P)(A_t = a_t mid(|) S_t = s_t) &= Q_p (s_t, a_t) \
+  forall t in NN, quad bb(P)(A_t = a_t mid(|) S_t = s_t) &= Q_pi (s_t, a_t) \
   forall t in NN^*, quad
   bb(P)(S_t = s_t | C_(t-1) = c_(t-1)) &= bb(P)(M(C_(t-1)) = M(c_(t-1)) | C_(t-1) = c_(t-1)) \
   &= bb(P)(C_(t-1) = c_(t-1) | C_(t-1) = c_(t-1)) = 1
@@ -92,8 +92,8 @@ Donc on a
 
 $
   P(C = (c_t)_(t in NN))
-  &= rho_0(s_0) Q_p (s_0, a_0) product_(t=1)^oo Q_p (s_t, a_t) \
-  &= rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t)
+  &= rho_0(s_0) Q_pi (s_0, a_0) product_(t=1)^oo Q_pi (s_t, a_t) \
+  &= rho_0(s_0) product_(t=0)^oo Q_pi (s_t, a_t)
 $
 
 Et ainsi
@@ -101,8 +101,8 @@ Et ainsi
 $
   exp(sum_(t=0)^oo gamma^t r(C_t))
   &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) bb(P)(C = (c_t)_(t in NN)) \
-  &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) rho_0(s_0) product_(t=0)^oo Q_p (s_t, a_t) \
-  &= eta(p, r) quad qed
+  &= sum_((c_t)_(t in NN) in cal(S)) (sum_(t=0)^oo gamma^t r(c_t)) rho_0(s_0) product_(t=0)^oo Q_pi (s_t, a_t) \
+  &= eta(pi, r) quad qed
 $
 
 == Simplification de l'expression de $L(s, a, Pi, Pi', R)$ dans PPO-Clip <proof-ppo-clip-simplify>

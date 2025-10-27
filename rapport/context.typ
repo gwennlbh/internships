@@ -299,7 +299,7 @@ $
 $
 
 
-On peut également exprimer $eta(p, r)$ comme une espérance. Soit $C$ une variable aléatoire de $cal(S)$. On a (cf @proof-eta-esperance)
+On peut également exprimer $eta(pi, r)$ comme une espérance. Soit $C$ une variable aléatoire de $cal(S)$. On a (cf @proof-eta-esperance)
 
 $
   eta(pi, r) = exp(sum_(t=0)^oo gamma^t r(C_t))
@@ -392,8 +392,8 @@ Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour 
 
 $
   eta(pi', r) & = eta(pi, r) + policyexp(pi') sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
-             & #[Qui se simplifie en @trpo] \
-             & = eta(pi, r) + sum
+              & #[Qui se simplifie en @trpo] \
+              & = eta(pi, r) + sum
 $
 
 
