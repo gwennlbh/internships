@@ -896,3 +896,19 @@ gzprof:
     date: '2025-10-28'
     value: https://gazebosim.org/api/common/7/profiler.html
 
+just:
+  type: web
+  title: Introduction - Just Programmer's Manual
+  url:
+    date: '2025-10-28'
+    value: https://just.systems/man/en/
+
+gzu-ghcr:
+  type: repository
+  title: 'Package gz-unitree'
+  author: Gepetto
+  publisher: Github
+  url:
+    date: '2025-10-28'
+    value: https://github.com/Gepetto/gz-unitree/pkgs/container/gz-unitree
+

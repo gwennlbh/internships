@@ -882,4 +882,54 @@ Un workflow est un ensemble de commandes à exécuter dans un environnement virt
 
 === Une image de base avec Docker
 
+L'environnement d'éxécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque éxécution du workflow, dans laquelle tout les programmes nécéssaires sont déjà installés.
+
+Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), et Gazebo.
+
+```dockerfile
+FROM ubuntu:24.04
+
+RUN apt update
+RUN apt install -y curl just sudo
+# Python (via le gestionnaire de versions et dépendances UV)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Code source de gz-unitree
+COPY . .
+
+# Gazebo et outils de compilation
+RUN just setup
+
+# FFMpeg, XVFB
+RUN apt install -y git ffmpeg xvfb xterm
+
+
+# Compilation et installation de de gz-unitree
+RUN mkdir -p /usr/local/lib/gz-unitree/
+RUN just install
+```
+
+Un autre workflow, celui-là vivant dans le dépôt de gz-unitree, crée une image Docker depuis ce Dockerfile, qui est ensuite utilisable via `ghcr.io/Gepetto/gz-unitree` @gzu-ghcr.
+
 === Une pipeline Github Actions
+
+Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
+
+#zebraw(
+  highlight-lines: (6, 7),
+  ```yaml
+  ...
+
+  jobs:
+    test:
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/gepetto/gz-unitree:latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v5
+          ...
+  ```
+)
+
+==== Émuler un serveur graphique <simulate-x>
