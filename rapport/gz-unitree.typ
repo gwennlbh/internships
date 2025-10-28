@@ -816,18 +816,18 @@ Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (
     GZ_PROFILE_END();
     ```
 
-  ]
+  ],
 )
 
 // On peut créer plusieurs segments en parallèle quand le programme possède plusieurs threads:
-// 
+//
 // ```cpp
 // GZ_PROFILE_THREAD_NAME("Nom du thread");
 // ```
 
 #figure(
   caption: [Profiling d'une simulation avec _gz-unitree_],
-  image("./profiler-many-ticks.png")
+  image("./profiler-many-ticks.png"),
 )
 
 Chaque groupe de segment correspond à un cycle de simulation.
@@ -845,7 +845,7 @@ Prenons un cycle en particulier:
     [Tick+CRC \ #dur(2)],
     [Publish state \ #dur(3)],
     [Update cmd. \ #dur(4)]
-  )
+  ),
 )
 
 
@@ -857,7 +857,7 @@ Notons également que, même si ce cyle-là a duré 0.267 ms, la durée d'un cyc
 
 Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'envoi d'un message DDS:
 
-/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à 
+/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à
 / Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
 / Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
 
@@ -961,7 +961,7 @@ Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
         - name: Checkout repository
           uses: actions/checkout@v5
           ...
-  ```
+  ```,
 )
 
 Et lancer la simulation et l'enregistrement vidéo.
