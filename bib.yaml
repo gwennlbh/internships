@@ -889,3 +889,10 @@ rtf:
     date: '2025-10-28'
     value: https://ceti.pages.st.inf.tu-dresden.de/robotics/howtos/SimulationSpeed.html
 
+gzprof:
+  type: web
+  title: 'Gazebo Common: Profiler'
+  url:
+    date: '2025-10-28'
+    value: https://gazebosim.org/api/common/7/profiler.html
+

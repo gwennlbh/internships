@@ -803,8 +803,50 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'éxécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
 
+En utilisant le _profiler_ de Gazebo @gzprof, on peut capturer des intervalles de temps et les annoter, pour identifier ce qui ralenti les cycles de simulation:
 
+```cpp
+GZ_PROFILE_BEGIN("Label");
+...
+GZ_PROFILE_END();
+```
 
+Crée un segment nommé "Label" dans le diagramme du profiler.
+
+On peut créer plusieurs segments en parallèle quand le programme possède plusieurs threads:
+
+```cpp
+GZ_PROFILE_THREAD_NAME("Nom du thread");
+```
+
+On obtient ce diagramme après l'éxécution du programme
+
+#figure(
+  caption: [Profiling d'une simulation avec _gz-unitree_],
+  image("./profiler-many-ticks.png")
+)
+
+Chaque groupe de segment correspond à un cycle de simulation.
+
+Prenons un cycle en particulier:
+
+#let ms_to_fr = (amount, total) => amount / total * 1fr
+#let durations = (0.267, 0.051, 0.039, 0.142, 0.028) // total, state, tick+crc, pub state, cmd
+#figure(
+  caption: [Profiling d'un cycle de simulation],
+  table(
+    columns: durations.slice(1).map(x => ms_to_fr(x, durations.at(0))),
+    table.cell([`::PreUpdate` #durations.at(0) ms], colspan: 4),
+    [Update state],
+    [Compute tick and CRC],
+    [Publish state],
+    [Update cmd.]
+  )
+)
+
+Quelques mesures ont été tentées pour améliorer le RTF:
+
+/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à 
 
 
 == Enregistrement de vidéos <video>
