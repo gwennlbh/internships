@@ -803,23 +803,27 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'éxécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
 
-En utilisant le _profiler_ de Gazebo @gzprof, on peut capturer des intervalles de temps et les annoter, pour identifier ce qui ralenti les cycles de simulation:
+#grid(
+  columns: 2,
+  gutter: 2em,
+  [
+    En utilisant le _profiler_ de Gazebo @gzprof, on peut capturer des intervalles de temps et les annoter, pour identifier ce qui ralenti les cycles de simulation.
+  ],
+  [
+    ```cpp
+    GZ_PROFILE_BEGIN("Label");
+    ...
+    GZ_PROFILE_END();
+    ```
 
-```cpp
-GZ_PROFILE_BEGIN("Label");
-...
-GZ_PROFILE_END();
-```
+  ]
+)
 
-Crée un segment nommé "Label" dans le diagramme du profiler.
-
-On peut créer plusieurs segments en parallèle quand le programme possède plusieurs threads:
-
-```cpp
-GZ_PROFILE_THREAD_NAME("Nom du thread");
-```
-
-On obtient ce diagramme après l'éxécution du programme
+// On peut créer plusieurs segments en parallèle quand le programme possède plusieurs threads:
+// 
+// ```cpp
+// GZ_PROFILE_THREAD_NAME("Nom du thread");
+// ```
 
 #figure(
   caption: [Profiling d'une simulation avec _gz-unitree_],
@@ -844,10 +848,23 @@ Prenons un cycle en particulier:
   )
 )
 
-Quelques mesures ont été tentées pour améliorer le RTF:
+
+Plus de la moitié du temps de calcul du plugin provient de l'envoi de l'état du robot sur le canal DDS `rt/lowstate`.
+
+Notons également que, même si ce cyle-là a duré 0.267 ms, la durée d'un cycle est assez variable, certains atteignent 0.8 ms.
+
+#image("./profiler-two-ticks.png")
+
+Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'envoi d'un message DDS:
 
 / Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à 
+/ Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
+/ Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
 
+Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle: par exemple, la mise en cache de joints à l'initialisation du plugin, pour éviter de devoir appeler `model.JointByName` dans une _hot loop_#footnote[Boucle (`for` ou `while`) dont le corps est exécuté un très grand nombre de fois, et dont la rapidité est importante].
+
+
+Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécéssaires pour atteindre un RTF raisonnable.
 
 == Enregistrement de vidéos <video>
 
