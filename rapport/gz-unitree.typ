@@ -830,17 +830,17 @@ Chaque groupe de segment correspond à un cycle de simulation.
 
 Prenons un cycle en particulier:
 
-#let ms_to_fr = (amount, total) => amount / total * 1fr
 #let durations = (0.267, 0.051, 0.039, 0.142, 0.028) // total, state, tick+crc, pub state, cmd
+#let dur = idx => [#durations.at(idx) ms]
 #figure(
   caption: [Profiling d'un cycle de simulation],
   table(
-    columns: durations.slice(1).map(x => ms_to_fr(x, durations.at(0))),
-    table.cell([`::PreUpdate` #durations.at(0) ms], colspan: 4),
-    [Update state],
-    [Compute tick and CRC],
-    [Publish state],
-    [Update cmd.]
+    columns: durations.slice(1).map(x => x / durations.at(0) * 1fr),
+    table.cell([`::PreUpdate` #dur(0)], colspan: 4),
+    [Update state \ #dur(1)],
+    [Tick+CRC \ #dur(2)],
+    [Publish state \ #dur(3)],
+    [Update cmd. \ #dur(4)]
   )
 )
 
