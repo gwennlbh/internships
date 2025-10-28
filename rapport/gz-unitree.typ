@@ -866,11 +866,19 @@ Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'
 
 Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécéssaires pour atteindre un RTF raisonnable.
 
-== Enregistrement de vidéos <video>
+== Enregistrement automatique de vidéos <video>
 
-=== Contrôle programmatique de l'enregistrement
+Gazebo possède une fonctionnalité d'enregistrement vidéo, ce qui s'avère utile pour partager des résultats de simulation.
+
+Cependant, l'enregistrement vidéo n'est pas nativement contrôlable par du code. L'idée était en effet de faire automatiquement tourner une simulation à chaque changement de la politique RL, et d'obtenir la vidéo du résultat, pour en observer l'évolution.
+
+Il a donc fallu développer un autre plugin, héritant de `gz::gui::Plugin` cette fois-ci. Ce plugin écoute des messages sur un topic Gazebo, `/video`, et permet de démarrer et arrêter l'enregistrement, tout en indiquant le chemin vers le fichier mp4 de sortie.
 
 == Mise en CI/CD
+
+Une fois l'enregistrement vidéo rendu automatisable, si l'on veut mettre en place le lancement automatique à chaque commit du dépôt git de la politique (i.e. chaque changement de la politique), il faut crééer une description de _workflow_ (dans notre cas, un workflow _Github Actions_).
+
+Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'éxécution (par exemple, "à chaque commit sur la branche `main`").
 
 === Une image de base avec Docker
 
