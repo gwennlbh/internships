@@ -881,3 +881,11 @@ actionvalue:
     type: book
     title: A Bradford book
 
+rtf:
+  type: web
+  title: Simulation Speed in Gazebo
+  author: Centre for Tactile Internet with Human-in-the-Loop
+  url:
+    date: '2025-10-28'
+    value: https://ceti.pages.st.inf.tu-dresden.de/robotics/howtos/SimulationSpeed.html
+

@@ -801,7 +801,11 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 == Amélioration des performances <perf>
 
-Les premiers essais affichent un
+Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'éxécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
+
+
+
+
 
 == Enregistrement de vidéos <video>
 
