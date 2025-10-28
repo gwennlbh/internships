@@ -872,7 +872,38 @@ Gazebo possède une fonctionnalité d'enregistrement vidéo, ce qui s'avère uti
 
 Cependant, l'enregistrement vidéo n'est pas nativement contrôlable par du code. L'idée était en effet de faire automatiquement tourner une simulation à chaque changement de la politique RL, et d'obtenir la vidéo du résultat, pour en observer l'évolution.
 
-Il a donc fallu développer un autre plugin, héritant de `gz::gui::Plugin` cette fois-ci. Ce plugin écoute des messages sur un topic Gazebo, `/video`, et permet de démarrer et arrêter l'enregistrement, tout en indiquant le chemin vers le fichier mp4 de sortie.
+Il a donc fallu développer un autre plugin, héritant de `gz::gui::Plugin` cette fois-ci. Ce plugin écoute des messages sur des topics Gazebo, `/gui/record_video/...`, et permet de démarrer et arrêter l'enregistrement, tout en indiquant le chemin vers le fichier mp4 de sortie.
+
+Au final, un script complet permettant de démarrer une simulation et l'enregistrer en MP4 ressemble à ceci
+
+```bash
+# Envoyer un message Gazebo avec un argument de type String et une valeur de retour de type Booléen
+send_to_gz() {
+  gz service -s $1 --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --req "data: \"$2\""
+}
+
+# Lancement en arrière plan
+gz sim robot.sdf & sim_pid=$!
+# On attends que la simulation soit prête
+sleep 30
+
+# Lancement de l'enregistrement
+send_to_gz /gui/record_video/start mp4
+
+# Lancement de la politique RL
+uv run policy.py & policy_pid=$!
+# On décide de la durée maximale de la vidéo (si la politique ne s'arrête pas d'elle même)
+sleep 120
+kill $policy_pid
+
+# Arrêt de l'enregistrement
+send_to_gz /gui/record_video/stop file:///tmp/result.mp4
+
+# Arrêt du simulateur
+kill $sim_pid
+
+# La vidéo est disponible à /tmp/result.mp4
+```
 
 == Mise en CI/CD
 
@@ -916,6 +947,7 @@ Un autre workflow, celui-là vivant dans le dépôt de gz-unitree, crée une ima
 Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
 
 #zebraw(
+  numbering: false,
   highlight-lines: (6, 7),
   ```yaml
   ...
@@ -931,5 +963,17 @@ Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
           ...
   ```
 )
+
+Et lancer la simulation et l'enregistrement vidéo.
+
+Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifacts_ de Github Actions:
+
+```yaml
+       - name: Save video as artifact
+         uses: actions/upload-artifact@v4
+         with:
+           name: gz-unitree-video
+           path: /tmp/result.mp4
+```
 
 ==== Émuler un serveur graphique <simulate-x>
