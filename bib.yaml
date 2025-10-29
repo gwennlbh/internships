@@ -912,3 +912,13 @@ gzu-ghcr:
     date: '2025-10-28'
     value: https://github.com/Gepetto/gz-unitree/pkgs/container/gz-unitree
 
+cicd:
+  type: article
+  title: What is CI/CD? Continuous integration and continuous delivery explained
+  author: Sacolick, Isaac
+  date: 2021-06-01
+  publisher: InfoWorld
+  url:
+    date: '2025-10-29'
+    value: https://www.infoworld.com/article/2269266/what-is-cicd-continuous-integration-and-continuous-delivery-explained.html
+

@@ -907,9 +907,12 @@ kill $sim_pid
 
 == Mise en CI/CD
 
+
+On appelle CI/CD (pour _Continuous Integration / Continuous Delivery_) la pratique consistant à intégrer fréquemment des petits changements à un dépôt de code source commun, en lançant des tests régulièrement (partie "CI") et éventuellement déployer la base de code fréquemment (partie "CD") @cicd.
+
 Une fois l'enregistrement vidéo rendu automatisable, si l'on veut mettre en place le lancement automatique à chaque commit du dépôt git de la politique (i.e. chaque changement de la politique), il faut crééer une description de _workflow_ (dans notre cas, un workflow _Github Actions_).
 
-Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'éxécution (par exemple, "à chaque commit sur la branche `main`").
+Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'éxécution (par exemple, "à chaque commit sur la branche `main`"). C'est un des outils permettant de mettre en place la CI/CD.
 
 === Une image de base avec Docker
 
@@ -980,3 +983,27 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
 
 Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
 
+Mais Gazebo nécéssite un display server pour enregistrer une vidéo.
+
+Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
+
+==== Un environnement de développement contraignant
+
+#grid(
+  columns: 2,
+  gutter: 2em,
+  [
+Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé. 
+
+Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
+
+Ceci rend le développement assez fastidieux, surtout quand le workflow peut durer plusieurs minutes.
+  ],
+  figure(caption: [Commits liés au développement du workflow], 
+    box(
+      clip: true,
+      inset: (right: -20cm, bottom: -5cm),
+      image("./cicd-commits.png")
+    )
+  )
+)
