@@ -77,17 +77,17 @@
   } else if el != none and appendix_root != 0 {
     let letter = numbering(
       el.numbering,
-      counter("appendices").at(el.location()).at(0),
+      counter(heading).at(el.location()).at(0),
     )
     let heading_path = numbering(
       "1.1",
       ..counter(heading).at(el.location()).slice(1),
     )
-    let path = letter + "." + heading_path
-    if appendix_root == 1 {
+    let path = numbering(el.numbering, ..counter(heading).at(el.location()))
+    if appendix_root == 1 and letter == "A" {
       [preuve en #path]
     } else {
-      [Annexe #path]
+      [annexe #path]
     }
   } else {
     it
@@ -153,7 +153,9 @@
 
 #include "proofs.typ"
 
-== Implémentation de CRC32 <crc32core>
+= Implémentation de CRC32 <crc32core>
+
+Extraite du code source de _unitree\_mujoco_, sous license BSD-3-Clause @muj-crc
 
 ```cpp
 uint32_t crc32_core(uint32_t *ptr, uint32_t len)

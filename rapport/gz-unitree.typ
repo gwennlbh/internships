@@ -573,7 +573,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   $NN$,
   [Somme de contrôle du message, utilisant _CRC32_. ],
   [Implémentation de CRC32 par Unitree #footnote[
-      Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` @sdk2-crc et de `unitree_mujoco` @muj-crc, elle est également donnée en annexe, cf @crc32core ]],
+      Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` @sdk2-crc et de `unitree_mujoco` @muj-crc, elle est également donnée en @crc32core ]],
 
   `imu_state…`,
   "struct.",
