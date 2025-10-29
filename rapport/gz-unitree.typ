@@ -977,3 +977,6 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
 ```
 
 ==== Émuler un serveur graphique <simulate-x>
+
+Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
+
