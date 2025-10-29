@@ -930,3 +930,45 @@ gitmoji:
     date: '2025-10-29'
     value: https://gitmoji.dev/
 
+pffc:
+  type: article
+  title: Position–Force Control of a Lower-Limb Rehabilitation Robot Using a Force
+    Feed-Forward and Compensative Gravity Proportional Derivative Method
+  author:
+    - Gam, Le T. H.
+    - Quan, Dam Hai
+    - Ngoc, Pham Van Bach
+    - Quan, Bui Hong
+    - Thanh, Bui Trung
+  date: 2024
+  url:
+    value: https://www.mdpi.com/2079-9292/13/22/4494
+    date: '2025-10-29'
+  serial-number:
+    doi: 10.3390/electronics13224494
+    issn: 2079-9292
+  abstract: The design and control of lower-limb rehabilitation robots for patients
+    after a stroke has gained significant attention. This paper presents the dynamic
+    analysis and control of a 3-degrees-of-freedom lower-limb rehabilitation robot
+    using combined position–force control based on the force feed-forward and compensative
+    gravity proportional derivative methods. In the lower-limb rehabilitation robot,
+    the interaction force between the patient with the joints and links of the robot
+    is uncertain and nonlinear due to the disturbance effect of Coriolis force, centrifugal
+    force, gravitational force, and friction force. During recovery stages, the forces
+    exerted by the patient’s lower limbs are also considered disturbances. Therefore,
+    to meet the quality requirements in using the rehabilitation robot with different
+    recovery stages of patient training, combining position control and force control
+    is essential. In this paper, we proposed a combination of proportional–derivative
+    gravity compensation motion control and force feed-forward control to form an
+    advanced combined controller (position–force feed-forward control—PFFC) for a
+    3 DOF lower-limb functional rehabilitation robot. The forces can be sensed using
+    a 3-axis force sensor. In addition, the robot’s position parameters are also measured
+    by encoders. The control algorithm is implemented on the STM32F4 Discovery board.
+    A verified test of the proposed control method is shown in the experiments, showing
+    the good performance of the system.
+  parent:
+    type: periodical
+    title: Electronics
+    issue: 22
+    volume: 13
+

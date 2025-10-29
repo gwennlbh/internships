@@ -64,7 +64,7 @@ Voici une trace wireshark d'un échange usuel entre commandes (`rt/lowcmd`) et �
 #figure(
   caption: [Trace de paquets RTPS sur _Wireshark_],
   overlayed-img[
-    #diagram(spacing: (4.54pt, 2.58pt), {
+    #diagram(spacing: (4.54pt, 2.75pt), {
       node((0, 0))[]
       let annotations-x = 80
       let annotate = (y-start, y-end, label) => edge(
@@ -368,7 +368,7 @@ $
 Avec
 
 / $tau$: pour _torque_, la force à donner au moteur
-/ $tau_"ff"$: le $tau$ "feed-forward", #todo[I de PID ou pas?]
+/ $tau_"ff"$: le $tau$ "feed-forward", 
 / $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
 / $Delta dot(q)$: vitesse de changement de la consigne#footnote[
 
@@ -387,7 +387,7 @@ Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la
 - L'erreur sur l'angle $Delta q$ (partie "proportional")
 - L'erreur sur la vitesse de changement de $Delta q$ (partie "derivative")
 
-Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs @control-pid.
+Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs 
 
 On contrôle la proportion de chaque terme dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
 
