@@ -360,15 +360,16 @@ Pour appliquer une commande à un moteur, on calcule la force effective que le m
 
 $
   tau =
-  underbracket(K_p Delta q, "proportional") +
-  underbracket(tau_"ff", "integrative") +
-  underbracket(K_d Delta dot(q), "derivative")
+  underbracket(K_p Delta q, "propertionnelle") +
+  underbracket(tau_"ff", "") +
+  underbracket(K_d Delta dot(q), "dérivative")
 $
+
 
 Avec
 
-/ $tau$: pour _torque_, la force à donner au moteur
-/ $tau_"ff"$: le $tau$ "feed-forward", 
+/ $tau$: pour _torque_, le couple à donner au moteur
+/ $tau_"ff"$: le $tau$ "feed-forward", partie estimée qui constitue 
 / $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
 / $Delta dot(q)$: vitesse de changement de la consigne#footnote[
 
@@ -381,6 +382,8 @@ Avec
   ]
 / $K_p$: prépondérance de la partie proportionelle
 / $K_p$: prépondérance de la partie dérivée
+
+Les termes forment trois parties
 
 Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la nouvelle consigne, en prenant en compte
 
