@@ -995,3 +995,41 @@ gz-messages:
     date: '2025-10-29'
     value: https://gazebosim.org/api/transport/8/messages.html
 
+# crcpp:
+#   type: repository
+#   title: 'CRC++: Easy to use and fast C++ CRC library'
+#   author: Daniel Bahr
+#   publisher: Github
+#   date: 2025-07-21
+#   url:
+#     date: '2025-10-29'
+#     value: https://d-bahr.github.io/CRCpp/
+# 
+crcpp:
+  type: repository
+  title: CRCpp
+  publisher: GitHub
+  author: Daniel Bahr
+  url:
+    date: '2025-10-29'
+    value: https://github.com/d-bahr/CRCpp
+  date: '2016-05-01'
+
+sdk2-crc:
+  type: repository
+  title: unitree_sdk2/example/h1/low_level/motors.hpp at 211dad48a40fb79485ad3d34c0ec6f6b12b0d8a5
+  author: Unitree Robotics
+  publisher: Github
+  url:
+    date: '2025-10-29'
+    value: https://github.com/unitreerobotics/unitree_sdk2/blob/211dad48a40fb79485ad3d34c0ec6f6b12b0d8a5/example/h1/low_level/motors.hpp#L54-L75
+
+muj-crc:
+  type: repository
+  title: unitree_mujoco/example/cpp/stand_go2.cpp at 24b7a498f6bc032684a8c8af30876a84d53d03e4
+  author: Unitree Robotics
+  publisher: Github
+  url:
+    date: '2025-10-29'
+    value: https://github.com/unitreerobotics/unitree_mujoco/blob/24b7a498f6bc032684a8c8af30876a84d53d03e4/example/cpp/stand_go2.cpp#L54-L84
+

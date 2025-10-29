@@ -418,13 +418,13 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
 ```
 )
 
-Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte trop d'instabilité #refneeded
+Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement #refneeded
 
 // === Réception des commandes <receive-lowcmd>
 
 Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `ChannelSubscriber` appelle `::CmdHandler` (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
 
-On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ comme décrit précédemment:
+On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ @h1-rt-lowcmd comme décrit précédemment:
 
 #let greyedout = content => text(fill: luma(120), emph(content))
 #let undocumented = greyedout[Non documenté]
@@ -443,7 +443,7 @@ On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ comme
   // [], [], greyedout[Autres champs inutilisés],
   `crc`, $NN$, [Somme de contrôle CRC32, pourrait éventuellement servir à éviter de prendre en compte des messages corrompus],
   `motor_cmd`, $"struct."^(35)$, [Paramètres de commande pour chacun des 35 moteurs],
-  [`  ` `.q`, `.dq`, `.tau`, `.kp` et `.kd`], $RR$, [Respectivement $q$, $dot(q)$, $tau$, $K_p$ et $K_d$]
+  [`  ` `.q`, `.dq`, `.tau`, `.kp` et `.kd`], $RR$, [Respectivement $q$, $dot(q)$, $tau_"ff"$, $K_p$ et $K_d$]
 )
 
 
@@ -573,8 +573,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   $NN$,
   [Somme de contrôle du message, utilisant _CRC32_. ],
   [Implémentation de CRC32 par Unitree #footnote[
-      Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` et de `unitree_mujoco` #todo[Mettre en annexe ?] #refneeded
-    ]],
+      Une implémentation ad-hoc existe dans le code source de `unitree_sdk2` @sdk2-crc et de `unitree_mujoco` @muj-crc, elle est également donnée en annexe, cf @crc32core ]],
 
   `imu_state…`,
   "struct.",
@@ -635,9 +634,9 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
 === Émission de l'état <send-lowstate>
 
-Avant de démarrer un nouveau pas de simulation, la méthode `::PreUpdate` vient mettre à jour l'état du robot simulé en modifiant le _State buffer_ interne au plugin (1A).
+Avant de démarrer un nouveau pas de simulation, la méthode `::PreUpdate` vient mettre à jour l'état du robot simulé en modifiant le _State buffer_ interne au plugin (1A). Gazebo envoie également le nouveau tick de simulation (1C) et les valeurs du capteur IMU (1D) dans leurs topics respectifs.
 
-Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $Pi$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`
+Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $Pi$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`.
 
 
 #let transparent = luma(0).opacify(0%)
@@ -696,20 +695,29 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 
 Ici également, `LowStateWriter` s'exécute _en parallèle_ du code de `::PreUpdate`: En effet, la création du `ChannelPublisher` démarre une boucle qui vient éxécuter `LowStateWriter` périodiquement, dans un autre _thread_: on a donc aucune garantie de synchronisation entre les deux.
 
-Ici, il y a en plus non pas deux, mais _trois_ boucles indépendantes qui sont en jeux:
+Ici, il y a en plus non pas deux, mais _cinq_ boucles indépendantes qui sont en jeux:
 
 - La boucle de simulation de Gazebo (fréquence d'appel de `::PreUpdate`),
 - La boucle du `ChannelPublisher` (fréquence d'appel de `::LowStateWriter`), et
-- La boucle de réception de $Pi$ (à quelle fréquence $Pi$ est-elle capable de reçevoir des messages)
+- La boucle de réception de $Pi$ (fréquence de réception de messages pour $Pi$)
+- La boucle de mise à jour du tick (fréquence d'envoi de ticks de simulation par Gazebo)
+- La boucle de mise à jour de l'IMU (fréquence d'envoi des valeurs du capteur IMU par Gazebo)
 
 
-Similairement à la réception de commandes:
+Similairement à la réception de commandes, en comparant à la boucle de mise à jour de $Pi$:
 
 / Si `::PreUpdate` est plus fréquente: On perdra des états intermédiaires, la résolution temporelle de l'évolution de l'état du robot disponible pour (ou acceptable par#footnote[
     En fonction de si `::LowStateWriter` est plus fréquente que $Pi$ (dans ce cas là, c'est ce qui est acceptable par $Pi$ qui est limitant) ou inversement (dans ce cas, c'est ce que la boucle du publisher met à disposition de $Pi$ qui est limitant)
   ]) $Pi$ sera moins grande
 / Si `::PreUpdate` est moins fréquente: $Pi$ reçevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
 
+
+On a des effets similaires en comparant la fréquence de la boucle de mise à jour de l'IMU avec celle de la boucle de $Pi$:
+
+/ Si la boucle IMU est plus fréquente: Certaines valeurs du capteur ne seront pas prises en compte par la politique
+/ Si la boucle IMU est moins fréquente: $Pi$ recevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
+
+Pour la boucle du tick, cela a peut d'importance. En effet, $Pi$ ne dépend probablement pas du tick de simulation, ou si il en dépend, ce serait de manièr peu précise (ce serait plutôt pour savoir "depuis quand est-ce qu'on a lancé la politique", ce qui ne demande pas une précision à la milliseconde) #refneeded. On met quand même à jour le tick pour que nos messages `rt/lowstate` synthétiques se rapprochent le plus possible des vrais messages tels qu'envoyés par le robot physique.
 
 == Désynchronisations
 
@@ -896,7 +904,10 @@ Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'env
 / Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
 / Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
 
-Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle: par exemple, la mise en cache de joints à l'initialisation du plugin, pour éviter de devoir appeler `model.JointByName` dans une _hot loop_#footnote[Boucle (`for` ou `while`) dont le corps est exécuté un très grand nombre de fois, et dont la rapidité est importante].
+Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle: 
+
+/ Mise en cache de joints à l'initialisation du plugin: pour éviter de devoir appeler `model.JointByName` dans une _hot loop_#footnote[Boucle (`for` ou `while`) dont le corps est exécuté un très grand nombre de fois, et dont la rapidité est importante].
+/ Utilisation d'une implémentation de CRC32 plus rapide: tentative avec _CRC++_ @crcpp non achevée, à cause d'un _stack smashing_ pendant l'éxécution
 
 
 Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécéssaires pour atteindre un RTF raisonnable.
