@@ -1002,7 +1002,7 @@ Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnem
 
   ],
   figure(
-    caption: [Quelques commits liés au développement du workflow], 
+    caption: [Quelques commits liés au développement du workflow#footnote[Les émojis servent d'icônes pour différencier les types de commits, via le standard Gitmoji @gitmoji]], 
     trimmed-image("./cicd-commits.png", trim: (right: 65%))
   )
 )
