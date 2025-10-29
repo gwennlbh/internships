@@ -356,9 +356,7 @@ En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePl
   ),
 )
 
-== `rt/lowcmd`
-
-=== Calcul des nouvelles forces des moteurs
+== Calcul des nouveaux couples des moteurs
 
 Pour appliquer une commande à un moteur, on calcule la force effective que le moteur doit appliquer:
 
@@ -397,8 +395,14 @@ Cette prise en compte de la vitesse permet de lisser les changements appliqués 
 
 On contrôle la proportion de chaque terme dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
 
+
+
+== `rt/lowcmd` <receive-lowcmd>
+
 En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$ proviennent de l'état du moteur, accessible dans `rt/lowstate` avec les champs `q` et `dq` du moteur en question @h1-rt-lowstate
 
+#figure(
+  caption: [Implémentation de la mise à jour de $tau$],
 ```cpp
   // Avec i l'indice du moteur
   auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
@@ -412,12 +416,35 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
   std::vector<double> torque = {force};
   joint.SetForce(ecm, torque);
 ```
+)
 
-Cette équation se rapproche des modèles de type PDI (_proportional-derivative-integrative_), avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte trop d'instabilité #refneeded
+Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte trop d'instabilité #refneeded
 
-=== Réception des commandes <receive-lowcmd>
+// === Réception des commandes <receive-lowcmd>
 
-Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
+Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `ChannelSubscriber` appelle `::CmdHandler` (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
+
+On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ comme décrit précédemment:
+
+#let greyedout = content => text(fill: luma(120), emph(content))
+#let undocumented = greyedout[Non documenté]
+#table(
+  // columns: (1.5fr, 0.5fr, 3fr, 2fr),
+  columns: 3,
+  stroke: none,
+  inset: 6pt,
+
+  "Champ", "Type", "Description",
+  table.hline(),
+
+  // `mode_pr`, ${0, 1}$, undocumented,
+  // `mode_machine`, ${0, 1}$, undocumented,
+  // `reserve`, $NN^4$, undocumented,
+  // [], [], greyedout[Autres champs inutilisés],
+  `crc`, $NN$, [Somme de contrôle CRC32, pourrait éventuellement servir à éviter de prendre en compte des messages corrompus],
+  `motor_cmd`, $"struct."^(35)$, [Paramètres de commande pour chacun des 35 moteurs],
+  [`  ` `.q`, `.dq`, `.tau`, `.kp` et `.kd`], $RR$, [Respectivement $q$, $dot(q)$, $tau$, $K_p$ et $K_d$]
+)
 
 
 Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
@@ -508,25 +535,26 @@ On notera que (1B) s'exécute _parallèlement_ au reste des étapes: la boucle d
 
 == `rt/lowstate`
 
-#todo[Parler de IMUHandler et TickHandler !! (topics gz)]
-
 === Construction d'un message `rt/lowstate`
 
 La documentation d'Unitree liste l'ensemble des champs disponibles dans un message `rt/lowstate`, c'est-à-dire l'ensemble des données que l'on doit récupérer afin de construire nos messages d'état @h1-rt-lowstate:
 
+
+#let undocumented = text(fill: luma(120), emph("Non documenté"))
+#let empty = text(fill: luma(120), emph("Laissé vide"))
 #table(
   // columns: (1.5fr, 0.5fr, 3fr, 2fr),
   columns: 4,
   stroke: none,
-  inset: 8pt,
+  inset: 6pt,
 
   "Champ", "Type", "Description", "Où récupérer la valeur",
   table.hline(),
 
   `version`,
   $NN^2$,
-  [_Non documenté_],
-  [_Laissé vide_],
+  undocumented,
+  empty,
 
   `mode_pr`, ${0, 1}$, [Défini sur 0 par défaut], [0],
 
@@ -534,12 +562,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `tick`,
   $NN quad ("ms")$,
-  [_Non documenté_, proablement le temps écoulé depuis le début de la simulation],
+  [#undocumented, probablement le temps écoulé depuis le début de la simulation],
   [Messages `gz::msgs::Clock` sur le topic Gazebo `/clock` ],
 
-  `wireless_remote`, ${0, 1}^(40)$, [_Non documenté_], [_Laissé vide_],
+  `wireless_remote`, ${0, 1}^(40)$, undocumented, empty,
 
-  `reserve`, $NN^4$, [_Non documenté_], [_Laissé vide_],
+  `reserve`, $NN^4$, undocumented, empty,
 
   `crc`,
   $NN$,
@@ -596,12 +624,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   `  .ddq`,
   $RR quad ("rad" dot "s"^(-2))$,
   [Angle de rotation du moteur],
-  [_Laissé vide_],
+  empty,
 
   `  .tau_est`,
   $RR quad ("N" dot "m")$,
-  [Estimation de la torque exercée par le moteur],
-  [_Laissé vide_],
+  [Estimation du couple exercé par le moteur],
+  empty,
 )
 
 
@@ -637,8 +665,8 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
   // edge(<gz>, "d,d,d,d,d,r,r", <gzimu>, "@..>", label-pos: 30%)[(1C)]
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
-  edge(<publisher>, "->", (1, 0))[(3)]
-  edge(<policy>, (1, -1), (1, 0), "<--@", label-pos: 20%)[(4) subscription]
+  edge(<publisher>, (1, 0), <channelfactory.west>, "->")[(3)]
+  edge(<policy>, (0, 0), <channelfactory.west>, "<--@", label-pos: 20%)[(4) subscription]
   edge(
     <gzclock>,
     "@->",
@@ -656,11 +684,12 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
   )[(2D): IMU]
   edge(
     <policy>,
-    (1, -1),
-    (1, 0),
+    (0, 0),
+    <channelfactory.west>,
     stroke: none,
-    label-pos: 60%,
+    label-pos: 88%,
     label-side: left,
+    label-fill: white,
   )[(4) publish]
 })
 
