@@ -31,7 +31,7 @@
     let width-final-trimmed = none
     let height-final-trimmed = none
 
-    // Compute final size of trimmed image 
+    // Compute final size of trimmed image
     // by expanding along dimension that first hits the layout constraints
     if aspect-height-layout >= aspect-height-trimmed {
       // Expand width of image
@@ -45,18 +45,25 @@
 
     // Compute the hypothetical size of the image without trimming
     let width-final-untrimmed = width-final-trimmed / float(width-rel-trimmed)
-    let height-final-untrimmed = height-final-trimmed / float(height-rel-trimmed)
+    let height-final-untrimmed = (
+      height-final-trimmed / float(height-rel-trimmed)
+    )
 
     box(
-      clip: true, 
+      clip: true,
       inset: (
-          top: -(top * height-final-untrimmed), 
-          bottom: -(bottom * height-final-untrimmed),
-          left: -(left * width-final-untrimmed),
-          right: -(right * width-final-untrimmed)
-        ), 
+        top: -(top * height-final-untrimmed),
+        bottom: -(bottom * height-final-untrimmed),
+        left: -(left * width-final-untrimmed),
+        right: -(right * width-final-untrimmed),
+      ),
       // TODO: Handle explicit sizing according to a parameter (e.g. don't scale over DPI limits)
-      image(path, width: width-final-untrimmed, height: height-final-untrimmed, alt: alt)
+      image(
+        path,
+        width: width-final-untrimmed,
+        height: height-final-untrimmed,
+        alt: alt,
+      ),
     )
   })
 }

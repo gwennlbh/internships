@@ -391,7 +391,7 @@ Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la
 - L'erreur sur la vitesse de changement de $Delta q$ (partie "derivative")
 - Un couple dit de _feed-forward_, $tau_"ff"$, qui permet le maintient du robot à un état stable. On pourrait le déterminer en lançant une première simulation, avec pour objectif le maintient debout. Une fois la stabilité atteinte, on relève les couples des moteurs. Intuitivement, on peut voir $tau_"ff"$ comme un manière de s'affranchir de la partie "maintient debout" dans l'expression de la commande, similairement à la mise à zéro ("tarer") d'une balance.
 
-Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs 
+Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs
 
 On contrôle la proportion de chaque terme dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
 
@@ -403,19 +403,19 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
 
 #figure(
   caption: [Implémentation de la mise à jour de $tau$],
-```cpp
-  // Avec i l'indice du moteur
-  auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
-     cmdbuf->kp.at(i) * (                                           // K_p
-       cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()    // Delta q
-     ) +
-     cmdbuf->kd.at(i) * (                                           // K_d
-       cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq()  // Delta q.
-     );
+  ```cpp
+    // Avec i l'indice du moteur
+    auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
+       cmdbuf->kp.at(i) * (                                           // K_p
+         cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()    // Delta q
+       ) +
+       cmdbuf->kd.at(i) * (                                           // K_d
+         cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq()  // Delta q.
+       );
 
-  std::vector<double> torque = {force};
-  joint.SetForce(ecm, torque);
-```
+    std::vector<double> torque = {force};
+    joint.SetForce(ecm, torque);
+  ```,
 )
 
 Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement #refneeded
@@ -441,9 +441,15 @@ On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ @h1-r
   // `mode_machine`, ${0, 1}$, undocumented,
   // `reserve`, $NN^4$, undocumented,
   // [], [], greyedout[Autres champs inutilisés],
-  `crc`, $NN$, [Somme de contrôle CRC32, pourrait éventuellement servir à éviter de prendre en compte des messages corrompus],
-  `motor_cmd`, $"struct."^(35)$, [Paramètres de commande pour chacun des 35 moteurs],
-  [`  ` `.q`, `.dq`, `.tau`, `.kp` et `.kd`], $RR$, [Respectivement $q$, $dot(q)$, $tau_"ff"$, $K_p$ et $K_d$]
+  `crc`,
+  $NN$,
+  [Somme de contrôle CRC32, pourrait éventuellement servir à éviter de prendre en compte des messages corrompus],
+  `motor_cmd`,
+  $"struct."^(35)$,
+  [Paramètres de commande pour chacun des 35 moteurs],
+  [`  ` `.q`, `.dq`, `.tau`, `.kp` et `.kd`],
+  $RR$,
+  [Respectivement $q$, $dot(q)$, $tau_"ff"$, $K_p$ et $K_d$],
 )
 
 
@@ -451,9 +457,19 @@ Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il
 
 
 #architecture([Phase de réception des commandes], {
-  edge(<policy>, (2.25, -1), (2.25, 0), <channelfactory.east>, "-->", label-pos: 5%)[(1A) publish]
   edge(
-<policy>, (2.25, -1), (2.25, 0), <channelfactory.east>,
+    <policy>,
+    (2.25, -1),
+    (2.25, 0),
+    <channelfactory.east>,
+    "-->",
+    label-pos: 5%,
+  )[(1A) publish]
+  edge(
+    <policy>,
+    (2.25, -1),
+    (2.25, 0),
+    <channelfactory.east>,
     stroke: none,
     label-pos: 60%,
     label-side: left,
@@ -665,7 +681,13 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
   edge(<statebuf>, "@->", <lowstate>)[(1B)]
   edge(<lowstate>, "->", <publisher>)[(2)]
   edge(<publisher>, (1, 0), <channelfactory.west>, "->")[(3)]
-  edge(<policy>, (0, 0), <channelfactory.west>, "<--@", label-pos: 20%)[(4) subscription]
+  edge(
+    <policy>,
+    (0, 0),
+    <channelfactory.west>,
+    "<--@",
+    label-pos: 20%,
+  )[(4) subscription]
   edge(
     <gzclock>,
     "@->",
@@ -904,7 +926,7 @@ Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'env
 / Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
 / Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
 
-Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle: 
+Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle:
 
 / Mise en cache de joints à l'initialisation du plugin: pour éviter de devoir appeler `model.JointByName` dans une _hot loop_#footnote[Boucle (`for` ou `while`) dont le corps est exécuté un très grand nombre de fois, et dont la rapidité est importante].
 / Utilisation d'une implémentation de CRC32 plus rapide: tentative avec _CRC++_ @crcpp non achevée, à cause d'un _stack smashing_ pendant l'éxécution
@@ -1031,25 +1053,25 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
   gutter: 2em,
   [
 
-==== Un environnement de développement contraignant
-Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé. 
+    ==== Un environnement de développement contraignant
+    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé.
 
-Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
+    Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
 
-Ceci rend le développement assez fastidieux, surtout quand le workflow s'éxécute pendant des dizaines de minutes.
+    Ceci rend le développement assez fastidieux, surtout quand le workflow s'éxécute pendant des dizaines de minutes.
 
-==== Émuler un serveur graphique <simulate-x>
+    ==== Émuler un serveur graphique <simulate-x>
 
-Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
+    Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
 
-Mais Gazebo nécéssite un display server pour enregistrer une vidéo.
+    Mais Gazebo nécéssite un display server pour enregistrer une vidéo.
 
-Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
+    Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
 
   ],
   figure(
-    caption: [Quelques commits liés au développement du workflow#footnote[Les émojis servent d'icônes pour différencier les types de commits, via le standard Gitmoji @gitmoji]], 
-    trimmed-image("./cicd-commits.png", trim: (right: 65%))
-  )
+    caption: [Quelques commits liés au développement du workflow#footnote[Les émojis servent d'icônes pour différencier les types de commits, via le standard Gitmoji @gitmoji]],
+    trimmed-image("./cicd-commits.png", trim: (right: 65%)),
+  ),
 )
 
