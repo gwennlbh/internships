@@ -1,7 +1,7 @@
 #import "@preview/zebraw:0.5.5"
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 #import "@preview/cetz:0.4.2"
-#import "./utils.typ": dontbreak, refneeded, todo
+#import "./utils.typ": dontbreak, refneeded, todo, trimmed-image
 #show figure: set block(spacing: 2em)
 #let zebraw = (..args) => zebraw.zebraw(
   lang: false,
@@ -963,7 +963,7 @@ Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
       steps:
         - name: Checkout repository
           uses: actions/checkout@v5
-          ...
+        - ...
   ```,
 )
 
@@ -979,6 +979,19 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
            path: /tmp/result.mp4
 ```
 
+#v(2em)
+#grid(
+  columns: (5fr, 3fr),
+  gutter: 2em,
+  [
+
+==== Un environnement de développement contraignant
+Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé. 
+
+Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
+
+Ceci rend le développement assez fastidieux, surtout quand le workflow s'éxécute pendant des dizaines de minutes.
+
 ==== Émuler un serveur graphique <simulate-x>
 
 Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
@@ -987,23 +1000,10 @@ Mais Gazebo nécéssite un display server pour enregistrer une vidéo.
 
 Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
 
-==== Un environnement de développement contraignant
-
-#grid(
-  columns: 2,
-  gutter: 2em,
-  [
-Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé. 
-
-Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
-
-Ceci rend le développement assez fastidieux, surtout quand le workflow peut durer plusieurs minutes.
   ],
-  figure(caption: [Commits liés au développement du workflow], 
-    box(
-      clip: true,
-      inset: (right: -20cm, bottom: -5cm),
-      image("./cicd-commits.png")
-    )
+  figure(
+    caption: [Quelques commits liés au développement du workflow], 
+    trimmed-image("./cicd-commits.png", trim: (right: 65%))
   )
 )
+
