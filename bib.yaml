@@ -972,3 +972,26 @@ pffc:
     issue: 22
     volume: 13
 
+gz-topics:
+  type: reference
+  title: 'Gazebo Transport: Nodes and Topics'
+  publisher: Gazebo
+  url:
+    date: '2025-10-29'
+    value: https://gazebosim.org/api/transport/8/nodestopics.html
+
+protobuf:
+  type: reference
+  title: Protocol Buffers Documentation
+  url:
+    date: '2025-10-29'
+    value: https://protobuf.dev/
+
+gz-messages:
+  type: reference
+  title: 'Gazebo Transport: Messages'
+  publisher: Gazebo
+  url:
+    date: '2025-10-29'
+    value: https://gazebosim.org/api/transport/8/messages.html
+

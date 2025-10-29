@@ -148,9 +148,9 @@ Avec `filename` le chemin vers le plugin compilé, qui sera cherché dans les r�
 
 Le plugin consiste en trois parties distinctes:
 
-1. Le "branchement" dans les phases de Gazebo, par l'implémentation de méthodes de `gz::sim::System`
-2. L'interaction avec les canaux DDS du SDK d'Unitree
-3. Les données et méthodes internes au plugin
+- Le "branchement" dans les phases de simulation de Gazebo, par l'implémentation de méthodes de `gz::sim::System`
+- L'interaction avec les canaux DDS du SDK d'Unitree
+- Les données et méthodes internes au plugin
 
 En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit via les canaux DDS avec le robot (qu'il soit réel, ou simulé)
 
@@ -306,6 +306,10 @@ On lui associe:
 - Un _publisher_, chargé d'envoyer périodiquement des messages sur `rt/lowstate` en appellant la méthode `LowStateWriter`
 - Un _subscriber_, chargé d'appeller la méthode `CmdHandler` avec chaque message arrivant sur `rt/lowcmd`.
 
+On démarre aussi deux autres #emph[subscriber]s, qui sont eux chargés d'écouter des messages sur les topics Gazebo `/clock` et `/imu`, ce qui permet de récupérer le tick de simulation et les valeurs du capteur IMU#footnote[Inertial Measurement Unit, appelée "Centrale intertielle" en français], que l'on a préalablement fixé au modèle du robot en le déclarant au fichier SDF chargé par Gazebo. Le capteur IMU donne des informations importantes sur la position et la vitesse dans l'espace du robot.
+
+Les topics Gazebo sont un autre moyen de communcation inter-processus asynchrone par pub/sub, similaire à DDS @gz-topics. Gazebo utilise Protobuf @protobuf pour définir les types des messages @gz-messages, qui joue ici le même role qu'IDL dans DDS. Les topics Gazebo sont basés sur un réseau de noeuds décentralisé, chaque noeud pouvant publier et/ou recevoir des messages.
+
 Cette initialisation est faite à l'initialisation du plugin par Gazebo, en la faisant dans la méhode `::Configure` du plugin.
 
 En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePlugin` et ainsi passer des méthodes de la classe comme des simples fonctions
@@ -360,8 +364,8 @@ Pour appliquer une commande à un moteur, on calcule la force effective que le m
 
 $
   tau =
+  underbracket(tau_"ff", "stabilité") +
   underbracket(K_p Delta q, "propertionnelle") +
-  underbracket(tau_"ff", "") +
   underbracket(K_d Delta dot(q), "dérivative")
 $
 
@@ -369,7 +373,7 @@ $
 Avec
 
 / $tau$: pour _torque_, le couple à donner au moteur
-/ $tau_"ff"$: le $tau$ "feed-forward", partie estimée qui constitue 
+/ $tau_"ff"$: le $tau$ "feed-forward". Particulièrement utile pour les robots humanoïdes qui doivent rester debout. Dans ces cas, on parle parfois de _gravity compensation part_ @pffc
 / $Delta q$: écart d'angle de rotation du moteur entre la consigne et l'état actuel
 / $Delta dot(q)$: vitesse de changement de la consigne#footnote[
 
@@ -383,12 +387,11 @@ Avec
 / $K_p$: prépondérance de la partie proportionelle
 / $K_p$: prépondérance de la partie dérivée
 
-Les termes forment trois parties
-
 Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la nouvelle consigne, en prenant en compte
 
 - L'erreur sur l'angle $Delta q$ (partie "proportional")
 - L'erreur sur la vitesse de changement de $Delta q$ (partie "derivative")
+- Un couple dit de _feed-forward_, $tau_"ff"$, qui permet le maintient du robot à un état stable. On pourrait le déterminer en lançant une première simulation, avec pour objectif le maintient debout. Une fois la stabilité atteinte, on relève les couples des moteurs. Intuitivement, on peut voir $tau_"ff"$ comme un manière de s'affranchir de la partie "maintient debout" dans l'expression de la commande, similairement à la mise à zéro ("tarer") d'une balance.
 
 Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs 
 
@@ -410,6 +413,8 @@ En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$
   joint.SetForce(ecm, torque);
 ```
 
+Cette équation se rapproche des modèles de type PDI (_proportional-derivative-integrative_), avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte trop d'instabilité #refneeded
+
 === Réception des commandes <receive-lowcmd>
 
 Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `::CmdHandler` est appelé (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
@@ -419,17 +424,15 @@ Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il
 
 
 #architecture([Phase de réception des commandes], {
-  edge(<policy>, (2, -1), (2, 0), "-->", label-pos: 10%)[(1A) publish]
+  edge(<policy>, (2.25, -1), (2.25, 0), <channelfactory.east>, "-->", label-pos: 5%)[(1A) publish]
   edge(
-    <policy>,
-    (2, -1),
-    (2, 0),
+<policy>, (2.25, -1), (2.25, 0), <channelfactory.east>,
     stroke: none,
     label-pos: 60%,
     label-side: left,
   )[(1A) subscription]
-  edge((2, 0), <subscriber>, "->")[(2)]
-  edge(<subscriber>, "->", <lowcmd>)[(3)]
+  edge(<channelfactory.east>, (2, 0), <subscriber>, "->", label-pos: 80%)[(2)]
+  edge(<subscriber>, "->", <lowcmd>, label-side: right)[(3)]
   edge(<lowcmd>, "->", <cmdbuf>)[(4)]
   // edge(<lowcmd.east>, "r,d,d,l,l,l,l,l,l,u,u,u", <preupdate>, "->", label-side: left)[(5)]
   edge(<preupdate>, "d,d,r,r", <cmdbuf>, "<-@")[(1B)]
@@ -548,7 +551,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   `imu_state…`,
   "struct.",
   [Valeurs des capteurs intertiels du robot],
-  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu` (nécéssite d'avoir un capteur IMU#footnote[Inertial Measurement Unit, appelée "Centrale intertielle" en français] sur le modèle],
+  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu` sur le modèle],
 
   `  .quaternion`,
   $RR^4$,
