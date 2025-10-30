@@ -128,7 +128,7 @@ $
   (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
 $
 
-L'expression comporte deux hyperparamètres:
+L'expression comporte deux hyperparamètres, à valeurs dans $]0, 1[$:
 
 / Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
 / Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
@@ -280,7 +280,7 @@ On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant 
 
 $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $pi$ avec fonction de récompense $r$.
 
-Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins#footnote[En supposant $gamma < 1$, ce qui est souvent le cas #refneeded #todo[Mettre dans la def de $gamma$]] importantes avec le temps. $eta$ est définie ainsi @trpo
+Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins importantes avec le temps. $eta$ est définie ainsi @trpo
 
 #let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(S))$
 
@@ -653,8 +653,6 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
 
 Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
-
-On est donc dans un cas où il est très utile de
 
 Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions, on fait donc une émulation de la partie logicielle du robot), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
 

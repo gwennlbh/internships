@@ -826,6 +826,7 @@ wireshark:
 h1-rt-lowstate:
   type: reference
   title: rt/lowState topic Descirption -  宇树科技 文档中心
+  publisher: Unitree
   url:
     date: '2025-10-23'
     value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-4
@@ -833,9 +834,18 @@ h1-rt-lowstate:
 h1-rt-lowcmd:
   type: reference
   title: rt/lowCmd topic Description -  宇树科技 文档中心
+  publisher: Unitree
   url:
     date: '2025-10-23'
     value: https://support.unitree.com/home/en/H1_developer/H1-2_Basic_Services_Interface#heading-1
+
+h1-motion-services:
+  type: reference
+  title: High-Level Motion Services Interface -  宇树科技 文档中心
+  publisher: Unitree
+  url:
+    date: '2025-10-30'
+    value: https://support.unitree.com/home/en/H1_developer/Sports_Services_Interface
 
 control-pid:
   type: anthos

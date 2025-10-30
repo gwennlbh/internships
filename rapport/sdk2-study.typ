@@ -257,7 +257,7 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
 
 Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) renvoyé par le robot.
 
-Le `low` indique que ce sont des messages bas-niveau: par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, et non pas à des messages plus avancés tel que "avancer de $x$ mètres" #todo[ces messages plus haut-niveau = sport mode non? dire quand ils servent]
+Le `low` indique que ce sont des messages bas-niveau. Par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, au lieu d'envoyer des ordres plus évolués, tels que "se déplacer de $x$ mètres en avant" @h1-motion-services
 
 Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujoco pour mettre à jour l'état du robot simulé, et de messages `rt/lowstate` sont créés à partir des données fournies par Mujoco
 
