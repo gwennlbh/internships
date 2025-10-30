@@ -127,7 +127,7 @@
 
 #include "thanks.typ"
 
-#outline()
+#outline(depth: 3)
 
 = Contexte
 
