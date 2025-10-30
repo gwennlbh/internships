@@ -125,6 +125,8 @@
 
 = Remerciements
 
+#include "thanks.typ"
+
 #outline()
 
 = Contexte
@@ -144,6 +146,9 @@
 
 #include "gz-unitree.typ"
 
+= Conclusion
+
+#include "conclusion.typ"
 
 #bibliography("../bib.yaml")
 

@@ -671,12 +671,6 @@ En robotique, il est commun d'inclure dans la récompense les éléments suivant
 - #todo[]
 
 
-==== Apprentissage par des exemples
-
-#todo[Déterminer si je parle de ça, en fonction de cmb de pages il reste après avoir fait le reste, ça fera ptet trop...]
-
-Il est possible d'éviter la définition manuelle de la fonction coût, ce qui requiert d'instrumentaliser l'environnement avec des capteurs supplémentaires, en fournissant à la place
-
 === Inventaire des simulateurs en robotique
 
 ==== Isaac

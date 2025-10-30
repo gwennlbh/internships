@@ -1,0 +1,1 @@
+Je tiens à remercier _Olivier Stasse_ et _Guilhem Saurel_, qui m'ont suivie pendant toute la durée du stage et répondu à mes questionnements, sans qui je n'aurais pu mener ces recherches. #todo[continue]
