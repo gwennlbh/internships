@@ -666,14 +666,14 @@ Cet ensemble s'appelle un _simulateur système_.
 
 === Spécification de la tâche
 
-==== Définition explicite de la fonction coût
-
 Le score (récompense ou coût) dépend de la tâche pour laquelle on veut entraîner l'agent.
 
 En robotique, il est commun d'inclure dans la récompense les éléments suivants:
 
-- Puissance maximale sur les commandes envoyées au moteurs
-- #todo[]
+- Couple maximal sur les commandes envoyées au moteurs
+- Limite sur la vélocité du robot
+- Prévention des auto-collisions (par exemple, le bras qui tape la jambe)
+- etc.
 
 
 === Inventaire des simulateurs en robotique
