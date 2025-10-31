@@ -337,7 +337,7 @@ On peut visualiser ce calcul ainsi:
   node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$]
 
   // Bottom-branch path
-  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$]
+  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$ si l'on avait choisir $a_t''$ au lieu de $a_t$]
   edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$]
 
   // top-branch path
@@ -385,6 +385,12 @@ On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'esp
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
 
+/*
+
+La preuve dans TRPO est incompréhensible, genre le A_pi(s) dans l'expression de eta(pi~) devient magiqueent r(s_t) + gamma V_pi(s_(t+1)) - V_pi(s_t) alors que c'est dit juste avant que A_pi(s) = exp(r(s) + ...)
+
+genre l'exp disparaît comme as
+
 === Lien entre $eta$ et $A$
 
 Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $pi$ en fonction de la valeur de $eta$ pour une autre politique $pi'$ @trpo-advantage-eta-link
@@ -398,6 +404,7 @@ $
               & = eta(pi, r) + sum_((s_t, a_t)_(t in NN) in cal(S)) rho_0(s_0) product_(t=0)^oo Q_(pi')(s_t, a_t) sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
               & = eta(pi, r) + sum_(s in S) rho_0(s) sum_(a in A) Q_(pi')(s, a) A_(pi, r)(s, a)
 $
+*/
 
 
 === _Surrogate advantage_ $cL$
@@ -640,6 +647,8 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
   )
 
 ]
+
+== CaT (_Constraints as Terminations_)
 
 // L'algorithme de mise à jour est le suivant @ppo-openai:
 //
