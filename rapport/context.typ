@@ -273,13 +273,13 @@ On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant 
 
 *Remarque*
 
-Les définitions suivantes, dont la plupart proviennent du papier _Trust Region Policy Optimization_, citation "@trpo", ont été reformulées pour utiliser cette notion de chemins. 
+Les définitions suivantes, dont la plupart proviennent du papier _Trust Region Policy Optimization_, citation "@trpo", ont été reformulées pour utiliser cette notion de chemins.
 
 #{
   show math.equation: math.display
 
   [
-    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition. 
+    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition.
 
     Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance le long de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
   ]
@@ -316,7 +316,7 @@ $
 $ <eta-exp-definition>
 
 
-Avec $C ~ pi in cal(C)$ signifiant 
+Avec $C ~ pi in cal(C)$ signifiant
 
 - $C$ est une variable aléatoire à valeur dans $cal(C)$
 - $C$ sui la même loi que $pi$
@@ -347,12 +347,16 @@ On peut visualiser ce calcul ainsi:
 
   // Bottom-branch path
   node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$ ]
-  node((5.75, +1.5), align(left)[si $Pi$ avait choisit $a'_t$ \ au lieu de $a_t$])
+  node((5.75, +1.5), align(
+    left,
+  )[si $Pi$ avait choisit $a'_t$ \ au lieu de $a_t$])
   edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$]
 
   // top-branch path
   node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$]
-  node((5.75, -1.5), align(left)[si $Pi$ avait choisit $a''_t$ \ au lieu de $a_t$])
+  node((5.75, -1.5), align(
+    left,
+  )[si $Pi$ avait choisit $a''_t$ \ au lieu de $a_t$])
   edge(<break>, <top>, "->", bend: 25deg)[$a''_t$]
 
   // Expectation bar V(s)
