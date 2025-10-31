@@ -1,4 +1,3 @@
-#import "./utils.typ": todo
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 
 #show figure: set block(spacing: 3em)

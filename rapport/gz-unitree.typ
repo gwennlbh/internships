@@ -1,7 +1,7 @@
 #import "@preview/zebraw:0.5.5"
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 #import "@preview/cetz:0.4.2"
-#import "./utils.typ": dontbreak, refneeded, todo, trimmed-image
+#import "./utils.typ": dontbreak, refneeded, trimmed-image
 #show figure: set block(spacing: 2em)
 #let zebraw = (..args) => zebraw.zebraw(
   lang: false,

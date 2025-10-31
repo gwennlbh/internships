@@ -1043,3 +1043,17 @@ muj-crc:
     date: '2025-10-29'
     value: https://github.com/unitreerobotics/unitree_mujoco/blob/24b7a498f6bc032684a8c8af30876a84d53d03e4/example/cpp/stand_go2.cpp#L54-L84
 
+maciej:
+  type: manuscript
+  title: '{Latent Conditioned Loco-Manipulation Using Motion Priors}'
+  author:
+    - Stępień, Maciej
+    - Kourdis, Rafael
+    - Roux, Constant
+    - Stasse, Olivier
+  date: 2025-09
+  url:
+    value: https://hal.science/hal-05242643
+    date: '2025-10-31'
+  note: working paper or preprint
+

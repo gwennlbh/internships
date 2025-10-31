@@ -1,5 +1,7 @@
 digraph {
-	rankdir=LR;
+	// rankdir=LR;
+	ranksep = 1.5;
+	node [shape=rectangle];
 	"absl-py" [label="absl-py\n2.3.1"]
 	"antlr4-python3-runtime" [label="antlr4-python3-runtime\n4.9.3"]
 	"biped-assets" [label="biped-assets\n0.1.0"]

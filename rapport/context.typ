@@ -279,7 +279,7 @@ Les définitions suivantes, dont la plupart proviennent du papier _Trust Region 
   show math.equation: math.display
 
   [
-    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation du papier $exp_(s_0, a_0, ... ~ pi)$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition. 
+    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition. 
 
     Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance le long de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
   ]
@@ -324,10 +324,9 @@ Avec $C ~ pi in cal(C)$ signifiant
 
 === Avantage $A$
 
+// Le >= #h(-1pt) ""_f dans la footnote c'est un hack pour mettre f en subscript inline de >= , sinon ça passe en dessous et c'est moche
 
-// L'avantage $A_(pi, r)(s, a)$ représente l'écart entre la récompense (au sens de $r$) attendue _après avoir choisi $a$_ et la récompense attendue _en considérant toutes les actions possibles depuis $s$_.
-
-L'avantage $A_(pi, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $pi$, avec "préférable" au sens de $(r(S), >=)$)
+L'avantage $A_(pi, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $pi$, avec "préférable" au sens de $>=_(r(M(s, dot.c)))$#footnote[En posant, pour toute fonction $f: I -> O$, avec $O$ ordonné par $>=$: $forall i in I^2, quad i_1 op(>=#h(-1pt) ""_f) i_2 := f(i_1) >= f(i_2)$. Ici donc, on compare les politiques selon $a |-> r(M(s, a))$. Autrement dit, la récompense associé à l'état obtenu après le choix d'une action, depuis l'état $s$])
 
 On peut visualiser ce calcul ainsi:
 
@@ -686,6 +685,7 @@ En robotique, il est commun d'inclure dans la récompense les éléments suivant
 - Couple maximal sur les commandes envoyées au moteurs
 - Limite sur la vélocité du robot
 - Prévention des auto-collisions (par exemple, le bras qui tape la jambe)
+- #todo[Ajouter @maciej]
 - etc.
 
 
