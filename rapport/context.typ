@@ -337,11 +337,13 @@ On peut visualiser ce calcul ainsi:
   node((4.5, 0))[$sum_(i=t+1)^oo gamma^t r(s_i)$]
 
   // Bottom-branch path
-  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$ si l'on avait choisir $a_t''$ au lieu de $a_t$]
+  node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$ ]
+  node((5.75, +1.5), align(left)[si l'on avait choisit $a'_t$ \ au lieu de $a_t$])
   edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$]
 
   // top-branch path
   node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$]
+  node((5.75, -1.5), align(left)[si l'on avait choisit $a''_t$ \ au lieu de $a_t$])
   edge(<break>, <top>, "->", bend: 25deg)[$a''_t$]
 
   // Expectation bar V(s)
