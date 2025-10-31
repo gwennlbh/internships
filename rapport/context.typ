@@ -280,7 +280,7 @@ Les grandes différences de notations sont les suivantes
   inset: 1em,
   ..([Papier TRPO], [Ce rapport]).map(strong),
   ..(
-    $exp_(s_0, a_0, ...)$, [$exp_((s_t, a_t)_(t in NN) in cal(S))$, aussi noté $exp_((c_t)_(t in NN) in cal(S))$ ou $exp_(c in cal(S))$]
+    $exp_(s_0, a_0, ...)$, [$exp_((s_t, a_t)_(t in NN) in cal(C))$, aussi noté $exp_((c_t)_(t in NN) in cal(C))$ ou $exp_(c in cal(C))$]
   ).map(content => {
     show math.equation: it => math.display(it)
     content
@@ -293,12 +293,12 @@ $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour u
 
 Elle prend en compte le _discount factor_ $gamma$ : les récompenses des actions deviennent de moins en moins importantes avec le temps. $eta$ est définie ainsi @trpo
 
-#let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(S))$
+#let policyexp = policy => $exp_((c_t)_(t in NN) op(~) #policy op(in) cal(C))$
 
 $
   eta(pi, r) :=
   underbracket(
-    sum_((c_t)_(t in NN) in cal(S))
+    sum_((c_t)_(t in NN) in cal(C))
     underbracket(
       rho_0(s_0)
       product_(t=0)^oo Q_pi (c_t), "probabilité du chemin"
@@ -313,13 +313,13 @@ $
 On peut également exprimer $eta(pi, r)$ comme une espérance. On a (cf @proof-eta-esperance)
 
 $
-  eta(pi, r) = exp_(C ~ pi in cal(S))(sum_(t=0)^oo gamma^t r(C_t))
+  eta(pi, r) = exp_(C ~ pi in cal(C))(sum_(t=0)^oo gamma^t r(C_t))
 $
 
 
-Avec $C ~ pi in cal(S)$ signifiant 
+Avec $C ~ pi in cal(C)$ signifiant 
 
-- $C$ est une variable aléatoire à valeur dans $cal(S)$
+- $C$ est une variable aléatoire à valeur dans $cal(C)$
 - $C$ sui la même loi que $pi$
 
 
@@ -381,10 +381,10 @@ Pour calculer $A_(pi, r)(s, a)$, on regarde l'espérance des récompenses cumul�
 $
   A_(pi, r)(s, a) :=
   underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(S) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
     Q(s, a)
   ) - underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(S) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
     V(s)
   )
 $
@@ -547,7 +547,7 @@ Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, po
 
 
 $
-  argmax_(Pi') & exp_((s, a) in cal(S)) L(s, a, Pi, Pi', R) \
+  argmax_(Pi') & exp_((s, a) in cal(C)) L(s, a, Pi, Pi', R) \
         "s.c." & top
 $
 
