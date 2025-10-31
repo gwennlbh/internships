@@ -271,21 +271,20 @@ On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant 
   _Cette formalisation est utile par la suite, \ pour proprement définir certaines grandeurs._
 ]
 
-Les définitions, suivantes, dont la plupart proviennent du papier _Trust Region Policy Optimization_ @trpo, ont été reformulées pour utiliser cette notion de chemins.
+*Remarque*
 
-Les grandes différences de notations sont les suivantes
+Les définitions suivantes, dont la plupart proviennent du papier _Trust Region Policy Optimization_, citation "@trpo", ont été reformulées pour utiliser cette notion de chemins. 
 
-#table(
-  columns: 2,
-  inset: 1em,
-  ..([Papier TRPO], [Ce rapport]).map(strong),
-  ..(
-    $exp_(s_0, a_0, ...)$, [$exp_((s_t, a_t)_(t in NN) in cal(C))$, aussi noté $exp_((c_t)_(t in NN) in cal(C))$ ou $exp_(c in cal(C))$]
-  ).map(content => {
-    show math.equation: it => math.display(it)
-    content
-  })
-)
+#{
+  show math.equation: math.display
+
+  [
+    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation du papier $exp_(s_0, a_0, ... ~ pi)$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition. 
+
+    Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance le long de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
+  ]
+}
+
 
 === Récompense attendue $eta$
 
@@ -307,14 +306,14 @@ $
     underbracket(sum_(t=0)^oo gamma^t r(c_t), "récompense associée"),
     "pour tout chemin possible"
   )
-$
+$ <eta-sum-definition>
 
 
 On peut également exprimer $eta(pi, r)$ comme une espérance. On a (cf @proof-eta-esperance)
 
 $
   eta(pi, r) = exp_(C ~ pi in cal(C))(sum_(t=0)^oo gamma^t r(C_t))
-$
+$ <eta-exp-definition>
 
 
 Avec $C ~ pi in cal(C)$ signifiant 
@@ -407,9 +406,7 @@ genre l'exp disparaît comme as
 
 === Lien entre $eta$ et $A$
 
-Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $pi$ en fonction de la valeur de $eta$ pour une autre politique $pi'$ @trpo-advantage-eta-link
-
-
+Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour une politique $pi$ en fonction de la valeur de $eta$ pour une autre politique $pi'$ @trpo
 
 $
   eta(pi', r) & = eta(pi, r) + policyexp(pi') sum_(t=0)^oo gamma^t A_(pi, r)(c_t)
@@ -449,7 +446,7 @@ $
 Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(Pi, R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(Pi)$ @trpo
 
 
-Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre
+Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre @trpo-openai
 
 $
   cL_r (pi', pi) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) A_(pi, r)(s_t, a_t)
