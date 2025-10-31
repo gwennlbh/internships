@@ -182,7 +182,7 @@ On note dans le reste de cette section:
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
 / $Pi: S -> A$: une politique
 / $Pi^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
-/ $R: S -> RR^+$: sa fonction de récompense // d'une politique $p$
+/ $R: S -> RR^+$: sa fonction de récompense // d'une politique $pi$
 / $Q_pi: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_pi (s_t, a_t)$ est la probabilité que $pi$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
 / $Q$ et $Q^*$: $Q_Pi$ et $Q_(Pi^*)$, pour alléger les notations
 // $R$: $R_Pi$
@@ -231,11 +231,7 @@ $
   )
 $
 
-Un chemin se modélise aisément par une suite d'éléments de $S times A$. Ainsi, on note
-
-#comment[p-ê Expliquer pourquoi une suite de $S$ en fait ça marche pas, en gros on choppe pas tt les chemins possible psk faut trouver $a$ en fonction de $p$ donc ya pas tout. Si on prend $p(a)$ c'est que le chemin que la politique prendrait]
-
-
+Un chemin se modélise aisément par une suite d'éléments de#footnote[Il est essentiel de conserver l'information de l'action prise entre chaque état (contrairement à ce que fournirait une simple suite d'éléments de $S$, par exemple) pour pouvoir calculer de probabilités par rapport à une politique le long de ce chemin. En effet, on peut savoir avec quelle probabilité $Pi$ choisit une certaine action $a in A$ depuis un certain $s in S$, mais encore faut-il savoir "par quelle $a in A$ est-on passé".] $S times A$. Ainsi, on note
 
 $
   cal(C)_pi := setbuilder(
@@ -249,7 +245,7 @@ $
   )
 $
 
-l'ensemble des chemins possibles avec la politique $p$. C'est tout simplement l'ensemble de tout les "déroulements" de la politique $p$ en partant des états possibles de l'environnement.
+l'ensemble des chemins possibles avec la politique $pi$. C'est tout simplement l'ensemble de tout les "déroulements" de la politique $pi$ en partant des états possibles de l'environnement.
 
 
 On définit également l'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
@@ -274,7 +270,6 @@ On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant 
 #align(center)[
   _Cette formalisation est utile par la suite, \ pour proprement définir certaines grandeurs._
 ]
-#comment[pas sûre de cette phrase]
 
 === Récompense attendue $eta$
 
@@ -392,6 +387,7 @@ En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a
 La preuve dans TRPO est incompréhensible, genre le A_pi(s) dans l'expression de eta(pi~) devient magiqueent r(s_t) + gamma V_pi(s_(t+1)) - V_pi(s_t) alors que c'est dit juste avant que A_pi(s) = exp(r(s) + ...)
 
 genre l'exp disparaît comme as
+*/
 
 === Lien entre $eta$ et $A$
 
@@ -399,14 +395,9 @@ Pour une fonction de récompense $r$ donnée, $A$ permet de calculer $eta$ pour 
 
 
 
-
-
 $
-  eta(pi', r) & = eta(pi, r) + policyexp(pi') sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
-              & = eta(pi, r) + sum_((s_t, a_t)_(t in NN) in cal(S)) rho_0(s_0) product_(t=0)^oo Q_(pi')(s_t, a_t) sum_(t=0)^oo gamma^t A_(pi, r)(c_t) \
-              & = eta(pi, r) + sum_(s in S) rho_0(s) sum_(a in A) Q_(pi')(s, a) A_(pi, r)(s, a)
+  eta(pi', r) & = eta(pi, r) + policyexp(pi') sum_(t=0)^oo gamma^t A_(pi, r)(c_t)
 $
-*/
 
 
 === _Surrogate advantage_ $cL$
@@ -705,27 +696,12 @@ Les intérêts de Gazebo @gazebo sont multiples:
 - Son architecture modulaire permet notamment d'utiliser plusieurs moteurs de simulation physique différents @gazebo-physics-engines, à l'inverse de MuJoCo.
 - C'est un _simulateur système_, qui est capable de simuler la partie logicielle du robot en plus de la physique du son modèle 3D.
 
-Gazebo possède des plugins officiels pour:
+Gazebo possède des plugins officiels pour divers moteurs de simulation physique:
 
-/ DART: Plugin `gz-physics-dartsim-plugin`, c'est l'implémentation principale, et celle par défaut @gazebo-physics-engines.
-/ Bullet: Plugin `gz-physics-bulletsim-plugin`. En beta @gazebo-physics-engines.
-/ Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta @gazebo-physics-engines.
+/ DART: Plugin `gz-physics-dartsim-plugin`, c'est l'implémentation principale, et celle par défaut @gazebo-physics-engines @dart.
+/ Bullet: Plugin `gz-physics-bulletsim-plugin`. En beta @gazebo-physics-engines @bullet @pybullet.
+/ Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta @gazebo-physics-engines. Une variable de Bullet, utilisant l'algorithme de Featherstone @bullet-featherstone @featherstone
 
-
-
-=== Inventaire des moteurs de simulation physique
-
-==== DART
-
-DART, pour Dynamic Animation and Robotics Toolkit @dart,
-
-==== Bullet
-
-Bullet @bullet @pybullet
-
-==== Bullet avec Featherstone
-
-L'algorithme de Featherstone @featherstone, servant d'implémentation alternative à Bullet  @bullet-featherstone
 
 == Le robot _H1v2_ d'Unitree
 
@@ -745,7 +721,7 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
 
 #figure(
   caption: [Arbre des dépendances pour _Gepetto/h1v2-Isaac_],
-  scale(10%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
+  scale(7%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
 )
 
 Bien que toutes ces dépendances puissent être spécifiées à des versions strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ à l'installation pour des raisons de performance @cpp-python. Des problèmes de reproductibilité peuvent donc subsister à l'installation des dépendances, étant donné la dépendance du processus de compilation à la machine compilant le code.
