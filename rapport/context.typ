@@ -271,6 +271,22 @@ On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant 
   _Cette formalisation est utile par la suite, \ pour proprement définir certaines grandeurs._
 ]
 
+Les définitions, suivantes, dont la plupart proviennent du papier _Trust Region Policy Optimization_ @trpo, ont été reformulées pour utiliser cette notion de chemins.
+
+Les grandes différences de notations sont les suivantes
+
+#table(
+  columns: 2,
+  inset: 1em,
+  ..([Papier TRPO], [Ce rapport]).map(strong),
+  ..(
+    $exp_(s_0, a_0, ...)$, [$exp_((s_t, a_t)_(t in NN) in cal(S))$, aussi noté $exp_((c_t)_(t in NN) in cal(S))$ ou $exp_(c in cal(S))$]
+  ).map(content => {
+    show math.equation: it => math.display(it)
+    content
+  })
+)
+
 === Récompense attendue $eta$
 
 $eta$ représente la récompense moyenne à laquelle l'on peut s'attendre pour une politique $pi$ avec fonction de récompense $r$.
