@@ -1085,3 +1085,19 @@ gazebros2nix:
     value: https://github.com/Gepetto/gazebros2nix
   date: '2025-08-31'
 
+nixgz2:
+  type: web
+  title: 'ROS stuff: part 1 by Pandapip1 · Pull Request #355629 · NixOS/nixpkgs ·
+    GitHub'
+  url:
+    date: '2025-11-03'
+    value: https://github.com/NixOS/nixpkgs/pull/355629
+
+nixgz3:
+  type: web
+  title: 'Pull requests on NixOS/nixpkgs'
+  author: Gelakais
+  publisher: Github
+  url:
+    date: 2025-11-03
+    value: https://github.com/NixOS/nixpkgs/pulls?q=is%3Apr+gz+author%3AGuelakais
