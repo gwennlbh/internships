@@ -92,6 +92,7 @@ Compiler le SDK nécéssite l'existance de ces fichiers binaires:
 
 #figure(
   caption: [Extrait de `cmake/unitree_sdk2Targets.cmake`],
+  kind: raw,
   zebraw(
     numbering-offset: 63 - 1,
     highlight-lines: (4,),

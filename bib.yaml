@@ -1057,3 +1057,31 @@ maciej:
     date: '2025-10-31'
   note: working paper or preprint
 
+nixros:
+  type: repository
+  title: nix-ros-overlay
+  publisher: GitHub
+  author: null
+  url:
+    date: '2025-11-03'
+    value: https://github.com/lopsided98/nix-ros-overlay
+  date: '2019-03-12'
+
+nixgz:
+  type: web
+  title: '[WIP] gz-sim and dependencies: init by ShamrockLee · Pull Request #394757
+    · NixOS/nixpkgs · GitHub'
+  url:
+    date: '2025-11-03'
+    value: https://github.com/NixOS/nixpkgs/pull/394757
+
+gazebros2nix:
+  type: repository
+  title: gazebros2nix
+  publisher: GitHub
+  author: Gepetto team, LAAS-CNRS
+  url:
+    date: '2025-11-03'
+    value: https://github.com/Gepetto/gazebros2nix
+  date: '2025-08-31'
+
