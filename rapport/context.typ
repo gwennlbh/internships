@@ -741,6 +741,6 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
   scale(7%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
 )
 
-Bien que toutes ces dépendances puissent être spécifiées à des versions strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ à l'installation pour des raisons de performance @cpp-python. 
+Bien que toutes ces dépendances puissent être spécifiées à des versions strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ à l'installation pour des raisons de performance @cpp-python.
 
 Des problèmes de reproductibilité peuvent donc subsister à l'installation des dépendances, étant donné la dépendance du processus de compilation à la machine compilant le code.

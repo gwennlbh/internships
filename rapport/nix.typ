@@ -186,7 +186,7 @@ Ici encore, cela apporte un gain en terme de reproductibilité: l'état de confi
 
 Le packaging pour Nix de gz-unitree lui-même n'est pas très complexe: il s'agit d'un projet C++ / CMake standard.
 
-Cependant, gz-unitree a deux principales dépendances 
+Cependant, gz-unitree a deux principales dépendances
 
 - Gazebo lui-même, à travers `gz-sim`, `gz-sensors`, `gz-common`, `gz-plugin`, `gz-cmake`, etc.
 - Le SDK2 d'Unitree
