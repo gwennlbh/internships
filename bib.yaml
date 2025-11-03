@@ -1079,7 +1079,7 @@ gazebros2nix:
   type: repository
   title: gazebros2nix
   publisher: GitHub
-  author: Gepetto team, LAAS-CNRS
+  author: Gepetto 
   url:
     date: '2025-11-03'
     value: https://github.com/Gepetto/gazebros2nix
