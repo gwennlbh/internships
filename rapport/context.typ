@@ -31,7 +31,7 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 - Un _environnement_, que les actions viennent modifier
 - Un _score_ (_coût_ s'il doit être minimisé, _récompense_ inversement) qui dépend de l'état pré- et post-action de l'environnement ainsi que de l'action qui a été effectuée
 
-La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec meilleur définit comme "qui minimise le coût" (ou maximise la récompense):
+La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec "meilleur" définit comme "qui minimise le coût" (ou maximise la récompense):
 
 #diagram({
   node((0, 0))[Agent]
@@ -48,37 +48,40 @@ En robotique, une approche similaire explore l'espace d'action (en général un 
 
 En robotique, on a des correspondances claires pour ces quatres notions:
 
-/ Agent: Robot pour lequel on développe le programme de contrôle (appelée une _politique_)
+/ Agent: Robot pour lequel on développe le programme de contrôle (appelé _politique_)
 / Actions: Envoi d'ordres aux moteurs, souvent le courant électrique à appliquer // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécéssaire au microcontrolleurs sur le robot même]
-/ Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la multiplicité des implémentations est importante, voir @why_multiple_simulators
-/ Coût: un ensemble de contraintes ("ne pas endommager le robot") et d'évaluations spécifiques à la tâche à effectuer ("s'est déplacé de 5m en avant selon l'axe $x$).
+/ Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la pluralité des implémentations est importante, voir @why_multiple_simulators
+/ Coût: Ensemble de contraintes ("ne pas endommager le robot") et d'évaluations spécifiques à la tâche à effectuer ("s'est déplacé de 5m en avant selon l'axe $x$").
 
 === L'entraînement
 
 Une fois que ce cadre est posé, il reste à savoir _comment_ l'on va trouver la fonction qui associe un état de l'environnement à une action.
 
-Une première approche naïve, mais suffisante dans certains cas, consiste à faire une recherche exhaustive et à stocker dans un simple tableau la meilleure action à faire en fonction d'un état de l'environnement:
+Une première approche naïve, mais suffisante dans certains cas, consiste à faire une recherche exhaustive et à stocker dans un simple tableau la meilleure action à faire en fonction de chaque état de l'environnement:
 
 #let exhaustive_memory_table = (caption, filled: false) => {
   let maybe = content => if filled { content } else { [] }
-  let costs = (
-    plus_one,
-    minus_one,
-  ) => [ $L(x+1,) = #plus_one quad L(x-1,) = #minus_one$ ]
-  pad(x: 7%, y: 10%, figure(
+  let loss = x => calc.abs(calc.max(x,0) - 2)
+  let costs = (x) => (
+    $L(#{x+1},) = #{loss(x+1)}$,
+    $L(#{calc.max(x - 1, 0)},) = #{loss(x - 1)}$
+  )
+
+  pad(x: 7%, y: 8%, figure(
     table(
-      columns: (2fr, 1.9fr, 3fr),
+      columns: (2fr, 1.9fr, 1.5fr, 1.5fr),
       align: (left, center, left),
       inset: 8pt,
-      [*État actuel* \ $(x, "retour")$],
-      [*Meilleure action* \ +1 ou -1],
-      [*Coûts associés* \ #maybe[avec $L = (x, "retour") |-> |x-2|$]],
+      table.cell([*État actuel* \ $(x, "retour")$], rowspan: 2),
+      table.cell([*Action à effectuer* \ +1 ou -1], rowspan: 2),
+      table.cell([*Coûts associés*], colspan: 2),
+      [Pour $+1$], [Pour $-1$],
 
-      [ $(0, "C'est plus")$ ], maybe[ +1 ], maybe(costs(2, 2)),
-      [ $(1, "C'est plus")$ ], maybe[ +1 ], maybe(costs(1, 2)),
-      [ $(3, "C'est moins")$ ], maybe[ -1 ], maybe(costs(2, 3)),
-      [ $(4, "C'est moins")$ ], maybe[ -1 ], maybe(costs(3, 4)),
-      [ $(5, "C'est moins")$ ], maybe[ -1 ], maybe(costs(4, 5)),
+      [ $(0, "C'est plus")$ ], maybe[ +1 ], ..costs(0).map(maybe),
+      [ $(1, "C'est plus")$ ], maybe[ +1 ], ..costs(1).map(maybe),
+      [ $(3, "C'est moins")$ ], maybe[ -1 ], ..costs(2).map(maybe),
+      [ $(4, "C'est moins")$ ], maybe[ -1 ], ..costs(3).map(maybe),
+      [ $(5, "C'est moins")$ ], maybe[ -1 ], ..costs(4).map(maybe),
     ),
     caption: caption,
   ))
@@ -86,7 +89,7 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #exhaustive_memory_table(
   filled: false,
-)[ Mémoire exhaustive initiale pour un "C'est plus ou c'est moins" dans ${ 0, 1, 2 }$, avec pour solution 2 ]
+)[ Mémoire exhaustive initiale pour un "C'est plus ou c'est moins" dans $[| 0, 5 |] times {"C'est plus", "C'est moins"}$, avec pour solution 2 ]
 
 L'entraînement consiste donc ici en l'exploration de l'entièreté des états possibles de l'environnement, et, pour chaque état, le calcul du coût associé à chaque action possible.
 
@@ -102,7 +105,7 @@ On remplit la colonne "Action à effectuer" avec l'action au coût le plus bas:
 
 #exhaustive_memory_table(
   filled: true,
-)[ Entraînement terminé, avec pour fonction coût $L$ la distance à la solution ]
+)[ Entraînement terminé, avec pour fonction coût $L = (x, "retour") |-> |x-2|$ la distance à la solution ]
 
 Ici, cette approche exhaustive suffit parce que l'ensemble des états possibles de l'environnement, $E$, posssède 6 éléments
 
@@ -117,12 +120,17 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 
 / État actuel: devient la couche d'entrée
 / Meilleure action: devient la couche de sortie
-/ Coûts associés: la fonction à optimiser par le réseau. Il peut s'agir d'une fonction qui permet au réseau de neurones d'approximer une autre fonction par supervision.
-/ Le remplissage du tableau: devient la rétropropagation pendant l'entraînement
+/ Coûts associés: devient la fonction à optimiser par descente de gradient
+/ Le remplissage du tableau: devient la rétropropagation du gradient pendant l'entraînement
+
+
+#dontbreak[
 
 ==== Mise à jour (_Q-learning_)
 
 Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
+
+]
 
 $
   (1 - alpha) underbrace(Q(s_t, a_t), "valeur actuelle") + alpha ( underbrace(R_(t+1), "récompense\npour cette action") + gamma underbrace(max_a Q(S_(t+1), a), "récompense de la meilleure\naction pour l'état suivant") )
@@ -139,31 +147,23 @@ L'expression comporte deux hyperparamètres, à valeurs dans $]0, 1[$:
 
 Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement #refneeded: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
-Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste.
+Dans le cas de la robotique, cela arrive particulièrement souvent #refneeded, et il faut donc un simulateur qui soit suffisamment réaliste.
 
 ==== Sous-spécification de la fonction coût
 
-#comment[ Bof cette partie ]
-
-Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense (une fonction à maximiser au lieu de minimiser) "le nombre de trombones existant sur Terre", finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
+Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: On imagine un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense "le nombre de trombones existant sur Terre". Il finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
 
 ==== La validation comme méthode de mitigation <why_multiple_simulators>
 
-Comme ces bugs sont des comportements non voulus, il est très probables qu'ils ne soient pas exactement les mêmes d'implémentation à implémentation du même environnement.
+Comme ces bugs sont des comportements non voulus, il est très probables qu'ils ne soient pas exactement les mêmes en changeant d'implémentation.
 
-Il convient donc de se servir de _plusieurs_ implémentations: un sert à la phase d'entraînement, pendant laquelle l'agent développe des "tendances à la tricherie", puis une phase de _validation_.
+Il convient donc de se servir de _plusieurs_ implémentations: une sert à la phase d'entraînement, pendant laquelle l'agent développe des "tendances à la tricherie", puis une autre sert à la phase de _validation_.
 
 Cette phase consiste en le lancement de l'agent dans une autre implémentation, avec les mêmes actions mais qui, crucialement, ne comporte pas les mêmes bugs que l'environnement ayant servi à la phase d'apprentissage.
 
-Les "techniques de triche" ainsi apprises deviennent inefficace, et si le score (le coût ou la récompense) devient bien pire que pendant l'apprentissage, on peut détecter les cas de triche.
+Les "techniques de triche" ainsi apprises deviennent inefficace, et si le score devient bien pire que celui de l'apprentissage, on peut détecter les cas de triche.
 
-On peut même aller plus loin, et multiplier les phases de validation avec des implémentations supplémentaires, ce qui réduit encore la probabilité qu'une technique de triche se glisse dans l'agent final
-
-#comment[ Rien à voir mais je me dis, c'est enfait un moyen de trouver des bugs dans un physics engine ! ça me fait penser au Fuzzing un peu, mais avec un NN plutôt que du hasard contrôlé ]
-
-
-
-// Si jamais ya le time: == Entraînement par _curriculum_
+On peut même aller plus loin, et multiplier les phases de validation avec des implémentations supplémentaires, ce qui réduit encore la probabilité qu'une technique de triche se glisse dans l'agent final.
 
 == Évaluation de la performance d'une politique
 
@@ -171,7 +171,7 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 #let proba = $bb(P)$
 #let setbuilder = (content, with) => ${ #content thick mid(|) thick #with }$
 
-Théoriquement, le "score" associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
+Théoriquement, le score associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
 
 
 On note dans le reste de cette section:
@@ -182,9 +182,9 @@ On note dans le reste de cette section:
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
 / $Pi: S -> A$: une politique
 / $Pi^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
-/ $R: S -> RR^+$: sa fonction de récompense // d'une politique $pi$
-/ $Q_pi: S times A -> [0, 1]$: sa distribution de probabilité, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_pi (s_t, a_t)$ est la probabilité que $pi$ choisisse $a_t$ _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
-/ $Q$ et $Q^*$: $Q_Pi$ et $Q_(Pi^*)$, pour alléger les notations
+/ $R: S -> RR^+$: sa fonction de récompense #todo[incohérent! c'est sensé être $Q$, qu'on a assimilé à une distrib de proba :/]
+/ $Q_pi: S times A -> [0, 1]$: la distribution de probabilité d'une politique $pi$, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_pi (s_t, a_t)$ est la probabilité que $pi$ choisisse $a_t$, _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
+/ $Q$ (resp. $Q^*$): $Q_Pi$ (resp. $Q_(Pi^*)$), pour alléger les notations
 // $R$: $R_Pi$
 
 On suppose $A$ et $S$ dénombrables#footnote[En pratique, $bb(R)$ est discrétisé dans les simulateurs numérique, donc cette hypothèse ne pose pas de problèmes à l'application de la théorie au domaine de la robotique].
@@ -200,7 +200,7 @@ $
 
 
 
-$M$ et $Pi$ forment en fait tout se qui se passe pendant un pas de temps, c'est cette boucle que l'on répète pour soit entraîner l'agent (si l'on met $Pi$ à jour à chaque tour de boucle) ou l'utiliser:
+$M$ et $Pi$ forment en fait tout ce qui se passe pendant un pas de temps. c'est cette boucle que l'on répète pour entraîner l'agent (si l'on met $Pi$ à jour à chaque tour de boucle) ou l'utiliser (on parle alors d'inférence):
 
 #diagram(
   node((0, 0), $s_t$),
@@ -231,7 +231,9 @@ $
   )
 $
 
-Un chemin se modélise aisément par une suite d'éléments de#footnote[Il est essentiel de conserver l'information de l'action prise entre chaque état (contrairement à ce que fournirait une simple suite d'éléments de $S$, par exemple) pour pouvoir calculer de probabilités par rapport à une politique le long de ce chemin. En effet, on peut savoir avec quelle probabilité $Pi$ choisit une certaine action $a in A$ depuis un certain $s in S$, mais encore faut-il savoir "par quelle $a in A$ est-on passé".] $S times A$. Ainsi, on note
+On rappelle que $M$ est la fonction "simulation", qui renvoie l'état post-action en fonction de l'action choisie et de l'état pré-action.
+
+Un chemin se modélise aisément par une suite d'éléments de#footnote[Il est essentiel de conserver l'information de l'action prise entre chaque état (contrairement à ce que fournirait une simple suite d'éléments de $S$, par exemple) pour pouvoir calculer les probabilités par rapport à une politique le long d'un chemin. En effet, si l'on veut obtenir la probabilité que $Pi$ ait resulté en un état $s in S$ de l'environnement, il faut savoir "par quelle $a in A$ est-on passé", $Q_Pi$ prenant bien $s$ *et $a$* en entrée.] $S times A$. Ainsi, on note
 
 $
   cal(C)_pi := setbuilder(
@@ -263,7 +265,7 @@ $
 
 On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
 
-On note aussi que $cal(C)$ (et donc $cal(C)_pi$ aussi) est dénombrable, étant construit à partir de $(S times A)^NN$ et $S$, $A$ et $NN$ étant aussi dénombrables#footnote[
+On note aussi que $cal(C)$ et $cal(C)_pi$ sont dénombrables: Ils sont construits à partir de $(S times A)^NN$ et $S$, et $A$ & $NN$ sont également dénombrables#footnote[
   On a $card cal(C) <= card((S times A)^NN) = card(S times A)^(card NN) = (card S card A)^(card NN) <= (aleph_0)^(card NN) = attach(aleph_0, tl: 2) = aleph_0$
 ]
 
@@ -278,10 +280,13 @@ Les définitions suivantes, dont la plupart proviennent du papier _Trust Region 
 #{
   show math.equation: math.display
 
+
   [
+    #todo[Pas clair]
+
     Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition.
 
-    Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance le long de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
+    Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance _le long_ de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
   ]
 }
 
@@ -318,8 +323,8 @@ $ <eta-exp-definition>
 
 Avec $C ~ pi in cal(C)$ signifiant
 
-- $C$ est une variable aléatoire à valeur dans $cal(C)$
-- $C$ sui la même loi que $pi$
+- $C$ est une variable aléatoire à valeurs dans $cal(C)$
+- $C$ suit la même loi que $pi$
 
 
 === Avantage $A$
