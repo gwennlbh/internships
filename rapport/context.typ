@@ -61,10 +61,10 @@ Une première approche naïve, mais suffisante dans certains cas, consiste à fa
 
 #let exhaustive_memory_table = (caption, filled: false) => {
   let maybe = content => if filled { content } else { [] }
-  let loss = x => calc.abs(calc.max(x,0) - 2)
-  let costs = (x) => (
-    $L(#{x+1},) = #{loss(x+1)}$,
-    $L(#{calc.max(x - 1, 0)},) = #{loss(x - 1)}$
+  let loss = x => calc.abs(calc.max(x, 0) - 2)
+  let costs = x => (
+    $L(#{ x + 1 },) = #{ loss(x + 1) }$,
+    $L(#{ calc.max(x - 1, 0) },) = #{ loss(x - 1) }$,
   )
 
   pad(x: 7%, y: 8%, figure(
@@ -126,9 +126,9 @@ Une façon de remédier à ce problème de dimensions est de remplacer le tablea
 
 #dontbreak[
 
-==== Mise à jour (_Q-learning_)
+  ==== Mise à jour (_Q-learning_)
 
-Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
+  Le score associé à un état $s_t$ et une action $a_t$, appelée $Q(s_t, a_t)$ ici pour "quality" @qlearning-etymology ou "action-value" @actionvalue, est mis à jour avec cette valeur @maxq:
 
 ]
 
