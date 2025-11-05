@@ -34,7 +34,7 @@ sudo ufw allow in proto udp to 224.0.0.0/4
   gutter: 2em,
   [
 
-    Pour arriver à ces solutions, _Wireshark_ @wireshark s'est avéré utile, étant capable d'inspecter du traffic RTPS#footnote[Le protocole sur lequel est construit DDS @dds], 
+    Pour arriver à ces solutions, _Wireshark_ @wireshark s'est avéré utile, étant capable d'inspecter du traffic RTPS#footnote[Le protocole sur lequel est construit DDS @dds],
 
 
     C'est notamment grâce à ce traçage des paquets que le problème de domaine DDS a été découvert: notre _subscriber_ DDS était réglé sur le domaine anonyme (ID aléatoire représenté par un 0 lors de la configuration) alors que le SDK d'Unitree communique sur le domaine d'ID 1.
@@ -153,7 +153,7 @@ Le plugin consiste en trois parties distinctes:
 - L'interaction avec les canaux DDS du SDK d'Unitree
 - Les données et méthodes internes au plugin
 
-En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit avec le robot (qu'il soit réel, ou simulé) via le SDK, et donc via les canaux DDS. 
+En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit avec le robot (qu'il soit réel, ou simulé) via le SDK, et donc via les canaux DDS.
 
 #let legend = (
   ..descriptions,
@@ -317,8 +317,7 @@ En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePl
 
 #figure(
   caption: [Création d'un _subscriber_ à `rt/lowcmd` et d'un _publisher_ sur `rt/lowstate` dans `UnitreePlugin::Configure`],
-  text(size: 0.8em,
-  grid(
+  text(size: 0.8em, grid(
     columns: 2,
     gutter: 1em,
     ```cpp
@@ -348,8 +347,9 @@ En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePl
         &UnitreePlugin::LowStateWriter,
         this
       );
-    ```
-)))
+    ```,
+  )),
+)
 
 == Calcul des nouveaux couples des moteurs
 
@@ -600,13 +600,19 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   [Gyroscope],
   [
     En utilisant les valeurs de `.orientation()`:
-    #math.equation(numbering: none, block: true, $ vec(
-      delim: #("[", "]"),
-      gap: #0.5em,
-      "atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) ) ,
-      "asin"(2 (w y - z x)) ,  
-      "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2)) 
-    ) $)
+    #math.equation(
+      numbering: none,
+      block: true,
+      $
+        vec(
+          delim: #("[", "]"),
+          gap: #0.5em,
+          "atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) ),
+          "asin"(2 (w y - z x)),
+          "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2))
+        )
+      $,
+    )
   ],
 
   `  .accelerometer`, $RR^3$, [Accéléromètre], `.angular_velocity()`,
@@ -986,7 +992,7 @@ Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire
 ```dockerfile
 FROM ubuntu:24.04
 
-RUN apt update 
+RUN apt update
 # Just
 RUN apt install -y curl just sudo
 # Python (via le gestionnaire de versions et dépendances UV)

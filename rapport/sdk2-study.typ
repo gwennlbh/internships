@@ -24,28 +24,28 @@ L'intérêt d'un format indépendant du langage de programmation est que l'on pe
 Par exemple, les messages permettant de contrôler les moteurs du H1v2 sont définis ainsi
 
 #figure(
-    caption: [`LowCmd.idl`, traduit depuis sa conversion en C++ @lowcmd_hpp],
-    ```c
-    struct MotorCmd
-    {
-      uint8 mode;
-      float q;
-      float dq;
-      float tau;
-      float kp;
-      float kd;
-      unsigned long reserve;
-    };
+  caption: [`LowCmd.idl`, traduit depuis sa conversion en C++ @lowcmd_hpp],
+  ```c
+  struct MotorCmd
+  {
+    uint8 mode;
+    float q;
+    float dq;
+    float tau;
+    float kp;
+    float kd;
+    unsigned long reserve;
+  };
 
-    struct Cmd
-    {
-      uint8 mode_pr;
-      uint8 mode_machine;
-      MotorCmd motor_cmd[35];
-      unsigned long reserve[4];
-      unsigned long crc;
-    };
-    ```
+  struct Cmd
+  {
+    uint8 mode_pr;
+    uint8 mode_machine;
+    MotorCmd motor_cmd[35];
+    unsigned long reserve[4];
+    unsigned long crc;
+  };
+  ```,
 )
 
 DDS groupe les messages dans des _topics_. Les messages sont échangés sur un topic de la manière suivante

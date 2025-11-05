@@ -535,11 +535,11 @@ Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvell
 
 #dontbreak[
 
-En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise plutôt l'espérance @trpo.
+  En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise plutôt l'espérance @trpo.
 
-$
-  overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, dot) || Q'(s, dot))
-$
+  $
+    overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, dot) || Q'(s, dot))
+  $
 
 ]
 

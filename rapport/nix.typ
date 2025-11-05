@@ -238,5 +238,5 @@ Il existe plusieurs tentatives de packaging de Gazebo pour Nix:
 - Un outil de génération de paquets Nix à partir de paquets ROS ou Gazebo, développé par Guilhem Saurel au sein de l'équipe Gepetto, _gazebros2nix_ @gazebros2nix
 
 Au début du développement de _gz-unitree_, des essais d'utilisation des paquets Nix pour le développement et la compilation ont été réalisés, mais des erreurs subsistaient, en particulier avec Gazebo.
- Des efforts supplémentaires sont nécéssaires pour empaqueter _gz-unitree_.
+Des efforts supplémentaires sont nécéssaires pour empaqueter _gz-unitree_.
 
