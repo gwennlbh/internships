@@ -634,12 +634,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   `  .ddq`,
   $RR quad ("rad" dot "s"^(-2))$,
   [Angle de rotation du moteur],
-  empty,
+  [#empty#footnote[Tant que nos politiques n'ont pas besoin de ces champs, le SDK semble fonctionner avec des valeurs vides] <empty-why>],
 
   `  .tau_est`,
   $RR quad ("N" dot "m")$,
   [Estimation du couple exercé par le moteur],
-  empty,
+  [#empty@empty-why],
 )
 
 
@@ -647,7 +647,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
 Avant de démarrer un nouveau pas de simulation, la méthode `::PreUpdate` vient mettre à jour l'état du robot simulé en modifiant le _State buffer_ interne au plugin (1A). Gazebo envoie également le nouveau tick de simulation (1C) et les valeurs du capteur IMU (1D) dans leurs topics respectifs.
 
-Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $Pi$ (4), qui (on le suppose) possède une subscription sur `rt/lowstate`.
+Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur le canal DDS (2, 3) qui est ensuite lu par $Pi$ (4), qui possède une subscription sur `rt/lowstate`, via sa propre utilisation du SDK d'Unitree.
 
 
 #let transparent = luma(0).opacify(0%)
@@ -710,9 +710,9 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 })
 
 
-Ici également, `LowStateWriter` s'exécute _en parallèle_ du code de `::PreUpdate`: En effet, la création du `ChannelPublisher` démarre une boucle qui vient exécuter `LowStateWriter` périodiquement, dans un autre _thread_: on a donc aucune garantie de synchronisation entre les deux.
+Ici également, `LowStateWriter` s'exécute _parallèlement_ à `::PreUpdate`: En effet, on démarre une boucle qui vient exécuter `LowStateWriter` périodiquement, dans un autre _thread_: on a donc aucune garantie de synchronisation entre les deux.
 
-Ici, il y a en plus non pas deux, mais _cinq_ boucles indépendantes qui sont en jeux:
+Ici, il y a en plus non pas deux, mais _cinq_ boucles indépendantes qui sont en jeu:
 
 - La boucle de simulation de Gazebo (fréquence d'appel de `::PreUpdate`),
 - La boucle du `ChannelPublisher` (fréquence d'appel de `::LowStateWriter`), et
@@ -734,7 +734,7 @@ On a des effets similaires en comparant la fréquence de la boucle de mise à jo
 / Si la boucle IMU est plus fréquente: Certaines valeurs du capteur ne seront pas prises en compte par la politique
 / Si la boucle IMU est moins fréquente: $Pi$ recevra plusieurs fois le même état, ce qui sera représentatif du fait que la simulation n'a pas encore avancé.
 
-Pour la boucle du tick, cela a peut d'importance. En effet, $Pi$ ne dépend probablement pas du tick de simulation, ou si il en dépend, ce serait de manièr peu précise (ce serait plutôt pour savoir "depuis quand est-ce qu'on a lancé la politique", ce qui ne demande pas une précision à la milliseconde) #refneeded. On met quand même à jour le tick pour que nos messages `rt/lowstate` synthétiques se rapprochent le plus possible des vrais messages tels qu'envoyés par le robot physique.
+Pour la boucle du tick, cela a peu d'importance. En effet, $Pi$ ne dépend probablement pas du tick de simulation, ou si elle en dépend, on suppose que c'est une dépendance à une valeur peu précise (ce serait plutôt pour savoir "depuis quand est-ce qu'on a lancé la politique", ce qui ne demande pas une précision à la milliseconde). On met quand même à jour le tick pour que nos messages `rt/lowstate` synthétiques se rapprochent le plus possible des vrais messages, tels qu'envoyés par le robot physique.
 
 == Désynchronisations
 
@@ -861,7 +861,7 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 == Amélioration des performances <perf>
 
-Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'exécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
+Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF (Real-Time Factor) @rtf. Un RTF de 100% signifie que la simulation s'exécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que ce qu'elle simule] autour des 10 à 15%.
 
 #grid(
   columns: 2,
@@ -886,7 +886,7 @@ Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (
 // ```
 
 #figure(
-  caption: [Profiling d'une simulation avec _gz-unitree_],
+  caption: [Profilage de _gz-unitree_ lors d'une simulation],
   image("./profiler-many-ticks.png"),
 )
 
@@ -897,7 +897,7 @@ Prenons un cycle en particulier:
 #let durations = (0.267, 0.051, 0.039, 0.142, 0.028) // total, state, tick+crc, pub state, cmd
 #let dur = idx => [#durations.at(idx) ms]
 #figure(
-  caption: [Profiling d'un cycle de simulation],
+  caption: [Profil d'un cycle de simulation],
   table(
     columns: durations.slice(1).map(x => x / durations.at(0) * 1fr),
     table.cell([`::PreUpdate` #dur(0)], colspan: 4),
@@ -909,7 +909,7 @@ Prenons un cycle en particulier:
 )
 
 
-Plus de la moitié du temps de calcul du plugin provient de l'envoi de l'état du robot sur le canal DDS `rt/lowstate`.
+Plus de la moitié du temps de calcul du plugin est dû à de l'envoi de l'état du robot sur le canal DDS `rt/lowstate`.
 
 Notons également que, même si ce cyle-là a duré 0.267 ms, la durée d'un cycle est assez variable, certains atteignent 0.8 ms.
 
@@ -917,7 +917,7 @@ Notons également que, même si ce cyle-là a duré 0.267 ms, la durée d'un cyc
 
 Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'envoi d'un message DDS:
 
-/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à
+/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à tout addresse IP accessible dans un certain intervalle. En restreignant à `localhost`, on s'assure que le message n'a pas à être copié plusieurs fois.
 / Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
 / Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
 
@@ -933,14 +933,14 @@ Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des r
 
 Gazebo possède une fonctionnalité d'enregistrement vidéo, ce qui s'avère utile pour partager des résultats de simulation.
 
-Cependant, l'enregistrement vidéo n'est pas nativement contrôlable par du code. L'idée était en effet de faire automatiquement tourner une simulation à chaque changement de la politique RL, et d'obtenir la vidéo du résultat, pour en observer l'évolution.
+Cependant, l'enregistrement vidéo n'est pas nativement contrôlable programmatiquement. L'idée était en effet de faire automatiquement tourner une simulation à chaque changement de la politique RL, et d'obtenir la vidéo du résultat, pour en observer l'évolution.
 
-Il a donc fallu développer un autre plugin, héritant de `gz::gui::Plugin` cette fois-ci. Ce plugin écoute des messages sur des topics Gazebo, `/gui/record_video/...`, et permet de démarrer et arrêter l'enregistrement, tout en indiquant le chemin vers le fichier mp4 de sortie.
+Il a donc fallu développer un autre plugin, héritant de `gz::gui::Plugin` cette fois-ci. Ce plugin écoute des messages sur des topics Gazebo, `/gui/record_video/`${$`start`,`stop`$}$, et permet de démarrer et arrêter l'enregistrement, tout en indiquant le chemin vers le fichier MP4 de sortie.
 
 Au final, un script complet permettant de démarrer une simulation et l'enregistrer en MP4 ressemble à ceci
 
 ```bash
-# Envoyer un message Gazebo avec un argument de type String et une valeur de retour de type Booléen
+# Fonction pour envoyer un message Gazebo avec un argument de type String et une valeur de retour de type Booléen
 send_to_gz() {
   gz service -s $1 --reqtype gz.msgs.StringMsg --reptype gz.msgs.Boolean --req "data: \"$2\""
 }
@@ -955,7 +955,7 @@ send_to_gz /gui/record_video/start mp4
 
 # Lancement de la politique RL
 uv run policy.py & policy_pid=$!
-# On décide de la durée maximale de la vidéo (si la politique ne s'arrête pas d'elle même)
+# On décide de la durée maximale de la vidéo (si la politique ne l'arrête pas d'elle même)
 sleep 120
 kill $policy_pid
 
@@ -971,22 +971,23 @@ kill $sim_pid
 == Mise en CI/CD
 
 
-On appelle CI/CD (pour _Continuous Integration / Continuous Delivery_) la pratique consistant à intégrer fréquemment des petits changements à un dépôt de code source commun, en lançant des tests régulièrement (partie "CI") et éventuellement déployer la base de code fréquemment (partie "CD") @cicd.
+On appelle CI/CD (pour _Continuous Integration / Continuous Delivery_) la pratique consistant à intégrer fréquemment des petits changements à un dépôt de code source commun, en lançant des tests régulièrement (partie "CI") et éventuellement en déployant la base de code fréquemment (partie "CD") @cicd.
 
-Une fois l'enregistrement vidéo rendu automatisable, si l'on veut mettre en place le lancement automatique à chaque commit du dépôt git de la politique (i.e. chaque changement de la politique), il faut crééer une description de _workflow_ (dans notre cas, un workflow _Github Actions_).
+Une fois l'enregistrement vidéo rendu automatisable, si l'on veut mettre en place l'enregistrement vidéo automatique à chaque changement de la politique, il faut crééer une description de _workflow_ (dans notre cas, un workflow _Github Actions_).
 
-Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'exécution (par exemple, "à chaque commit sur la branche `main`"). C'est un des outils permettant de mettre en place la CI/CD.
+Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé#footnote[Qu'il s'agisse d'une machine virtuelle ou d'un simple container] ainsi que des évènements et conditions décrivant quand lancer l'exécution (par exemple, "à chaque commit sur la branche `main`"). C'est un des outils permettant de mettre en place la CI/CD.
 
 === Une image de base avec Docker
 
 L'environnement d'exécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque exécution du workflow, dans laquelle tout les programmes nécéssaires sont déjà installés.
 
-Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), et Gazebo.
+Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), Gazebo et gz-unitree.
 
 ```dockerfile
 FROM ubuntu:24.04
 
-RUN apt update
+RUN apt update 
+# Just
 RUN apt install -y curl just sudo
 # Python (via le gestionnaire de versions et dépendances UV)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
@@ -1006,18 +1007,16 @@ RUN mkdir -p /usr/local/lib/gz-unitree/
 RUN just install
 ```
 
-Un autre workflow, celui-là vivant dans le dépôt de gz-unitree, crée une image Docker depuis ce Dockerfile, qui est ensuite utilisable via `ghcr.io/Gepetto/gz-unitree` @gzu-ghcr.
+Un autre workflow, défini cette fois-ci dans le dépôt de gz-unitree et non celui de la politique RL, crée une image Docker depuis ce Dockerfile, qui est ensuite utilisable via `ghcr.io/Gepetto/gz-unitree` @gzu-ghcr. Les commandes installant Gazebo et les outils de compilation sont écrites dans le _Justfile_, que nous lançons ici avec `RUN just setup`.
 
 === Une pipeline Github Actions
 
-Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
+Une fois cette image disponible, on peut l'utiliser dans un workflow Github sur le dépôt Git de la politique RL:
 
 #zebraw(
   numbering: false,
   highlight-lines: (6, 7),
   ```yaml
-  ...
-
   jobs:
     test:
       runs-on: ubuntu-latest
@@ -1026,7 +1025,6 @@ Une fois cette image disponible, on peut l'utiliser dans un workflow Github:
       steps:
         - name: Checkout repository
           uses: actions/checkout@v5
-        - ...
   ```,
 )
 
@@ -1042,14 +1040,14 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
            path: /tmp/result.mp4
 ```
 
-#v(2em)
+#v(0.5em)
 #grid(
   columns: (5fr, 3fr),
   gutter: 2em,
   [
 
     ==== Un environnement de développement contraignant
-    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur exécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'exécute entièrement, et regardé si quelque chose s'est mal passé.
+    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur exécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'exécute entièrement, et regarde si quelque chose s'est mal passé.
 
     Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
 
@@ -1059,9 +1057,9 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
 
     Les environnements de CI/CD s'apparentent plus à des serveurs qu'à des ordinateurs complets: en particulier, il n'y a pas d'interface graphique et donc pas de serveur d'affichage (_display server_).
 
-    Mais Gazebo nécéssite un display server pour enregistrer une vidéo.
+    Mais Gazebo a besoin d'un display server pour enregistrer une vidéo.
 
-    Il convient donc de simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
+    Il faut donc simuler un serveur d'affichage. Dans notre cas, l'environnement de CI/CD étant sous Linux, on simule un serveur X11 avec _XVFB_ @xvfb.
 
   ],
   figure(
