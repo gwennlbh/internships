@@ -266,7 +266,7 @@ $
 On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
 
 On note aussi que $cal(C)$ et $cal(C)_pi$ sont dénombrables: Ils sont construits à partir de $(S times A)^NN$ et $S$, et $A$ & $NN$ sont également dénombrables#footnote[
-  On a $card cal(C) <= card((S times A)^NN) = card(S times A)^(card NN) = (card S card A)^(card NN) <= (aleph_0)^(card NN) = attach(aleph_0, tl: 2) = aleph_0$
+  On a $card cal(C) <= card((S times A)^NN) = card(S times A)^(card NN) = (card S card A)^(card NN) <= (aleph_0)^(card NN) = attach(aleph_0, tl: 2) = aleph_0$. De plus, $cal(C)_pi subset cal(C)$, donc $card cal(C)_pi <= card cal(C) <= aleph_0$
 ]
 
 #align(center)[
@@ -284,7 +284,7 @@ Les définitions suivantes, dont la plupart proviennent du papier _Trust Region 
   [
     #todo[Pas clair]
 
-    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple. L'"espérance-sur-ensemble" est définie par le passage de @eta-sum-definition à @eta-exp-definition], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition.
+    Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple.], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition.
 
     Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance _le long_ de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
   ]
@@ -331,7 +331,21 @@ Avec $C ~ pi in cal(C)$ signifiant
 
 // Le >= #h(-1pt) ""_f dans la footnote c'est un hack pour mettre f en subscript inline de >= , sinon ça passe en dessous et c'est moche
 
-L'avantage $A_(pi, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $pi$, avec "préférable" au sens de $>=_(r(M(s, dot.c)))$#footnote[En posant, pour toute fonction $f: I -> O$, avec $O$ ordonné par $>=$: $forall i in I^2, quad i_1 op(>=#h(-1pt) ""_f) i_2 := f(i_1) >= f(i_2)$. Ici donc, on compare les politiques selon $a |-> r(M(s, a))$. Autrement dit, la récompense associé à l'état obtenu après le choix d'une action, depuis l'état $s$])
+L'avantage $A_(pi, r)(s, a)$ mesure à quel point  il est préférable de choisir l'action $a$ quand on est dans l'état $s$ (pour la politique $pi$, avec "préférable" au sens de#footnote[En posant, pour toute fonction $f: I -> O$, avec $O$ ordonné par $>=$: $forall i in I^2, quad i_1 op(>=#h(-1pt) ""_f) i_2 := f(i_1) >= f(i_2)$. Ici donc, on compare les politiques selon $a |-> r(M(s, a))$. Autrement dit, la récompense associé à l'état obtenu après le choix d'une action, depuis l'état $s$] $>=_(r(M(s, dot.c)))$)
+
+Pour calculer $A_(pi, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
+
+$
+  A_(pi, r)(s, a) :=
+  underbracket(
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
+    Q(s, a)
+  ) - underbracket(
+    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
+    V(s)
+  )
+$
+
 
 On peut visualiser ce calcul ainsi:
 
@@ -383,19 +397,6 @@ On peut visualiser ce calcul ainsi:
   node((5, -0.5))
 })
 
-Pour calculer $A_(pi, r)(s, a)$, on regarde l'espérance des récompenses cumulées pour tout chemin commençant par $s$, et on la compare à celle pour tout chemin commençant par $M(s, a)$
-
-$
-  A_(pi, r)(s, a) :=
-  underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s \ s_1 = M(s_0, a)) sum_(t=0)^oo gamma^t r(s_t),
-    Q(s, a)
-  ) - underbracket(
-    exp_((s_t, a_t)_(t in NN) op(~) pi op(in) cal(C) \ s_0 = s) sum_(t=0)^oo gamma^t r(s_t),
-    V(s)
-  )
-$
-
 
 
 On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'espérance...
@@ -423,7 +424,7 @@ $
 
 === _Surrogate advantage_ $cL$
 
-Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur à un état donné:
+Il est théoriquement possible d'utiliser $A$ pour optimiser une politique, en maximisant sa valeur:
 
 #diagram(
   caption: [Boucle d'entraînement],
@@ -451,7 +452,7 @@ $
   a_(t+1)^* & := argmax_(a in A) A_(Pi, R)(s_(t+1), a) \
 $
 
-Mais, en pratique, des erreurs d'approximations peuvent rendre $A_(Pi, R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(Pi)$ @trpo
+Mais, en pratique, des erreurs d'approximation peuvent rendre $A_(Pi, R)(s_(t+1), a_(t+1)^*)$ négatif, ce qui empêche de s'en servir pour définir une valeur de $Q_(Pi)$ @trpo
 
 
 Le _surrogate advantage_ détermine la performance d'une politique par rapport à une autre @trpo-openai
