@@ -2,7 +2,16 @@
 
 #show figure: set block(spacing: 3em)
 
-Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de contrôler ses robots (dont le H1v2).
+== Le robot _H1v2_ d'Unitree
+
+Le _H1v2_ est un modèle de robot humanoïde créé par la société Unitree.
+
+Il possède plus de 26 degrés de liberté, dont
+
+- 6 dans chaque jambe (3 à la hanche, 2 au talon et un au genou),
+- 7 dans chaque bras (3 à l'épaule, 3 au poignet et un au coude) @h1v2
+
+Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de le contrôler.
 
 == Canaux DDS
 

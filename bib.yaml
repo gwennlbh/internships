@@ -916,7 +916,7 @@ just:
 gzu-ghcr:
   type: repository
   title: 'Package gz-unitree'
-  author: Gepetto
+  author: Gepetto team at LAAS-CNRS
   publisher: Github
   url:
     date: '2025-10-28'
@@ -1101,3 +1101,13 @@ nixgz3:
   url:
     date: 2025-11-03
     value: https://github.com/NixOS/nixpkgs/pulls?q=is%3Apr+gz+author%3AGuelakais
+h1v2isaac:
+  type: repository
+  title: h1v2-Isaac
+  publisher: GitHub
+  author: Gepetto team at LAAS-CNRS
+  url:
+    date: '2025-11-05'
+    value: https://github.com/Gepetto/h1v2-Isaac
+  date: '2025-06-02'
+

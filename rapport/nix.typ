@@ -4,7 +4,7 @@
 
 === État dans le domaine de la programmation
 
-La différence entre une fonction au sens mathématique et une fonction au sens programmatique consiste en le fait que, par des raisons de practicité, on permet aux `function`s des langages de programmation d'avoir des _effets de bords_. Ces effets affectent, modifient ou font dépendre la fonction d'un environnement global qui n'est pas explicitement déclaré comme une entrée (un argument) de la fonction en question @purefunctions.
+La différence entre une fonction au sens mathématique et une fonction au sens programmatique consiste en le fait que, par des raisons de practicité, on permet aux `function`s des langages de programmation d'avoir des _effets de bords_. Ces effets affectent, modifient ou font dépendre la fonction d'un environnement global qui n'est pas explicitement déclaré comme une entrée (argument) de la fonction en question @purefunctions.
 
 Cette liberté permet, par exemple, d'avoir accès à la date et à l'heure courante, interagir avec un système de fichier d'un ordinateur, générer une surface pseudo aléatoire par bruit de Perlin, etc.
 
@@ -23,15 +23,15 @@ def f(a):
   return date.today().year + a
 ```
 
-Selon l'année dans laquelle nous sommes, $mono(f)(0)$ n'a pas la même valeur.
+Selon l'année dans laquelle nous sommes, `f(0)` n'a pas la même valeur.
 
-De manière donc très concrète, si cette fonction `f` fait partie du protocole expérimental d'une expérience, cette expérience n'est plus reproductible, et ses résultats sont donc potentiellement non vérifiables, si le papier est soumis le 15 décembre 2025 et la _peer review_ effectuée le 2 janvier 2026.
+De manière donc très concrète, si cette fonction `f` fait partie d'un protocole expérimental, l'expérience n'est plus reproductible, et ses résultats sont donc potentiellement non vérifiables, si le papier est soumis le 15 décembre 2025 et la _peer review_ effectuée le 2 janvier 2026.
 
 === Contenir les effets de bords
 
-En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée dans certains domaines de programmation @reproducibility
+En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée dans certains domaines de programmation @reproducibility #todo[Lesquels?].
 
-Il existe donc depuis longtemps des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limite les effets de bords. Certains langages font également la distinction entre une fonction _pure_#footnote[sans effets de bord] et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord puisqu'elle ne renvoie pas de valeur @ibm-function-procedure-routine
+Il existe donc depuis longtemps #todo[préciser + #refneeded] des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limitent les effets de bords. Certains langages font également la distinction entre une fonction _pure_ (sans effets de bord) et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord et ne renvoie pas de valeur @ibm-function-procedure-routine.
 
 
 === État dans le domaine de la robotique
@@ -43,9 +43,9 @@ De fait, les langages employés sont communément C, C++ ou Python#footnote[Il a
 L'idée de s'affranchir d'effets de bords pour rendre les programmes dans la recherche en robotique reproductibles est donc plus utopique que réaliste.
 
 
-=== Environnements de développement
+=== Reproductibilité de la compilation
 
-Cependant, ce qui fait un programme n'est pas seulement son code: surtout dans des langages plus anciens sans gestion de dépendance intégrée au langage, les dépendances (bibliothèques) du programme, ainsi que l'environnement et les étapes de compilation de ce dernier, représentent également une partie considérable de la complexité du programme (par exemple, en C++, on utilise un outil générant des fichiers de configuration pour un autre outil qui à son tour configure le compilateur de C++ @cmake)
+Cependant, ce qui fait un programme n'est pas seulement son code: surtout dans des langages plus anciens sans gestion de dépendance intégrée au langage, les dépendances (bibliothèques) du programme, ainsi que l'environnement et les étapes de compilation de ce dernier, représentent également une partie considérable de la complexité du programme (par exemple, en C++, on utilise un outil générant des fichiers de configuration pour un autre outil qui à son tour configure le compilateur de C++#footnote[Il est ici question de CMake, qui génère des Makefile configurant GCC] @cmake)
 
 C'est cette partie que Nix, le gestionnaire de paquet, permet d'encapsuler et de rendre reproductible. Dans ce modèle, la compilation (et de manière plus générale la construction, ou _build_) du projet est la fonction que l'on veut rendre pure. L'entrée est le code source, et le résultat de la fonction est un binaire, qui ne doit dépendre que du code source.
 
@@ -53,9 +53,9 @@ $
   forall "src", "bin", forall f in "bin"^"src", forall (P_1, P_2) in "src"^2, P_1 = P_2 => f(P_1) = f(P_2)
 $
 
-Ici, $P_1$ et $P_2$ sont deux itérations du code source (src) du programme. Si le code source est identique, les binaires résultants de la compilation ($f$) sont égaux, au sens de l'égalité bit à bit.
+Ici, $P_1$ et $P_2$ sont deux itérations du code source (éléments de src) du programme. Si le code source est identique, les binaires résultants de la compilation ($f$) sont égaux, au sens de l'égalité bit à bit.
 
-On a la proposition (1), avec $E = "src"$, l'ensemble des code source possibles pour un langage, et $F= "bin"$, l'ensemble des binaires éxécutables
+On a la proposition (1), avec $E = "src"$, l'ensemble des code source possibles pour un langage, et $F= "bin"$, l'ensemble des binaires exécutables
 
 Nix ne peut pas garantir que le programme sera sans effets de bords au _runtime_, mais vise à le garantir au _build-time_.
 
@@ -63,7 +63,9 @@ Nix ne peut pas garantir que le programme sera sans effets de bords au _runtime_
 
 === Un _DSL_#footnote[Domain-Specific Language] fonctionnel
 
-Une autre caractéristique que l'on trouve souvent dans la famille de langages fonctionnels est l'omniprésence des _expressions_: quasi toute les constructions syntaxiques forment des expressions valides, et peuvent donc servir de valeur
+Une autre caractéristique que l'on trouve souvent dans la famille de langages fonctionnels est l'omniprésence des _expressions_: la quasi-totalité des constructions syntaxiques forment des expressions valides, et peuvent donc servir de valeur
+
+#todo[améliorer exemple, ya des ternaires dans tt les langages...]
 
 #table(
   columns: (50%, 50%),
@@ -101,7 +103,7 @@ Afin de décrire les dépendances d'un programme, l'environnement de compilation
   ```,
 )
 
-Voici un exemple de définition d'un programme, appelée _dérivation_ dans le jargon de Nix:
+Voici un exemple de définition d'un paquet Nix, appelée _dérivation_ dans le jargon du langage:
 
 
 ```nix
@@ -146,47 +148,47 @@ stdenv.mkDerivation {
 }
 ```
 
-La dérivation ici prend en entrée le code source (`src-odri-masterboard-sdk`), ainsi que des dépendances, que ce soit des fonctions relatives à Nix même (comme `stdenv.mkDerivation`) pour simplifier la définition de dérivation, ou des dépendances au programmes, que ce soit pour sa compilation ou pour son exécution (dans ce dernier cas de figures, les dépendances sont inclues ou reliées au binaire final)
+La dérivation prend ici en entrée le code source (`src-odri-masterboard-sdk`), ainsi que des dépendances, que ce soit des fonctions relatives à Nix même (comme `stdenv.mkDerivation`) pour simplifier la définition de dérivation, ou des dépendances du programme, qu'elles servent à la compilation ou à son exécution (dans ce dernier cas de figure, les dépendances sont inclues ou dynamiquement liées dans le binaire final)
 
 === Un ecosystème de dépendances
 
-Afin de conserver la reproductibilité même lorsque l'on dépend de libraries tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des _packages_ Nix, disponibles sur _Nixpkgs_ @nixpkgs.
+Afin de conserver la reproductibilité même lorsque l'on dépend de libraries tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des paquets Nix, disponibles sur un registre centralisé, _Nixpkgs_ @nixpkgs.
 
-Parfois donc, écrire un paquet Nix pour son logiciel demande aussi d'écrire les paquets Nix pour les dépendances de notre projet, si celles-ci n'existent pas encore, et cela récursivement. On peut ensuite soumettre nos paquets afin que d'autres puissent en dépendre sans les réécrire, en contribuant à _Nixpkgs_ @nixpkgs-contributing
+Ainsi, écrire un paquet Nix pour son logiciel demande parfois d'écrire des paquets Nix pour les dépendances de notre projet, si celles-ci n'existent pas encore, et cela récursivement. On peut ensuite soumettre ces autres paquets à Nixpkgs @nixpkgs-contributing afin que d'autres puissent en dépendre sans les réécrire.
 
-Pour ne pas avoir à compiler toutes les dépendances soit-même quand on dépend de `.nix` de _nixpkgs_, il existe un serveur de cache, qui propose des binaires des dépendances, Cachix @cachix
+Pour ne pas avoir à compiler toutes les dépendances soi-même quand on dépend de paquets sur _Nixpkgs_, il existe un serveur de cache, qui propose des binaires des dépendances, Cachix @cachix
 
 === Une compilation dans un environnement fixé
 
-Certains aspects de l'environnement dans lequel l'on compile un programme peuvent faire varier le résultat final. Pour éviter cela, Nix limite au maximum les variations d'environnement. Par exemple, la date du système est fixée au 0 UNIX (1er janvier 1990): le programme compilé ne peut pas dépendre de la date à laquelle il a été compilé.
+Certains aspects de l'environnement dans lequel l'on compile un programme peuvent faire varier le résultat final. Pour éviter cela, Nix limite au maximum les variations d'environnement. Par exemple, la date du système est fixée au 0 UNIX (1er janvier 1990) pendant la compilation#footnote[La date système n'est pas modifiée par Nix, mais il expose une date zéro au processus compilant le logiciel]: le programme compilé ne peut pas dépendre de la date à laquelle il a été compilé.
 
-Quand le _sandboxing_ est activé, Nix isole également le code source de tout accès au réseau, aux autres fichiers du système (ainsi que d'autres mesures) pour améliorer la reproductibilité @nix-sandboxing
+Quand le _sandboxing_ est activé, Nix isole également le code source de tout accès au réseau, aux autres fichiers du système, ainsi que d'autres mesures, pour améliorer la reproductibilité @nix-sandboxing
 
-==== Un complément utile: compiler en CI
+==== Un complément utile: compiler en _CI_
 
-Pour aller plus loin, on peut lancer la compilation du paquet Nix en _CI_#footnote[Continuous Integration, lit. intégration continue], c'est-à-dire sur un serveur distant au lieu de sur sa propre machine. On s'assure donc que l'état de notre machine de développement personnelle n'influe pas sur la compilation, puisque chaque compilation est lancée dans une machine virtuelle vierge @github-runners.
+Pour aller plus loin, on peut lancer la compilation du paquet Nix en _CI_#footnote[Continuous Integration, lit. intégration continue], c'est-à-dire sur un serveur distant, au lieu de compiler sur sa propre machine. On s'assure donc que l'état de notre machine de développement personnelle n'influe pas sur la compilation, puisque chaque compilation est lancée dans une machine virtuelle vierge @github-runners.
 
 == NixOS, un système d'exploitation à configuration déclarative
 
-Une fois le programme compilé avec ses dépendances, il est prêt à être transféré sur l'ordinateur ou la carte de contrôle embarquée au robot.
+Une fois le programme compilé avec ses dépendances, il est prêt à être transféré à l'ordinateur ou la carte de contrôle embarquée sur le robot.
 
 Lorsqu'il y a un ordinateur embarqué, comme par exemple une Raspberry Pi @raspi, il faut choisir un OS sur lequel faire tourner le programme.
 
-Là encore, un OS s'accompagne d'un amas considérable de configuration des différentes parties du système: accès au réseau, drivers,…
+Là encore, un OS s'accompagne d'un amas considérable de configuration des différentes parties du système: accès au réseau, drivers, etc.
 
-Sur les OS Linux classiques tels que Ubuntu ou Debian, cette configuration est parfois stockée dans des fichiers, ou parfois retenue en mémoire, modifiée par l'éxécution de commandes.
+Sur les distributions Linux classiques tels que Ubuntu ou Debian, cette configuration est parfois stockée dans des fichiers, ou parfois retenue en mémoire, modifiée par l'exécution de commandes.
 
-C'est un problème assez récurrent dans Linux de manière générale: d'un coup, le son ne marche plus, on passe ½h sur un forum à copier-coller des commandes dans un terminal, et le problème est réglé… jusqu'à ce qu'il survienne à nouveau après un redémarrage ou une réinstallation.
+C'est un problème assez récurrent avec Linux de manière générale: d'un coup, le son ne marche plus, on passe ½h sur un forum à copier-coller des commandes dans un terminal, et le problème est réglé… jusqu'à ce qu'il survienne à nouveau après un redémarrage ou une réinstallation.
 
-Ici, NixOS assure que toute modification de la configuration d'un système est _déclarée_ (d'où l'adjectif "déclaratif") dans des fichiers de configurations, également écrits dans des fichiers `.nix` @nixos-impatient.
+Ici, NixOS assure que toute modification de l'état du système est _déclarée_ (d'où l'adjectif "déclaratif") dans des fichiers de configurations, également écrits dans des fichiers `.nix` @nixos-impatient.
 
 Ici encore, cela apporte un gain en terme de reproductibilité: l'état de configuration de l'OS sur lequel est déployé le programme du robot est, lui aussi, rendu reproductible.
 
 == Packaging Nix pour _gz-unitree_
 
-Le packaging pour Nix de gz-unitree lui-même n'est pas très complexe: il s'agit d'un projet C++ / CMake standard.
+Le packaging pour Nix de _gz-unitree_ lui-même n'est pas très complexe: il s'agit d'un projet C++ / CMake standard.
 
-Cependant, gz-unitree a deux principales dépendances
+Cependant, _gz-unitree_ a deux principales dépendances
 
 - Gazebo lui-même, à travers `gz-sim`, `gz-sensors`, `gz-common`, `gz-plugin`, `gz-cmake`, etc.
 - Le SDK2 d'Unitree

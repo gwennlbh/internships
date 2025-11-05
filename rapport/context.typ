@@ -468,10 +468,7 @@ $
 
 
 
-La méthode TRPO définit la mise à jour de $Q$ avec un $Q'$ qui maximise le _surrogate advantage_ @trpo-openai, sous une contrainte limitant l'écart entre $Q$ et $Q'$
-
-
-L'idée de la _TRPO_ est de maximiser le _surrogate advantage_ du nouveau $Q$ tout en limitant l'ampleur des modifications apportées à $Q$, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
+La méthode TRPO définit la mise à jour de $Q$ avec un $Q'$ qui maximise le _surrogate advantage_ @trpo-openai, sous une contrainte limitant l'ampleur des modifications individuelles, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
 
 $
   Q' = & cases(
@@ -494,7 +491,7 @@ Avec $cal(X)$ l'espace des échantillons et $P, P'$ deux distributions de probab
 
 
 
-Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_Pi$ et $Q_Pi'$ pour $s in S$ fixé @trpo
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_Pi$ et $Q_Pi'$, pour tout $s in S$ @trpo
 
 $
   max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) < delta
@@ -536,12 +533,15 @@ Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvell
 
 #let ddot = [ #sym.dot #h(-1em / 16) #sym.dot ]
 
-En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise plutôt l'espérance @trpo
+#dontbreak[
+
+En pratique, l'optimisation sous cette contrainte est trop demandeuse en puissance de calcul, on utilise plutôt l'espérance @trpo.
 
 $
   overline(D_"KL") := bb(E)_(s in S) D_"KL" (Q(s, dot) || Q'(s, dot))
 $
 
+]
 
 
 
@@ -663,27 +663,8 @@ La complexité de l'expression, et la présence d'un $min$ au lieu de simplement
 
 ]
 
-== CaT (_Constraints as Terminations_)
-
-// L'algorithme de mise à jour est le suivant @ppo-openai:
-//
-// 1. Mise à jour de la politique:
-//
-// $
-// Pi' = argmax_p 1/T sum_(t=1)^T L(s, a, Pi, p, R)
-// $
-
 
 == Application en robotique
-
-
-Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
-
-Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
-
-Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions, on fait donc une émulation de la partie logicielle du robot), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
-
-Cet ensemble s'appelle un _simulateur système_.
 
 
 === Spécification de la tâche
@@ -700,6 +681,18 @@ En robotique, il est commun d'inclure dans la récompense les éléments suivant
 
 
 === Inventaire des simulateurs en robotique
+
+
+Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
+
+Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
+
+
+
+
+Un environnement de RL#footnote[Reinforcement Learning] ne se résume pas à son moteur de physique: il faut également charger des modèles 3D, le modèle du robot (qui doit être contrôlable par les actions, on fait donc une émulation de la partie logicielle du robot), et également, pendant les phases de développement, avoir un moteur de rendu graphique, une interface et des outils de développement.
+
+Cet ensemble s'appelle un _simulateur système_.
 
 ==== Isaac
 
@@ -726,16 +719,6 @@ Gazebo possède des plugins officiels pour divers moteurs de simulation physique
 / Bullet Featherstone: Plugin `gz-physics-bullet-featherstone-plugin`, également en beta @gazebo-physics-engines. Une variable de Bullet, utilisant l'algorithme de Featherstone @bullet-featherstone @featherstone
 
 
-== Le robot _H1v2_ d'Unitree
-
-_H1v2_ est un modèle de robot humanoïde créé par la société Unitree.
-
-Il possède plus de 26 degrés de liberté, dont
-
-- 6 dans chaque jambe (3 à la hanche, 2 au talon et un au genou),
-- 7 dans chaque bras (3 à l'épaule, 3 au poignet et un au coude) @h1v2
-
-
 == Reproductibilité logicielle
 
 La reproductibilité est particulièrement complexe dans le champ du reinforcement learning @rl-reproducibility.
@@ -747,6 +730,4 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
   scale(7%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
 )
 
-Bien que toutes ces dépendances puissent être spécifiées à des versions strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ à l'installation pour des raisons de performance @cpp-python.
-
-Des problèmes de reproductibilité peuvent donc subsister à l'installation des dépendances, étant donné la dépendance du processus de compilation à la machine compilant le code.
+Bien que toutes ces dépendances puissent être spécifiées avec des contraintes de version strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ _à l'installation_#footnote[Pour des raisons de performance @cpp-python, certaines bibliothèques implémentent leurs fonctions critiques en C++. C'est par exemple le cas de NumPy #refneeded]: fixer la version de la bibliothèque ne suffit pas donc à guarantir la reproductibilité de la compilation de l'arbre des dépendances.

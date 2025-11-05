@@ -715,7 +715,7 @@ Le `LowStateWriter` vient lire le _State buffer_ (1B) pour publier l'état sur l
 })
 
 
-Ici également, `LowStateWriter` s'exécute _en parallèle_ du code de `::PreUpdate`: En effet, la création du `ChannelPublisher` démarre une boucle qui vient éxécuter `LowStateWriter` périodiquement, dans un autre _thread_: on a donc aucune garantie de synchronisation entre les deux.
+Ici également, `LowStateWriter` s'exécute _en parallèle_ du code de `::PreUpdate`: En effet, la création du `ChannelPublisher` démarre une boucle qui vient exécuter `LowStateWriter` périodiquement, dans un autre _thread_: on a donc aucune garantie de synchronisation entre les deux.
 
 Ici, il y a en plus non pas deux, mais _cinq_ boucles indépendantes qui sont en jeux:
 
@@ -866,7 +866,7 @@ L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportem
 
 == Amélioration des performances <perf>
 
-Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'éxécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
+Les premiers essais affichent un facteur temps-réel#footnote[Appelé RTF @rtf (Real-Time Factor). Un RTF de 100% signifie que la simulation s'exécute à vitesse réelle, un RTF inférieur à 1 signifie que la simulation est plus lente que la vitesse simulée] autour des 10 à 15%.
 
 #grid(
   columns: 2,
@@ -929,7 +929,7 @@ Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'env
 Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle:
 
 / Mise en cache de joints à l'initialisation du plugin: pour éviter de devoir appeler `model.JointByName` dans une _hot loop_#footnote[Boucle (`for` ou `while`) dont le corps est exécuté un très grand nombre de fois, et dont la rapidité est importante].
-/ Utilisation d'une implémentation de CRC32 plus rapide: tentative avec _CRC++_ @crcpp non achevée, à cause d'un _stack smashing_ pendant l'éxécution
+/ Utilisation d'une implémentation de CRC32 plus rapide: tentative avec _CRC++_ @crcpp non achevée, à cause d'un _stack smashing_ pendant l'exécution
 
 
 Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécéssaires pour atteindre un RTF raisonnable.
@@ -980,11 +980,11 @@ On appelle CI/CD (pour _Continuous Integration / Continuous Delivery_) la pratiq
 
 Une fois l'enregistrement vidéo rendu automatisable, si l'on veut mettre en place le lancement automatique à chaque commit du dépôt git de la politique (i.e. chaque changement de la politique), il faut crééer une description de _workflow_ (dans notre cas, un workflow _Github Actions_).
 
-Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'éxécution (par exemple, "à chaque commit sur la branche `main`"). C'est un des outils permettant de mettre en place la CI/CD.
+Un workflow est un ensemble de commandes à exécuter dans un environnement virtualisé (qu'il s'agisse d'une machine virtuelle ou d'un simple container), ainsi que des évènements et conditions décrivant quand lancer l'exécution (par exemple, "à chaque commit sur la branche `main`"). C'est un des outils permettant de mettre en place la CI/CD.
 
 === Une image de base avec Docker
 
-L'environnement d'éxécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque éxécution du workflow, dans laquelle tout les programmes nécéssaires sont déjà installés.
+L'environnement d'exécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque exécution du workflow, dans laquelle tout les programmes nécéssaires sont déjà installés.
 
 Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), et Gazebo.
 
@@ -1054,11 +1054,11 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
   [
 
     ==== Un environnement de développement contraignant
-    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur éxécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'éxécute entièrement, et regardé si quelque chose s'est mal passé.
+    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur exécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'exécute entièrement, et regardé si quelque chose s'est mal passé.
 
     Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
 
-    Ceci rend le développement assez fastidieux, surtout quand le workflow s'éxécute pendant des dizaines de minutes.
+    Ceci rend le développement assez fastidieux, surtout quand le workflow s'exécute pendant des dizaines de minutes.
 
     ==== Émuler un serveur graphique <simulate-x>
 
