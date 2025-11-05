@@ -11,42 +11,101 @@ Il possède plus de 26 degrés de liberté, dont
 - 6 dans chaque jambe (3 à la hanche, 2 au talon et un au genou),
 - 7 dans chaque bras (3 à l'épaule, 3 au poignet et un au coude) @h1v2
 
-Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de le contrôler.
+Unitree met à disposition du public un _SDK_#footnote[Kit de développement logiciel (Software Development Kit)] permettant de le contrôler, `unitree_sdk2` @unitree_sdk2
 
 == Canaux DDS
 
-Pour communiquer avec le robot via le réseau, Unitree utilise CycloneDDS, une implémentation par Oracle du standard DDS#footnote[pour Data Distribution Service] @cyclonedds, une technologie de communication bidirectionnelle#footnote[dite "_pub-sub_" pour _publish_/_subscribe_ ] en temps réel, standardisée par l'Object Management Group, OMG @dds. Les messages sont envoyées sur le réseau via UDP et IP.
+Pour communiquer avec le robot via le réseau, Unitree utilise CycloneDDS, une implémentation par Oracle du standard DDS#footnote[pour Data Distribution Service] @cyclonedds. DDS est une technologie de communication bidirectionnelle#footnote[dite "_pub-sub_" pour _publish_/_subscribe_ ] en temps réel, standardisée par l'Object Management Group, OMG @dds. Les messages sont envoyés sur le réseau via UDP et IP.
 
 Les données contenues dans chacun des messages sont spécifiées via un autre format, IDL, également  standardisé par l'OMG @omgidl.
 
-L'intérêt d'un format indépendant du langage de programmation est que l'on peut générer du code décrivant ces données pour plusieurs langages, ce que fait Unitree en distribuant du code C++ et Python.
+L'intérêt d'un format indépendant du langage de programmation est que l'on peut générer du code décrivant ces données dans plusieurs langages de programmation, ce que fait Unitree en distribuant un SDK en C++ et en Python.
 
 Par exemple, les messages permettant de contrôler les moteurs du H1v2 sont définis ainsi
 
 #figure(
-  caption: [`LowCmd.idl`, traduit depuis sa conversion en C++ @lowcmd_hpp],
-  ```c
-  struct MotorCmd
-  {
-    uint8 mode;
-    float q;
-    float dq;
-    float tau;
-    float kp;
-    float kd;
-    unsigned long reserve;
-  };
+    caption: [`LowCmd.idl`, traduit depuis sa conversion en C++ @lowcmd_hpp],
+    ```c
+    struct MotorCmd
+    {
+      uint8 mode;
+      float q;
+      float dq;
+      float tau;
+      float kp;
+      float kd;
+      unsigned long reserve;
+    };
 
-  struct Cmd
-  {
-    uint8 mode_pr;
-    uint8 mode_machine;
-    MotorCmd motor_cmd[35];
-    unsigned long reserve[4];
-    unsigned long crc;
-  };
-  ```,
-)
+    struct Cmd
+    {
+      uint8 mode_pr;
+      uint8 mode_machine;
+      MotorCmd motor_cmd[35];
+      unsigned long reserve[4];
+      unsigned long crc;
+    };
+    ```)
+
+
+#grid(
+  columns: 2,
+    ```python
+    @dataclass
+    @annotate.final
+    @annotate.autoid("sequential")
+    class MotorCmd_(idl.IdlStruct, typename="MotorCmd"):
+        mode: types.uint8
+        q: types.float32
+        dq: types.float32
+        tau: types.float32
+        kp: types.float32
+        kd: types.float32
+        reserve: types.uint32
+
+    @dataclass
+    @annotate.final
+    @annotate.autoid("sequential")
+    class LowCmd_(idl.IdlStruct, typename="Cmd"):
+        mode_pr: types.uint8
+        mode_machine: types.uint8
+        motor_cmd: types.array['MotorCmd_', 35]
+        reserve: types.array[types.uint32, 4]
+        crc: types.uint32
+
+    ```,
+    ```cpp
+    class LowCmd_
+    {
+    private:
+     uint8_t mode_pr_ = 0;
+     uint8_t mode_machine_ = 0;
+     std::array<::MotorCmd_, 35> motor_cmd_ = { };
+     std::array<uint32_t, 4> reserve_ = { };
+     uint32_t crc_ = 0;
+
+    public:
+      LowCmd_() = default;
+
+      explicit LowCmd_(
+        uint8_t mode_pr,
+        uint8_t mode_machine,
+        const std::array<::MotorCmd_, 35>& motor_cmd,
+        const std::array<uint32_t, 4>& reserve,
+        uint32_t crc) :
+        mode_pr_(mode_pr),
+        mode_machine_(mode_machine),
+        motor_cmd_(motor_cmd),
+        reserve_(reserve),
+        crc_(crc) { }
+
+      uint8_t mode_pr() const { return this->mode_pr_; }
+      uint8_t& mode_pr() { return this->mode_pr_; }
+      void mode_pr(uint8_t _val_) { this->mode_pr_ = _val_; }
+      uint8_t mode_machine() const { return this->mode_machine_; }
+    ```
+  )
+))
 
 DDS groupe les mesages dans des _topics_. Les messages sont échangés sur un topic de la manière suivante
 

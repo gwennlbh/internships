@@ -1111,3 +1111,10 @@ h1v2isaac:
     value: https://github.com/Gepetto/h1v2-Isaac
   date: '2025-06-02'
 
+gzu-cmakelists:
+  type: web
+  title: gz-unitree/CMakeLists.txt at main · Gepetto/gz-unitree · GitHub
+  url:
+    date: '2025-11-05'
+    value: https://github.com/Gepetto/gz-unitree/blob/main/CMakeLists.txt
+

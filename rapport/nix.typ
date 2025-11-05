@@ -186,14 +186,14 @@ Ici encore, cela apporte un gain en terme de reproductibilité: l'état de confi
 
 == Packaging Nix pour _gz-unitree_
 
-Le packaging pour Nix de _gz-unitree_ lui-même n'est pas très complexe: il s'agit d'un projet C++ / CMake standard.
+Le packaging pour Nix de _gz-unitree_ lui-même n'est pas très complexe: il s'agit d'un projet C++ / CMake standard @gzu-cmakelists.
 
-Cependant, _gz-unitree_ a deux principales dépendances
+Cependant, _gz-unitree_ a deux dépendances principales:
 
 - Gazebo lui-même, à travers `gz-sim`, `gz-sensors`, `gz-common`, `gz-plugin`, `gz-cmake`, etc.
-- Le SDK2 d'Unitree
+- Le SDK d'Unitree, `unitree_sdk2`
 
-En ce qui concerne le SDK2 d'Unitree, une déclaration de paquet Nix a pu être écrite sans trop de soucis, la bibliothèque étant également un projet C++ standard:
+En ce qui concerne le SDK d'Unitree, un paquet Nix a pu être écrit sans trop de soucis, la bibliothèque étant également un projet C++ standard:
 
 ```nix
 {
@@ -231,12 +231,12 @@ stdenv.mkDerivation rec {
 
 Par contre, en ce qui concerne Gazebo, la situation est plus complexe: étant un simulateur système, le projet est bien plus conséquent, et donc plus dur à packager.
 
-Il existe plusieurs tentaives de packaging de Gazebo pour Nix:
+Il existe plusieurs tentatives de packaging de Gazebo pour Nix:
 
 - Un _overlay_ ROS (Robot Operating System), qui inclut notamment Gazebo @nixros
-- Un package pour nixpkgs (registry officielle de Nix) @nixgz @nixgz2 @nixgz3
+- Un package pour _Nixpkgs_ @nixgz @nixgz2 @nixgz3
 - Un outil de génération de paquets Nix à partir de paquets ROS ou Gazebo, développé par Guilhem Saurel au sein de l'équipe Gepetto, _gazebros2nix_ @gazebros2nix
 
 Au début du développement de _gz-unitree_, des essais d'utilisation des paquets Nix pour le développement et la compilation ont été réalisés, mais des erreurs subsistaient, en particulier avec Gazebo.
-
+ Des efforts supplémentaires sont nécéssaires pour empaqueter _gz-unitree_.
 
