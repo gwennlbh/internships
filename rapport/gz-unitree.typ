@@ -87,9 +87,10 @@ Voici une trace wireshark d'un échange usuel entre commandes (`rt/lowcmd`) et �
 
 == Installation du plugin dans Gazebo
 
-Un _system plugin_ Gazebo consiste en la définition d'une classe héritant de `gz::sim::System`, ainsi que d'autres interfaces permettant notamment d'exécuter notre code avant ou après une mise à jour de l'état du simulateur (avec `gz::sim::ISystem`{`Pre`,`Post`}`Update`)
+Un _system plugin_ Gazebo consiste en la définition d'une classe héritant de `gz::sim::System` et d'interfaces permettant notamment d'exécuter notre code avant ou après un pas de temps du simulateur (avec `gz::sim::ISystem`{`Pre`,`Post`}`Update`)
 
-#dontbreak(
+#figure(
+  caption: [Fichier header pour le plugin],
   ```cpp
   #include <gz/sim/System.hh>
   namespace gz_unitree
@@ -115,7 +116,7 @@ Il faut ensuite implémenter la classe puis appeler une macro ajoutant le plugin
 ```cpp
 #include <gz/plugin/Register.hh>
 
-... // implementation
+... // class implementation
 
 GZ_ADD_PLUGIN(
     UnitreePlugin,
@@ -123,7 +124,7 @@ GZ_ADD_PLUGIN(
     UnitreePlugin::ISystemPreUpdate)
 ```
 
-Enfin, on active le plugin en le référançant dans le fichier SDF @sdf-plugin, qui décrit l'environnement du simulateurs (objets, éclairage, etc)
+Enfin, on active le plugin en le référençant dans le fichier SDF @sdf-plugin, qui décrit l'environnement des simulations (objets, éclairage, etc)
 
 #zebraw(
   numbering: false,
@@ -152,7 +153,7 @@ Le plugin consiste en trois parties distinctes:
 - L'interaction avec les canaux DDS du SDK d'Unitree
 - Les données et méthodes internes au plugin
 
-En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit via les canaux DDS avec le robot (qu'il soit réel, ou simulé)
+En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui interagit avec le robot (qu'il soit réel, ou simulé) via le SDK, et donc via les canaux DDS. 
 
 #let legend = (
   ..descriptions,
@@ -232,7 +233,7 @@ En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui int
         name: <dds>,
         (<channelfactory>, <publisher>, <subscriber>),
         alignment: top + center,
-      )[SDK d'Unitree]
+      )[Unitree SDK]
 
 
       node(name: <gzclock>, (1, 5), subtitled(
@@ -265,8 +266,8 @@ En plus de cela, il y a bien évidemment la politique de contrôle $Pi$, qui int
 
       if show-legend {
         node((0, 5), stroke: none, width: 15em, fill: white, legend(
-          ("--", "Message DDS"),
-          ("..", "Message Gazebo"),
+          ("-->", "Message DDS"),
+          ("..>", "Message Gazebo"),
           ("@->", "Désynchronisation"),
         ))
       }
@@ -306,55 +307,49 @@ On lui associe:
 - Un _publisher_, chargé d'envoyer périodiquement des messages sur `rt/lowstate` en appellant la méthode `LowStateWriter`
 - Un _subscriber_, chargé d'appeller la méthode `CmdHandler` avec chaque message arrivant sur `rt/lowcmd`.
 
-On démarre aussi deux autres #emph[subscriber]s, qui sont eux chargés d'écouter des messages sur les topics Gazebo `/clock` et `/imu`, ce qui permet de récupérer le tick de simulation et les valeurs du capteur IMU#footnote[Inertial Measurement Unit, appelée "Centrale intertielle" en français], que l'on a préalablement fixé au modèle du robot en le déclarant au fichier SDF chargé par Gazebo. Le capteur IMU donne des informations importantes sur la position et la vitesse dans l'espace du robot.
+On démarre aussi deux autres #emph[subscriber]s, qui sont eux chargés d'écouter des messages sur les topics Gazebo `/clock` et `/imu`, ce qui permet de récupérer le tick de simulation et les valeurs du capteur IMU#footnote[Inertial Measurement Unit, appelée "Centrale intertielle" en français], que l'on a préalablement fixé au modèle du robot en le déclarant dans le fichier SDF chargé par Gazebo. Le capteur IMU donne des informations spatiales importantes sur la position et la vitesse du robot.
 
-Les topics Gazebo sont un autre moyen de communcation inter-processus asynchrone par pub/sub, similaire à DDS @gz-topics. Gazebo utilise Protobuf @protobuf pour définir les types des messages @gz-messages, qui joue ici le même role qu'IDL dans DDS. Les topics Gazebo sont basés sur un réseau de noeuds décentralisé, chaque noeud pouvant publier et/ou recevoir des messages.
+Les topics Gazebo sont un autre moyen de communcation inter-processus asynchrone par pub/sub, similaire à DDS @gz-topics. Gazebo utilise Protobuf pour définir les types des messages @protobuf @gz-messages, qui joue ici le même role qu'IDL dans DDS. Les topics Gazebo sont basés sur un réseau décentralisé de nœuds, chaque nœud pouvant indépendamment publier et/ou recevoir des messages.
 
-Cette initialisation est faite à l'initialisation du plugin par Gazebo, en la faisant dans la méhode `::Configure` du plugin.
+Cette initialisation est faite à la phase de configuration du plugin par Gazebo, via l'implémentation de la méthode `::Configure` du plugin.
 
-En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePlugin` et ainsi passer des méthodes de la classe comme des simples fonctions
+En pratique, on utilise `std::bind` @cpp-bind pour fixer l'instance d'`UnitreePlugin` et ainsi passer des méthodes de la classe comme des simples fonctions.
 
-#grid(
-  columns: 2,
-  gutter: 1em,
-  figure(
-    caption: [Création d'un _subscriber_ à `rt/lowcmd` dans `UnitreePlugin::Configure`],
-    text(size: 0.8em, ```cpp
-    auto subscriber = ChannelSubscriberPtr<LowCmd_>(
-      new ChannelSubscriber<LowCmd_>("rt/lowcmd")
-    );
+#figure(
+  caption: [Création d'un _subscriber_ à `rt/lowcmd` et d'un _publisher_ sur `rt/lowstate` dans `UnitreePlugin::Configure`],
+  text(size: 0.8em,
+  grid(
+    columns: 2,
+    gutter: 1em,
+    ```cpp
+      auto subscriber = ChannelSubscriberPtr<LowCmd_>(
+        new ChannelSubscriber<LowCmd_>("rt/lowcmd")
+      );
 
-    auto handler = std::bind(
-      &UnitreePlugin::CmdHandler,
-      this,
-      std::placeholders::_1
-    )
+      auto handler = std::bind(
+        &UnitreePlugin::CmdHandler,
+        this,
+        std::placeholders::_1
+      )
 
-    subscriber->InitChannel(handler, 1);
+      subscriber->InitChannel(handler, 1);
+    ```,
+    ```cpp
+      auto publisher = ChannelPublisherPtr<LowState_>(
+        new ChannelPublisher<LowState_>("rt/lowstate")
+      );
 
-    .
-    ```),
-  ),
+      publisher->InitChannel();
 
-  figure(
-    caption: [Création du _publisher_ pour `rt/lowstate` dans `UnitreePlugin::Configure`],
-    text(size: 0.8em, ```cpp
-    auto publisher = ChannelPublisherPtr<LowState_>(
-      new ChannelPublisher<LowState_>("rt/lowstate")
-    );
-
-    publisher->InitChannel();
-
-    this->publisher_thread = CreateRecurrentThreadEx(
-      "low_state_writer",
-      UT_CPU_ID_NONE,
-      500,
-      &UnitreePlugin::LowStateWriter,
-      this
-    );
-    ```),
-  ),
-)
+      this->publisher_thread = CreateRecurrentThreadEx(
+        "low_state_writer",
+        UT_CPU_ID_NONE,
+        500,
+        &UnitreePlugin::LowStateWriter,
+        this
+      );
+    ```
+)))
 
 == Calcul des nouveaux couples des moteurs
 
@@ -387,44 +382,17 @@ Avec
 
 Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la nouvelle consigne, en prenant en compte
 
-- L'erreur sur l'angle $Delta q$ (partie "proportional")
-- L'erreur sur la vitesse de changement de $Delta q$ (partie "derivative")
+- L'erreur sur l'angle $Delta q$ (partie proportionelle).
+- L'erreur sur la vitesse de changement de $Delta q$ (partie dérivative). Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs.
 - Un couple dit de _feed-forward_, $tau_"ff"$, qui permet le maintient du robot à un état stable. On pourrait le déterminer en lançant une première simulation, avec pour objectif le maintient debout. Une fois la stabilité atteinte, on relève les couples des moteurs. Intuitivement, on peut voir $tau_"ff"$ comme un manière de s'affranchir de la partie "maintient debout" dans l'expression de la commande, similairement à la mise à zéro ("tarer") d'une balance.
 
-Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs
-
-On contrôle la proportion de chaque terme dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
-
+On contrôle la prépondérance des deux erreurs dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
 
 
 == `rt/lowcmd` <receive-lowcmd>
 
-En pratique, les valeurs actuelles pour le calcul de $Delta q$ et $Delta dot(q)$ proviennent de l'état du moteur, accessible dans `rt/lowstate` avec les champs `q` et `dq` du moteur en question @h1-rt-lowstate
 
-#figure(
-  caption: [Implémentation de la mise à jour de $tau$],
-  ```cpp
-    // Avec i l'indice du moteur
-    auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
-       cmdbuf->kp.at(i) * (                                           // K_p
-         cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()    // Delta q
-       ) +
-       cmdbuf->kd.at(i) * (                                           // K_d
-         cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq()  // Delta q.
-       );
-
-    std::vector<double> torque = {force};
-    joint.SetForce(ecm, torque);
-  ```,
-)
-
-Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement #refneeded
-
-// === Réception des commandes <receive-lowcmd>
-
-Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `ChannelSubscriber` appelle `::CmdHandler` (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue.
-
-On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ @h1-rt-lowcmd comme décrit précédemment:
+On trouve dans les messages `rt/lowcmd` les champs nécéssaires à au calcul de $tau$ @h1-rt-lowcmd comme décrit précédemment:
 
 #let greyedout = content => text(fill: luma(120), emph(content))
 #let undocumented = greyedout[Non documenté]
@@ -452,8 +420,29 @@ On trouve dans ces messages les champs nécéssaires à au calcul de $tau$ @h1-r
   [Respectivement $q$, $dot(q)$, $tau_"ff"$, $K_p$ et $K_d$],
 )
 
+Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement #refneeded
 
-Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
+
+#figure(
+  caption: [Implémentation de la mise à jour de $tau$],
+  ```cpp
+    // Avec i l'indice du moteur
+    auto force = cmdbuf->tau_ff.at(i) +                               // tau_ff
+       cmdbuf->kp.at(i) * (                                           // K_p
+         cmdbuf->q_target.at(i) - lowstate.motor_state().at(i).q()    // Delta q
+       ) +
+       cmdbuf->kd.at(i) * (                                           // K_d
+         cmdbuf->dq_target.at(i) - lowstate.motor_state().at(i).dq()  // Delta q.
+       );
+
+    std::vector<double> torque = {force};
+    joint.SetForce(ecm, torque);
+  ```,
+)
+
+// === Réception des commandes <receive-lowcmd>
+
+Lorsqu'un message, publié par $Pi$ (1A) et contenant des ordres pour les moteurs, arrive sur `rt/lowcmd`, `ChannelSubscriber` appelle `::CmdHandler` (2, 3), et modifie un _buffer_ (4) contenant la dernière commande reçue. Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il appelle la méthode `::PreUpdate` sur notre plugin, qui vient chercher la commande stockée dans le _buffer_ (1B), et applique cette commande sur le modèle du robot, animé par le simulateur.
 
 
 #architecture([Phase de réception des commandes], {
@@ -484,9 +473,9 @@ Ensuite, Gazebo démarre un nouveau pas de simulation. Avant de faire ce pas, il
 On notera que (1B) s'exécute _parallèlement_ au reste des étapes: la boucle de simulation de Gazebo est indépendante de la boucle de mise à jour de la politique.
 
 
-/ Si `::PreUpdate` est plus fréquente: Le simulateur appliquera simplement plusieurs fois la même commande, le buffer n'ayant pas été modifié.
+/ Si `::PreUpdate` est plus fréquente: Le simulateur appliquera plusieurs fois la même commande, le buffer `cmdbuf` n'ayant pas été modifié.
 
-/ Si `::PreUpdate` est moins fréquente: Certaines commandes seront simplement ignorées par Gazebo, qui ne vera pas la valeur du buffer avant qu'il change de nouveau.
+/ Si `::PreUpdate` est moins fréquente: Certaines commandes seront ignorées par Gazebo, qui ne vera pas la valeur du buffer `statebuf` avant qu'il change de nouveau.
 
 // L'initialisation du subscriber se fait pendant l'initialisation du plugin, c'est à dire dans `UnitreePlugin::Configure`. On relie la réception d'un message à une fonction, qui est ici une méthode, `UnitreePlugin::CmdHandler`.
 //
@@ -594,12 +583,12 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   `imu_state…`,
   "struct.",
   [Valeurs des capteurs intertiels du robot],
-  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu` sur le modèle],
+  [Messages `gz::msgs::IMU` sur le topic Gazebo `/imu`],
 
   `  .quaternion`,
   $RR^4$,
   [Posture dans l'espace du robot, dans l'ordre $(w, x, y, z)$],
-  [$w$, $x$, $y$ et $z$ sur  `.orientation()`],
+  [`w`, `x`, `y` et `z` sur  `.orientation()`],
 
   `  .rpy`,
   $RR^3$,
@@ -610,8 +599,14 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
   $RR^3$,
   [Gyroscope],
   [
-    En utilisant les valeurs de `.orientation()`: \
-    $"atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) )) \ "asin"(2 (w y - z x)) \ "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2))$
+    En utilisant les valeurs de `.orientation()`:
+    #math.equation(numbering: none, block: true, $ vec(
+      delim: #("[", "]"),
+      gap: #0.5em,
+      "atan"_2(2(w x + y z), 1 - 2 (x^2 + y^2) ) ,
+      "asin"(2 (w y - z x)) ,  
+      "atan"_2(2(w z + x y), 1 - 2(y^2 + z^2)) 
+    ) $)
   ],
 
   `  .accelerometer`, $RR^3$, [Accéléromètre], `.angular_velocity()`,
@@ -623,7 +618,7 @@ La documentation d'Unitree liste l'ensemble des champs disponibles dans un messa
 
   `  .mode`,
   ${0, 1}$,
-  [$0$ pour "Brake" et $1$ pour "FOC#footnote[Field-Oriented Control]", deux modes de contrôle pour le moteur électrique],
+  [Modes de contrôle pour le moteur électrique. $0$ pour "Brake" et $1$ pour "FOC#footnote[Field-Oriented Control]"],
   [0],
 
   `  .q`,
