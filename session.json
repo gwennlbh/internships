@@ -53,13 +53,13 @@
                 "height": 1048
             },
             "client_machine_name": "shunbetsu",
-            "window_title": "/home/glebihan/internships/rapport/main.pdf",
+            "window_title": "/home/glebihan/internships/slides/main.pdf",
             "app_name": "org.pwmt.zathura",
             "wm_class": "org.pwmt.zathura",
             "wm_class_instance": "org.pwmt.zathura",
             "cmd": [
                 "zathura",
-                "/home/glebihan/internships/rapport/main.pdf"
+                "/home/glebihan/internships/slides/main.pdf"
             ],
             "process_create_time": "jeu. oct. 16 08:50:37 2025",
             "window_state": {
@@ -97,7 +97,7 @@
             "wm_class_instance": "neovide",
             "cmd": [
                 "neovide",
-                "/home/glebihan/internships/rapport/"
+                "/home/glebihan/internships/slides/"
             ],
             "process_create_time": "jeu. oct. 16 08:51:09 2025",
             "window_state": {

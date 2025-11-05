@@ -6,7 +6,7 @@ launch fish -c "./autopush.fish"
 
 new_tab Typst
 cd ~/internships
-launch fish -c "typst watch --root . rapport/main.typ"
+launch fish -c "typst watch --root . slides/main.typ"
 
 new_tab Bibliography
 cd ~/internships
