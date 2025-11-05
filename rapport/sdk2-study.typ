@@ -45,86 +45,27 @@ Par exemple, les messages permettant de contrôler les moteurs du H1v2 sont déf
       unsigned long reserve[4];
       unsigned long crc;
     };
-    ```)
-
-
-#grid(
-  columns: 2,
-    ```python
-    @dataclass
-    @annotate.final
-    @annotate.autoid("sequential")
-    class MotorCmd_(idl.IdlStruct, typename="MotorCmd"):
-        mode: types.uint8
-        q: types.float32
-        dq: types.float32
-        tau: types.float32
-        kp: types.float32
-        kd: types.float32
-        reserve: types.uint32
-
-    @dataclass
-    @annotate.final
-    @annotate.autoid("sequential")
-    class LowCmd_(idl.IdlStruct, typename="Cmd"):
-        mode_pr: types.uint8
-        mode_machine: types.uint8
-        motor_cmd: types.array['MotorCmd_', 35]
-        reserve: types.array[types.uint32, 4]
-        crc: types.uint32
-
-    ```,
-    ```cpp
-    class LowCmd_
-    {
-    private:
-     uint8_t mode_pr_ = 0;
-     uint8_t mode_machine_ = 0;
-     std::array<::MotorCmd_, 35> motor_cmd_ = { };
-     std::array<uint32_t, 4> reserve_ = { };
-     uint32_t crc_ = 0;
-
-    public:
-      LowCmd_() = default;
-
-      explicit LowCmd_(
-        uint8_t mode_pr,
-        uint8_t mode_machine,
-        const std::array<::MotorCmd_, 35>& motor_cmd,
-        const std::array<uint32_t, 4>& reserve,
-        uint32_t crc) :
-        mode_pr_(mode_pr),
-        mode_machine_(mode_machine),
-        motor_cmd_(motor_cmd),
-        reserve_(reserve),
-        crc_(crc) { }
-
-      uint8_t mode_pr() const { return this->mode_pr_; }
-      uint8_t& mode_pr() { return this->mode_pr_; }
-      void mode_pr(uint8_t _val_) { this->mode_pr_ = _val_; }
-      uint8_t mode_machine() const { return this->mode_machine_; }
     ```
-  )
-))
+)
 
-DDS groupe les mesages dans des _topics_. Les messages sont échangés sur un topic de la manière suivante
+DDS groupe les messages dans des _topics_. Les messages sont échangés sur un topic de la manière suivante
 
 / Lecture: En s'abonnant au topic, on reçoit en temps réel les messages qui sont envoyés dessus
 / Écriture: En publiant des messages sur le topic, on les rend disponibles aux abonnés
 
 #import "@preview/unify:0.7.1": qty
 
-CycloneDDS est capable d'un débit d'environ #qty("1", "GB/s"), pour des messages d'environ #qty("1", "kB") chacun @dds-benchmark. On remarque, en pratique, des messages entre #qty("0.9", "kB") et #qty("1.3", "kB") dans le cas des échanges commandes/état avec le robot
+CycloneDDS est capable d'un débit d'environ #qty("1", "GB/s"), pour des messages d'environ #qty("1", "kB") chacun @dds-benchmark. On remarque, en pratique, des tailles de message entre #qty("0.9", "kB") et #qty("1.3", "kB") dans le cas des échanges commandes/état avec le robot.
 
-Et enfin, les _topics_ peuvent être isolés d'autres topics via des _domain_#[s].
+Et enfin, les topics peuvent être isolés d'autres topics via des _domain_#[s], identifiés par un numéro. Deux topics portant le même nom reste isolés si ils sont sur deux domaines différents.
 
 
 == Une base de code partiellement open-source
 
-Le code source du SDK d'unitree est disponible sur Github @sdk2_source_today. Cependant, le dépôt git comprend des fichiers binaires déjà compilés:
+Le code source du SDK d'Unitree est disponible sur Github @sdk2_source_today. Cependant, le dépôt git comprend des fichiers binaires déjà compilés:
 
 #figure(
-  caption: [Résultat de `tree lib thirdparty` dans le dépot git],
+  caption: [Résultat de `tree lib/ thirdparty/` dans le dépot git],
   ```
   lib
   ├── aarch64
@@ -159,7 +100,7 @@ Compiler le SDK nécéssite l'existance de ces fichiers binaires:
 )
 
 #figure(
-  caption: [Extrait de `cmake/unitree_sdk2Targets.cmake`],
+  caption: [Extrait de `cmake/unitree_sdk2Targets.cmake` @unitree_sdk2],
   kind: raw,
   zebraw(
     numbering-offset: 63 - 1,
@@ -176,9 +117,9 @@ Compiler le SDK nécéssite l'existance de ces fichiers binaires:
   ),
 )
 
-Ici est défini, via `set_target_properties(... IMPORTED_LOCATION)`, le chemin d'une bibliothèque à lier avec la bibliothèque finale @cmake-imported-location.
+Ici est défini, via `set_target_properties(... IMPORTED_LOCATION)`, le chemin d'une bibliothèque à lier avec la bibliothèque finale @cmake-imported-location. Ici, c'est un des fichiers pré-compilés que l'on lie.
 
-On confirme ceci en lançant `mkdir build && cd build && cmake ..` après avoir supprimé le répertoire `lib/` :
+On confirme cette nécéssite en lançant `mkdir build && cd build && cmake ..` après avoir supprimé le répertoire `lib/` :
 
 #{
   show regex(".*CMake Error.*"): set text(fill: red)
@@ -234,9 +175,9 @@ thirdparty/include/dds
 
 Ces particularités laissent planner quelques doutes sur la nature open-source du code: ces binaires requis sont-ils seulement présent pour améliorer l'expérience développeur en accélererant la compilation, ou "cachent"-ils du code non public?
 
-Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK2, via _Ghidra_ @ghidra.
+Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK, via _Ghidra_ @ghidra.
 
-Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mujoco @unitree_mujoco a rendu cette piste non nécéssaire.
+Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mujoco @unitree_mujoco a rendu l'exploration de cette piste non nécéssaire.
 
 == Un autre bridge existant: `unitree_mujoco`
 
@@ -247,7 +188,7 @@ Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simu
 #figure(caption: "Fonctionnement usuel du SDK", diagram({
   node((0, 0), $Pi$)
   node((1, 0), "SDK")
-  node((2, 0), "Robot")
+  node((2, 0), "robot")
 
   edge((0, 0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
   edge((2.25, 0), (2.25, 0), "->", bend: -130deg, loop-angle: -180deg)[]
@@ -259,7 +200,7 @@ Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simu
   }
 }))
 
-Un bridge se substitue au Robot physique, interceptant les ordres du SDK et les traduisants en des appels de fonctions utilisant l'API du simulateur, et symmétriquement pour les envois d'états au SDK. On peut apparenter le fonctionnement d'un bridge à celui d'une attaque informatique de type "Man in the Middle" (MitM).
+Un bridge se substitue au robot physique, interceptant les ordres du SDK et les traduisants en des appels de fonctions provenant de l'API du simulateur, et symmétriquement pour les envois d'états au SDK. On peut apparenter le fonctionnement d'un bridge à celui d'une attaque informatique de type "Man in the Middle" (MitM).
 
 
 #figure(caption: [Fonctionnement via _unitree\_mujoco_ du SDK], diagram({
@@ -323,13 +264,13 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
   )[*API de Gazebo*])
 }))
 
-Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) renvoyé par le robot.
+Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) reçu depuis le robot.
 
-Le `low` indique que ce sont des messages bas-niveau. Par exemple, `rt/lowcmd` correspond directement à des ordres de tension pour les moteurs, au lieu d'envoyer des ordres plus évolués, tels que "se déplacer de $x$ mètres en avant" @h1-motion-services
+Le `low` indique que ce sont des messages bas-niveau. Par exemple, `rt/lowcmd` correspond directement à des ordres en valeurs de couple pour les moteurs, au lieu d'envoyer des ordres plus évolués, tels que "se déplacer de $x$ mètres en avant" @h1-motion-services
 
-Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujoco pour mettre à jour l'état du robot simulé, et de messages `rt/lowstate` sont créés à partir des données fournies par Mujoco
+Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujoco pour mettre à jour l'état du robot simulé, et de messages `rt/lowstate` sont créés à partir des données fournies par Mujoco.
 
-Étant donné le modèle _pub/sub_ de DDS, on parle de _pub(lication)_ de message, et de _sub(scription)_#footnote[abonnement] aux messages d'un canal (pour les recevoir)
+Étant donné le modèle _pub/sub_ de DDS, on parle de _pub(lication)_ de message, et de _sub(scription)_#footnote[abonnement] aux messages d'un canal (pour les recevoir).
 
 #figure(
   caption: [Cycle de vie de la simulation avec le bridge pour Mujoco],
@@ -354,10 +295,10 @@ Les ordres dans `rt/lowcmd` sont ensuite traduits en appels de fonctions de Mujo
 
 
     edge(<sdk>, <lowcmd>, "->", bend: 30deg)[pub]
-    edge(<lowcmd>, (1, 2), "..>", bend: 20deg)[via sub]
+    edge(<lowcmd>, (1, 2), "-->", bend: 20deg)[via sub]
     edge((1, 2), <mujoco>, "->", bend: 20deg, `data->ctrl[i] = ...`)
 
-    edge(<sdk>, <lowstate>, "<..", bend: -30deg)[via sub]
+    edge(<sdk>, <lowstate>, "<--", bend: -30deg)[via sub]
     edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
     edge((-1, 2), <mujoco>, "<-", bend: -20deg, `... = data->sensordata[i]`)
 

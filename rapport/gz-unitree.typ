@@ -16,13 +16,13 @@ En se basant sur _unitree\_mujoco_, il a donc été possible de réaliser un bri
 
 == Établissement du contact
 
-Une première tentative a été de suivre la documentation de CycloneDDS pour écouter sur le canal @cyclonedds-helloworld `rt/lowcmd`, en récupérant les définitions IDL des messages, disponibles sur le dépot `unitree_ros2`#footnote[`unitree_mujoco` n'avait pas encore été découvert] @unitree_ros2
+Une première tentative a été de suivre la documentation de CycloneDDS @cyclonedds-helloworld pour écouter sur le canal `rt/lowcmd`, en récupérant les définitions IDL des messages, disponibles sur le dépot `unitree_ros2`#footnote[`unitree_mujoco` n'avait pas encore été découvert] @unitree_ros2
 
-Malheureusement, cette solution s'est avérée infructueuse, à cause d'une inadéquation sur les domaines DDS (ce qui sera compris plus tard).
+Malheureusement, cette solution s'est avérée infructueuse, à cause d'une erreur sur les domaines DDS utilisés (ce qui sera compris plus tard).
 
-On change d'approche en préférant plutôt utiliser les abstractions fournies par le SDK de Unitree (cf @receive-lowcmd et @send-lowstate)
+On change d'approche, en préférant plutôt utiliser les abstractions fournies par le SDK de Unitree (cf @receive-lowcmd et @send-lowstate)
 
-Enfin, si un pare-feu est actif, il faut autoriser le traffic udp l'intervalle d'addresses IP `224.0.0.0/4`. Par exemple, avec _ufw_
+Enfin, si un pare-feu est actif, il faut autoriser le traffic UDP l'intervalle d'addresses IP `224.0.0.0/4`. Par exemple, avec _ufw_ @ufw
 
 ```bash
 sudo ufw allow in proto udp from 224.0.0.0/4
@@ -34,10 +34,10 @@ sudo ufw allow in proto udp to 224.0.0.0/4
   gutter: 2em,
   [
 
-    Pour arriver à ces solutions, du débuggage du traffic RTPS (le protocole sur lequel est construit DDS @dds), _Wireshark_ @wireshark s'est avéré utile.
+    Pour arriver à ces solutions, _Wireshark_ @wireshark s'est avéré utile, étant capable d'inspecter du traffic RTPS#footnote[Le protocole sur lequel est construit DDS @dds], 
 
 
-    C'est notamment grâce à ce traçage des paquets que le problème d'ID de domaine a été découvert: notre _subscriber_ DDS était réglé sur le domaine anonyme (ID 0) alors que le SDK d'Unitree communique sur le domaine d'ID 1.
+    C'est notamment grâce à ce traçage des paquets que le problème de domaine DDS a été découvert: notre _subscriber_ DDS était réglé sur le domaine anonyme (ID aléatoire représenté par un 0 lors de la configuration) alors que le SDK d'Unitree communique sur le domaine d'ID 1.
 
     C'est aussi Wireshark qui nous a permis de voir quels étaient les types IDL utilisés pour les messages.
   ],
