@@ -1,5 +1,6 @@
 #import "../rapport/utils.typ": dontbreak, todo
 #import "../rapport/context.typ": argmax, cL, definitions_paths_set, exp
+#import "../rapport/gz-unitree.typ": overlayed-img
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
 
@@ -218,11 +219,121 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 #centered[
 
-$
-  Pi' = & cases(
-            argmax_(pi) cL_r (pi, Pi),
-            "s.c.  distance"(Pi', Pi) < delta
-          )
-$
+  $
+    Pi' = & cases(
+              argmax_(pi) cL_r (pi, Pi),
+              "s.c.  distance"(Pi', Pi) < delta
+            )
+  $
 
+]
+
+== Mise à jour de $Pi$: distance entre politiques
+
+#centered[
+  $
+    "distance"(Pi', Pi) & := max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) \
+       D_"KL" (P || P') & := sum_(x in cal(X)) P(x) log P(x) / (P'(x))
+  $
+]
+
+
+#title-slide[
+  == Le _SDK_#super[1] d'Unitree
+  #super[1]Software Development Kit
+]
+
+== DDS
+
+#overlayed-img[
+  #diagram(spacing: (4.54pt, 2.75pt), {
+    node((0, 0))[]
+    let annotations-x = 80
+    let annotate = (y-start, y-end, label) => edge(
+      (annotations-x, y-start),
+      "|-|",
+      (annotations-x, y-end),
+      label-fill: white,
+      label-side: left,
+      label,
+    )
+
+    annotate(3, 20)[Attente]
+    annotate(20, 60)[Initialisation]
+    annotate(60, 100)[Échange `rt/` \ `lowstate` $arrows.lr$ `lowcmd`]
+  })
+]
+
+== Le SDK d'Unitree
+
+#centered[
+  #diagram((
+    node((0, 0), $Pi$),
+    node((1, 0), "SDK"),
+    node((2, 0), "robot"),
+    edge((0, 0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[],
+    edge((2.25, 0), (2.25, 0), "->", bend: -130deg, loop-angle: -180deg)[],
+    edge((0, 0), (1, 0), "->", shift: 7pt)[ordres],
+    edge((0, 0), (1, 0), "<-", shift: -7pt, label-side: right)[état],
+    edge((1, 0), (2, 0), "-->", shift: 7pt)[ordres],
+    edge((1, 0), (2, 0), "<--", shift: -7pt, label-side: right)[état],
+  ))
+
+  #diagram((
+    edge((0, 0), (1, 0), "-->"),
+    node((1.40, 0))[Message DDS],
+  ))
+]
+
+
+== Le SDK d'Unitree
+
+#centered[
+  #diagram({
+    node((0, 0), $Pi$)
+    node((1, 0), "SDK")
+    node((2, 0))[*Bridge*]
+    node((3, 0), "Simulateur")
+
+    edge((0, 0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
+    edge((3.25, 0), (3.25, 0), "->", bend: -130deg, loop-angle: -180deg)[]
+
+    for i in range(0, 3) {
+      let dash = if i == 1 { "--" } else { "-" }
+      edge((i, 0), (i + 1, 0), dash + ">", shift: 7pt)[ordres]
+      edge((i, 0), (i + 1, 0), "<" + dash, shift: -7pt, label-side: right)[état]
+    }
+
+    edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
+    edge((2, 1), (3, 1), "|-|", label-side: right)[API du simulateur]
+  })
+]
+
+
+== `unitree_mujoco`
+
+#centered(scale(70%, reflow: true, diagram({
+  node(name: <sdk>, (0, 0))[SDK]
+  node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(fill: blue)[Canaux \ DDS])
+  node(name: <lowcmd>, (1, 1))[`rt/lowcmd`]
+  node(name: <lowstate>, (-1, 1))[`rt/lowstate`]
+  node(name: <bridge>, enclose: ((1, 2), (-1, 2)), stroke: black, inset: 10pt)[Bridge]
+  node(name: <mujoco>, (0, 3))[Mujoco]
+
+
+  edge(<sdk>, <lowcmd>, "->", bend: 30deg)[pub]
+  edge(<lowcmd>, (1, 2), "-->", bend: 20deg)[via sub]
+  edge((1, 2), <mujoco>, "->", bend: 20deg, `data->ctrl[i] = ...`)
+
+  edge(<sdk>, <lowstate>, "<--", bend: -30deg)[via sub]
+  edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
+  edge((-1, 2), <mujoco>, "<-", bend: -20deg, `... = data->sensordata[i]`)
+
+  edge(<mujoco>, <mujoco>, "->", bend: 130deg, loop-angle: -90deg, `mj_step(model, data)`)
+})))
+
+
+#title-slide[
+  == Développement de _gz-unitree_
+  Un bridge pour Gazebo
 ]
