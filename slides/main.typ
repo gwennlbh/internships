@@ -1,6 +1,6 @@
 #import "../rapport/utils.typ": dontbreak, todo
 #import "../rapport/context.typ": argmax, cL, definitions_paths_set, exp
-#import "../rapport/gz-unitree.typ": overlayed-img
+#import "../rapport/gz-unitree.typ": overlayed-img, zebraw
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
 
@@ -243,26 +243,7 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
   #super[1]Software Development Kit
 ]
 
-== DDS
 
-#overlayed-img[
-  #diagram(spacing: (4.54pt, 2.75pt), {
-    node((0, 0))[]
-    let annotations-x = 80
-    let annotate = (y-start, y-end, label) => edge(
-      (annotations-x, y-start),
-      "|-|",
-      (annotations-x, y-end),
-      label-fill: white,
-      label-side: left,
-      label,
-    )
-
-    annotate(3, 20)[Attente]
-    annotate(20, 60)[Initialisation]
-    annotate(60, 100)[Échange `rt/` \ `lowstate` $arrows.lr$ `lowcmd`]
-  })
-]
 
 == Le SDK d'Unitree
 
@@ -337,3 +318,222 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
   == Développement de _gz-unitree_
   Un bridge pour Gazebo
 ]
+
+#centered[
+  #diagram({
+    node((0, 0), $Pi$)
+    node((1, 0), "SDK")
+    node((2, 0))[*gz-unitree*]
+    node((3, 0), "Gazebo")
+
+    edge((0, 0), (0, 0), "<-", bend: 130deg, loop-angle: 180deg)[]
+    edge((3.25, 0), (3.25, 0), "->", bend: -130deg, loop-angle: -180deg)[]
+
+    for i in range(0, 3) {
+      let dash = if i == 1 { "--" } else { "-" }
+      edge((i, 0), (i + 1, 0), dash + ">", shift: 7pt)[ordres]
+      edge((i, 0), (i + 1, 0), "<" + dash, shift: -7pt, label-side: right)[état]
+    }
+
+    edge((0, 1), (2, 1), "|-|", label-side: right)[API du SDK]
+    edge((2, 1), (3, 1), "|-|", label-side: right)[API de Gazebo]
+  })
+]
+
+#pagebreak()
+
+#centered(scale(75%, reflow: true, ```cpp
+#include <gz/sim/System.hh>
+namespace gz_unitree
+{
+    class UnitreePlugin :
+        public gz::sim::System,
+        public gz::sim::ISystemPreUpdate
+    {
+    public:
+        UnitreePlugin();
+    public:
+        ~UnitreePlugin() override;
+    public:
+        void PreUpdate(const gz::sim::UpdateInfo &_info,
+                       gz::sim::EntityComponentManager &ecm) override;
+    };
+}
+```))
+
+#pagebreak()
+
+#centered(scale(75%, reflow: true, grid(
+  columns: 2,
+  gutter: 2em,
+  ```cpp
+  #include <gz/plugin/Register.hh>
+
+  ... // class implementation
+
+  GZ_ADD_PLUGIN(
+      UnitreePlugin,
+      gz::sim::System,
+      UnitreePlugin::ISystemPreUpdate)
+  ```,
+
+  zebraw(
+    numbering: false,
+    highlight-lines: (..range(3, 5),),
+    ```xml
+    <sdf version='1.11'>
+    <world name="default">
+      <plugin filename="gz-unitree" name="gz_unitree::UnitreePlugin">
+      </plugin>
+    </world>
+    <model name='h1_description'>
+      <link name='pelvis'>
+        <inertial>
+        ...
+    ```,
+  ),
+)))
+
+#pagebreak()
+
+
+#let legend = (
+  ..descriptions,
+) => grid(
+  columns: (1fr, 3fr),
+  align: left,
+  row-gutter: 0.5em,
+  ..descriptions
+    .pos()
+    .map(((arrow, desc)) => (
+      diagram(edge((0, 0), arrow, (0.75, 0))),
+      desc,
+    ))
+    .flatten()
+)
+
+#let architecture = (
+  caption,
+  group-inset: 12pt,
+  group-color: luma(80),
+  show-legend: true,
+  ..edges,
+) => {
+  let group = (
+    nodes,
+    label,
+    alignment: bottom + center,
+    name: none,
+  ) => node(
+    name: name,
+    enclose: nodes,
+    snap: if name == none { false } else { 1 },
+    inset: group-inset,
+    stroke: group-color.lighten(75%) + 2pt,
+    align(alignment, move(
+      dy: 3.5 * group-inset * if alignment.y == bottom { 1 } else { -1 },
+      text(fill: group-color, label),
+    )),
+  )
+
+  let subtitled = (title, subtitle) => [#title \ #text(
+      size: 0.8em,
+      subtitle,
+    )]
+
+  diagram(
+    debug: false,
+    node-stroke: 0.5pt,
+    edge-corner-radius: 6pt,
+    (
+      node(name: <configure>, (0, 1), `::Configure`),
+      node(name: <preupdate>, (0, 2), `::PreUpdate`),
+      group(
+        name: <gz>,
+        (<configure>, <preupdate>),
+        `gz::sim::System`,
+        alignment: top + center,
+      ),
+      node(
+        name: <channelfactory>,
+        enclose: ((1, 0), (2, 0)),
+        inset: 8pt,
+        subtitled(`ChannelFactory`, [domaine 1, interface `lo`]),
+      ),
+      node(name: <publisher>, (1, 1), inset: 8pt, subtitled(
+        `ChannelPublisher`,
+        [canal `rt/lowstate`],
+      )),
+      node(name: <subscriber>, (2, 1), inset: 8pt, subtitled(
+        `ChannelSubscriber`,
+        [canal `rt/lowcmd`],
+      )),
+      group(
+        name: <dds>,
+        (<channelfactory>, <publisher>, <subscriber>),
+        alignment: top + center,
+      )[Unitree SDK],
+      node(name: <gzclock>, (1, 5), subtitled(
+        `::TickHandler`,
+        [topic Gazebo `/clock`],
+      )),
+      node(name: <gzimu>, (2, 5), subtitled(
+        `::IMUHandler`,
+        [topic Gazebo `/imu`],
+      )),
+      node(name: <lowstate>, (1, 2), `::LowStateWriter`),
+      node(name: <lowcmd>, (2, 2), `::CmdHandler`),
+      node(name: <statebuf>, (1, 3), subtitled("State buffer", `statebuf`)),
+      node(name: <cmdbuf>, (2, 3), subtitled("Commands buffer", `cmdbuf`)),
+      group(
+        (
+          <lowstate>,
+          <lowcmd>,
+          <statebuf>,
+          <cmdbuf>,
+          <gzclock>,
+          <gzimu>,
+        ),
+        [Plugin internals],
+      ),
+      node(name: <policy>, (0, -1), $Pi$),
+      ..edges.pos(),
+      if show-legend {
+        node((0, 5), stroke: none, width: 15em, fill: white, legend(
+          ("-->", "Message DDS"),
+          ("..>", "Message Gazebo"),
+          ("@->", "Désynchronisation"),
+        ))
+      },
+    ),
+  )
+}
+
+#centered-slide(scale(56%, reflow: true, architecture([Phase d'initialisation du plugin], show-legend: false, (
+  edge(
+    <configure>,
+    "u",
+    <channelfactory>,
+    "->",
+    label-side: left,
+    label-pos: 50%,
+  )[appelle],
+  pause,
+  edge(<configure>, "d,d,d,r", <gzclock>, "->", label-pos: 85%)[démarre],
+  edge(
+
+    <configure>,
+    "d,d",
+    (0, 3.75),
+    "r,r",
+    <gzimu>,
+    "->",
+    label-pos: 75%,
+  )[démarre],
+  pause,
+  edge(<channelfactory>, "->", <publisher>)[initialise],
+  edge(<channelfactory>, "->", <subscriber>)[initialise],
+  pause,
+  edge(<publisher>, "<->", <lowstate>)[`std::bind`],
+  edge(<subscriber>, "<->", <lowcmd>)[`std::bind`],
+))))

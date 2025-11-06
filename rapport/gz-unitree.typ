@@ -53,7 +53,6 @@ sudo ufw allow in proto udp to 224.0.0.0/4
 
 Voici une trace wireshark d'un échange usuel entre commandes (`rt/lowcmd`) et états (`rt/lowstate`)
 
-#let img = image("./wireshark-trace.png")
 // https://forum.typst.app/t/how-to-blend-a-color-with-an-image-and-make-the-image-transparent/1677/5
 #let overlayed-img = (contents, img) => layout(bounds => {
   let size = measure(img, ..bounds)
@@ -63,7 +62,7 @@ Voici une trace wireshark d'un échange usuel entre commandes (`rt/lowcmd`) et �
 
 #figure(
   caption: [Trace de paquets RTPS sur _Wireshark_],
-  overlayed-img([
+  overlayed-img(image("./wireshark-trace.png"))[
     #diagram(spacing: (4.54pt, 2.75pt), {
       node((0, 0))[]
       let annotations-x = 80
