@@ -514,6 +514,17 @@ namespace gz_unitree
   )
 }
 
+#let colored-edge = (color, label, ..args) => edge(
+  stroke: color,
+  label: text(fill: color, label),
+  ..args,
+)
+#let sim-edge = (..args) => colored-edge(blue, ..args)
+#let publisher-edge = (..args) => colored-edge(red, ..args)
+#let imu-edge = (..args) => colored-edge(olive.darken(30%), ..args)
+#let clock-edge = (..args) => colored-edge(orange.darken(30%), ..args)
+#let policy-edge = (..args) => colored-edge(fuchsia, ..args)
+
 #centered-slide(scale(56%, reflow: true, architecture(
   show-legend: false,
   pauses: true,
@@ -547,26 +558,96 @@ namespace gz_unitree
 #centered-slide(scale(56%, reflow: true, architecture(
   show-legend: true,
   pauses: false,
-  edge(
+
+  pause,
+
+  // Simulation loop
+  sim-edge(
+    "update",
+    <preupdate.east>,
+    "d",
+    <statebuf>,
+    "->",
+    label-pos: 70%,
+    label-side: right,
+  ),
+
+  clock-edge(
+    "",
+    <gz.east>,
+    (0.5, 1.5),
+    (0.5, 5),
+    <gzclock.west>,
+    "@-->",
+    label-pos: 45%,
+  ),
+  imu-edge(
+    "",
+    <gz.west>,
+    (-0.75, 1.5),
+    (-0.75, 5.75),
+    (2, 5.75),
+    <gzimu>,
+    "@-->",
+    label-pos: 45%,
+  ),
+  pause,
+
+  clock-edge(
+    "update",
+    <gzclock>,
+    <statebuf>,
+    "->",
+    label-pos: 25%,
+    label-side: right,
+  ),
+  imu-edge(
+    "update",
+    <gzimu>,
+    (1.5, 5),
+    (1.5, 3),
+    <statebuf>,
+    "->",
+    label-pos: 45%,
+  ),
+  publisher-edge("read", <statebuf>, "@->", <lowstate>),
+  pause,
+
+  publisher-edge("", <lowstate>, "-", <publisher>),
+  publisher-edge("", <publisher>, (1, 0), <channelfactory.west>, "->"),
+  pause,
+
+  policy-edge(
+    "state",
+    <policy>,
+    (0, 0),
+    <channelfactory.west>,
+    "<--@",
+    label-pos: 80%,
+  ),
+  pause,
+
+
+  policy-edge(
+    "commands",
     <policy>,
     (2.25, -1),
     (2.25, 0),
     <channelfactory.east>,
     "-->",
-    label-pos: 5%,
-  )[(1A) publish],
-  edge(
-    <policy>,
-    (2.25, -1),
-    (2.25, 0),
-    <channelfactory.east>,
-    stroke: none,
-    label-pos: 60%,
-    label-side: left,
-  )[(1A) subscription],
-  edge(<channelfactory.east>, (2, 0), <subscriber>, "->", label-pos: 80%)[(2)],
-  edge(<subscriber>, "->", <lowcmd>, label-side: right)[(3)],
-  edge(<lowcmd>, "->", <cmdbuf>)[(4)],
-  // edge(<lowcmd.east>, "r,d,d,l,l,l,l,l,l,u,u,u", <preupdate>, "->", label-side: left)[(5)]
-  edge(<preupdate>, "d,d,r,r", <cmdbuf>, "<-@")[(1B)],
+    label-pos: 10%,
+  ),
+
+  policy-edge("", <channelfactory.east>, (2, 0), <subscriber>, "->"),
+  policy-edge("", <subscriber>, "-", <lowcmd>),
+  policy-edge("update", <lowcmd>, "->", <cmdbuf>),
+
+  pause,
+  sim-edge("read", <preupdate>, "d,d,r,r", <cmdbuf>, "<-@"),
 )))
+
+
+#title-slide[
+  == Reproductibilité
+  Avec Nix
+]
