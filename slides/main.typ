@@ -295,10 +295,17 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 #centered(scale(70%, reflow: true, diagram({
   node(name: <sdk>, (0, 0))[SDK]
-  node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(fill: blue)[Canaux \ DDS])
+  node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(
+    fill: blue,
+  )[Canaux \ DDS])
   node(name: <lowcmd>, (1, 1))[`rt/lowcmd`]
   node(name: <lowstate>, (-1, 1))[`rt/lowstate`]
-  node(name: <bridge>, enclose: ((1, 2), (-1, 2)), stroke: black, inset: 10pt)[Bridge]
+  node(
+    name: <bridge>,
+    enclose: ((1, 2), (-1, 2)),
+    stroke: black,
+    inset: 10pt,
+  )[Bridge]
   node(name: <mujoco>, (0, 3))[Mujoco]
 
 
@@ -310,7 +317,14 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
   edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
   edge((-1, 2), <mujoco>, "<-", bend: -20deg, `... = data->sensordata[i]`)
 
-  edge(<mujoco>, <mujoco>, "->", bend: 130deg, loop-angle: -90deg, `mj_step(model, data)`)
+  edge(
+    <mujoco>,
+    <mujoco>,
+    "->",
+    bend: 130deg,
+    loop-angle: -90deg,
+    `mj_step(model, data)`,
+  )
 })))
 
 

@@ -473,9 +473,9 @@ La méthode TRPO définit la mise à jour de $pi$ avec un $pi'$ qui maximise le 
 
 $
   Pi' = & cases(
-           argmax_(pi) cL_r (pi, Pi),
-           "s.c.  distance"(Pi', Pi) < delta
-         )
+            argmax_(pi) cL_r (pi, Pi),
+            "s.c.  distance"(Pi', Pi) < delta
+          )
 $
 
 Avec $delta$ une limite supérieure de distance entre $Pi'$, la nouvelle politique, et $Pi$, l'ancienne.
