@@ -65,21 +65,18 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 
 
-#let what_is_surrogate_adv = [
-  == C'est quoi $cal(L)$ ?
+== C'est quoi $cal(L)$ ?
 
-  #centered[
+#centered[
 
-    C'est très simple:
+  C'est très simple:
 
-    $
-      cal(L)_r (pi', pi) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) A_(pi, r)(s_t, a_t)
-    $
+  $
+    cal(L)_r (pi', pi) := exp_((s_t, a_t)_(t in NN) in cal(C)) sum_(t=0)^oo (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) A_(pi, r)(s_t, a_t)
+  $
 
-  ]
 ]
 
-#what_is_surrogate_adv
 
 #title-slide[
 
@@ -207,4 +204,18 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 #pagebreak()
 
 
-#what_is_surrogate_adv
+== C'est quoi $cal(L)$ ?
+
+#centered[
+
+  $
+    cal(L)_r (pi', pi) := pause exp_((s_t, a_t)_(t in NN) in cal(C)) pause sum_(t=0)^oo pause (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) pause A_(pi, r)(s_t, a_t)
+  $
+
+]
+
+#title-slide[
+  == Optimisation de $Pi$
+  Mise à jour de la politique RL
+]
+
