@@ -1,4 +1,4 @@
-#import "utils.typ": comment, refneeded, todo, dontbreak
+#import "utils.typ": comment, dontbreak, refneeded, todo
 #import "@preview/fletcher:0.5.8": edge, node
 #import "@preview/fletcher:0.5.8"
 #import "@preview/diagraph:0.3.6"
@@ -252,14 +252,14 @@ l'ensemble des chemins possibles avec la politique $pi$. C'est tout simplement l
 On définit également l'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
 
 #let definitions_paths_set = $
-  cal(C) &:=
-  setbuilder(
-    cases(
-      & c_0 & = (s_0, a_0),
-      forall t in NN quad & c_(t+1) & = (M(c_t), a_t)
-    ),
-    (s_0, a) in S times A^NN
-  )
+  cal(C) & :=
+           setbuilder(
+             cases(
+               & c_0 & = (s_0, a_0),
+               forall t in NN quad & c_(t+1) & = (M(c_t), a_t)
+             ),
+             (s_0, a) in S times A^NN
+           )
 $
 
 #definitions_paths_set

@@ -92,12 +92,16 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 #let loop = (pauses: false) => diagram(
   node((0, 0), $s_t$),
   if pauses { pause } else { none },
-  if pauses { edge(corner: right, label-pos: 2 / 8, label-side: left)[choix de l'action] } else { none },
+  if pauses {
+    edge(corner: right, label-pos: 2 / 8, label-side: left)[choix de l'action]
+  } else { none },
   edge("->", corner: right, label-pos: 3 / 8, label-side: left)[$Pi$],
   node((1, -1))[$a_t$],
   if pauses { pause } else { none },
   edge("->", corner: right, label-pos: 5 / 8, label-side: left)[$M$],
-  if pauses { edge(corner: right, label-pos: 6 / 8, label-side: left)[simulation] } else { none },
+  if pauses {
+    edge(corner: right, label-pos: 6 / 8, label-side: left)[simulation]
+  } else { none },
   node((2, 0))[$s_(t+1)$],
   if pauses { pause } else { none },
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
