@@ -1,4 +1,4 @@
-#import "utils.typ": comment, refneeded, todo
+#import "utils.typ": comment, refneeded, todo, dontbreak
 #import "@preview/fletcher:0.5.8": edge, node
 #import "@preview/fletcher:0.5.8"
 #import "@preview/diagraph:0.3.6"
@@ -8,7 +8,6 @@
   caption: caption,
   fletcher.diagram(..args),
 )
-#let dontbreak = content => block(breakable: false, content)
 
 #show math.equation.where(block: true): set block(spacing: 2em)
 
@@ -252,8 +251,8 @@ l'ensemble des chemins possibles avec la politique $pi$. C'est tout simplement l
 
 On définit également l'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
 
-$
-  cal(C) :=
+#let definitions_paths_set = $
+  cal(C) &:=
   setbuilder(
     cases(
       & c_0 & = (s_0, a_0),
@@ -262,6 +261,8 @@ $
     (s_0, a) in S times A^NN
   )
 $
+
+#definitions_paths_set
 
 On notera que, selon $M$, on peut avoir $cal(C) subset.neq (S times A)^NN$: par exemple, certains états de l'environnement peuvent représenter des "impasses", où il est impossible d'évoluer vers un autre état, peut importe l'action choisie.
 
