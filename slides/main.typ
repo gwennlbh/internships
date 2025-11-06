@@ -413,7 +413,7 @@ namespace gz_unitree
 )
 
 #let architecture = (
-  caption,
+  pauses: false,
   group-inset: 12pt,
   group-color: luma(80),
   show-legend: true,
@@ -436,6 +436,8 @@ namespace gz_unitree
     )),
   )
 
+  let maybe_pause = if pauses { pause } else { none }
+
   let subtitled = (title, subtitle) => [#title \ #text(
       size: 0.8em,
       subtitle,
@@ -446,6 +448,8 @@ namespace gz_unitree
     node-stroke: 0.5pt,
     edge-corner-radius: 6pt,
     (
+      node(name: <policy>, (0, -1), $Pi$),
+      maybe_pause,
       node(name: <configure>, (0, 1), `::Configure`),
       node(name: <preupdate>, (0, 2), `::PreUpdate`),
       group(
@@ -454,6 +458,7 @@ namespace gz_unitree
         `gz::sim::System`,
         alignment: top + center,
       ),
+      maybe_pause,
       node(
         name: <channelfactory>,
         enclose: ((1, 0), (2, 0)),
@@ -473,6 +478,7 @@ namespace gz_unitree
         (<channelfactory>, <publisher>, <subscriber>),
         alignment: top + center,
       )[Unitree SDK],
+      maybe_pause,
       node(name: <gzclock>, (1, 5), subtitled(
         `::TickHandler`,
         [topic Gazebo `/clock`],
@@ -496,20 +502,21 @@ namespace gz_unitree
         ),
         [Plugin internals],
       ),
-      node(name: <policy>, (0, -1), $Pi$),
+      maybe_pause,
+      // TODO
+      // node((0, 5), stroke: none, width: 15em, fill: white, legend(
+      //   ("-->", "Message DDS"),
+      //   ("..>", "Message Gazebo"),
+      //   ("@->", "Désynchronisation"),
+      // )),
       ..edges.pos(),
-      if show-legend {
-        node((0, 5), stroke: none, width: 15em, fill: white, legend(
-          ("-->", "Message DDS"),
-          ("..>", "Message Gazebo"),
-          ("@->", "Désynchronisation"),
-        ))
-      },
     ),
   )
 }
 
-#centered-slide(scale(56%, reflow: true, architecture([Phase d'initialisation du plugin], show-legend: false, (
+#centered-slide(scale(56%, reflow: true, architecture(
+  show-legend: false,
+  pauses: true,
   edge(
     <configure>,
     "u",
@@ -520,8 +527,8 @@ namespace gz_unitree
   )[appelle],
   pause,
   edge(<configure>, "d,d,d,r", <gzclock>, "->", label-pos: 85%)[démarre],
+  pause,
   edge(
-
     <configure>,
     "d,d",
     (0, 3.75),
@@ -533,7 +540,33 @@ namespace gz_unitree
   pause,
   edge(<channelfactory>, "->", <publisher>)[initialise],
   edge(<channelfactory>, "->", <subscriber>)[initialise],
-  pause,
   edge(<publisher>, "<->", <lowstate>)[`std::bind`],
   edge(<subscriber>, "<->", <lowcmd>)[`std::bind`],
-))))
+)))
+
+#centered-slide(scale(56%, reflow: true, architecture(
+  show-legend: true,
+  pauses: false,
+  edge(
+    <policy>,
+    (2.25, -1),
+    (2.25, 0),
+    <channelfactory.east>,
+    "-->",
+    label-pos: 5%,
+  )[(1A) publish],
+  edge(
+    <policy>,
+    (2.25, -1),
+    (2.25, 0),
+    <channelfactory.east>,
+    stroke: none,
+    label-pos: 60%,
+    label-side: left,
+  )[(1A) subscription],
+  edge(<channelfactory.east>, (2, 0), <subscriber>, "->", label-pos: 80%)[(2)],
+  edge(<subscriber>, "->", <lowcmd>, label-side: right)[(3)],
+  edge(<lowcmd>, "->", <cmdbuf>)[(4)],
+  // edge(<lowcmd.east>, "r,d,d,l,l,l,l,l,l,u,u,u", <preupdate>, "->", label-side: left)[(5)]
+  edge(<preupdate>, "d,d,r,r", <cmdbuf>, "<-@")[(1B)],
+)))
