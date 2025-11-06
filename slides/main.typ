@@ -1,5 +1,5 @@
 #import "../rapport/utils.typ": dontbreak, todo
-#import "../rapport/context.typ": definitions_paths_set, exp
+#import "../rapport/context.typ": argmax, cL, definitions_paths_set, exp
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
 
@@ -209,13 +209,20 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 #centered[
 
   $
-    cal(L)_r (pi', pi) := pause exp_((s_t, a_t)_(t in NN) in cal(C)) pause sum_(t=0)^oo pause (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) pause A_(pi, r)(s_t, a_t)
+    cal(L)_r (pi', pi) := pause exp_((s_t, a_t)_(t in NN) in cal(C)) pause sum_(t=0)^oo pause (Q_pi (s_t, a_t)) / (Q_pi' (s_t, a_t)) A_(pi, r)(s_t, a_t)
   $
 
 ]
 
-#title-slide[
-  == Optimisation de $Pi$
-  Mise à jour de la politique RL
-]
+== Mise à jour de $Pi$
 
+#centered[
+
+$
+  Pi' = & cases(
+            argmax_(pi) cL_r (pi, Pi),
+            "s.c.  distance"(Pi', Pi) < delta
+          )
+$
+
+]

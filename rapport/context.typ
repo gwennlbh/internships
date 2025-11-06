@@ -469,16 +469,16 @@ $
 
 
 
-La méthode TRPO définit la mise à jour de $Q$ avec un $Q'$ qui maximise le _surrogate advantage_ @trpo-openai, sous une contrainte limitant l'ampleur des modifications individuelles, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
+La méthode TRPO définit la mise à jour de $pi$ avec un $pi'$ qui maximise le _surrogate advantage_ @trpo-openai, sous une contrainte limitant l'ampleur des modifications individuelles, ce qui procure une stabilité à l'algorithme, et évite qu'un seul "faux pas" dégrade violemment la performance de la politique.
 
 $
-  Q' = & cases(
-           argmax_(q) cL_r (q, Q),
-           "s.c.  distance"(Q', Q) < delta
+  Pi' = & cases(
+           argmax_(pi) cL_r (pi, Pi),
+           "s.c.  distance"(Pi', Pi) < delta
          )
 $
 
-Avec $delta$ une limite supérieure de distance entre $Q'$, la nouvelle politique, et $Q$, l'ancienne.
+Avec $delta$ une limite supérieure de distance entre $Pi'$, la nouvelle politique, et $Pi$, l'ancienne.
 
 ==== Distance entre politiques
 
