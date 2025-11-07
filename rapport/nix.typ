@@ -1,4 +1,4 @@
-#import "utils.typ": comment, refneeded, todo
+#import "utils.typ": comment, todo
 
 == Reproductibilité
 
@@ -29,9 +29,9 @@ De manière donc très concrète, si cette fonction `f` fait partie d'un protoco
 
 === Contenir les effets de bords
 
-En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée dans certains domaines de programmation @reproducibility #todo[Lesquels?].
+En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée en programmation @reproducibility.
 
-Il existe donc depuis longtemps #todo[préciser + #refneeded] des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limitent les effets de bords. Certains langages font également la distinction entre une fonction _pure_ (sans effets de bord) et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord et ne renvoie pas de valeur @ibm-function-procedure-routine.
+Il existe donc des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limitent les effets de bords. Certains langages font également la distinction entre une fonction _pure_ (sans effets de bord) et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord et ne renvoie pas de valeur @ibm-function-procedure-routine.
 
 
 === État dans le domaine de la robotique

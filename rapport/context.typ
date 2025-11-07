@@ -1,4 +1,4 @@
-#import "utils.typ": comment, dontbreak, refneeded, todo
+#import "utils.typ": dontbreak
 #import "@preview/fletcher:0.5.8": edge, node
 #import "@preview/fletcher:0.5.8"
 #import "@preview/diagraph:0.3.6"
@@ -137,16 +137,16 @@ $
 
 L'expression comporte deux hyperparamètres, à valeurs dans $]0, 1[$:
 
-/ Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas. // Il est commun de progressivement baisser $alpha$, ce qui donne lieu à des phases plus "exploratives" ($alpha$ élevé, exploration de nouvelles actions) ou "exploitative" ($alpha$ faible, exploitation des récompenses connues) #refneeded
+/ Learning rate $alpha$: contrôle à quel point l'on favorise l'évolution de $Q$ ou pas.
 / Discount factor $gamma$: contrôle l'importance que l'on donne aux récompenses futures. Il est utile de commencer avec une valeur faible puis l'augmenter avec le temps @maxq-discount.
 
 === Difficultés liées à l'implémentation de la fonction coût
 
 ==== Tendances à la "tricherie" des agents
 
-Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement #refneeded: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
+Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
-Dans le cas de la robotique, cela arrive particulièrement souvent #refneeded, et il faut donc un simulateur qui soit suffisamment réaliste.
+Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste.
 
 ==== Sous-spécification de la fonction coût
 
@@ -170,9 +170,6 @@ On peut même aller plus loin, et multiplier les phases de validation avec des i
 #let proba = $bb(P)$
 #let setbuilder = (content, with) => ${ #content thick mid(|) thick #with }$
 
-Théoriquement, le score associé à un couple état/action est souvent réduit à l'intervalle $[0, 1]$ et assimilé à une distribution de probabilité: $Q$ est une fonction de $S times A$ vers $[0, 1]$ qui renvoie la probabilité qu'a l'agent à choisir une action en étant dans un état de l'environnement.
-
-
 On note dans le reste de cette section:
 
 / $A$: l'ensemble des actions
@@ -181,7 +178,7 @@ On note dans le reste de cette section:
 / $M: S times A -> S$: le moteur de simulation physique, qui applique l'action à un état de l'environnement et envoie le nouvel état de l'environnement
 / $Pi: S -> A$: une politique
 / $Pi^*: S -> A$: la meilleure politique possible, celle que l'on cherche à approcher
-/ $R: S -> RR^+$: sa fonction de récompense #todo[incohérent! c'est sensé être $Q$, qu'on a assimilé à une distrib de proba :/]
+/ $R: S -> RR^+$: sa fonction de récompense
 / $Q_pi: S times A -> [0, 1]$: la distribution de probabilité d'une politique $pi$, qu'on suppose Markovienne (elle ne dépend que de l'état dans lequel on est). $Q_pi (s_t, a_t)$ est la probabilité que $pi$ choisisse $a_t$, _quand on est dans l'état_ $s_t$ ($s_t$ est l'état *pré*-action, et non post-action)
 / $Q$ (resp. $Q^*$): $Q_Pi$ (resp. $Q_(Pi^*)$), pour alléger les notations
 // $R$: $R_Pi$
@@ -283,8 +280,6 @@ Les définitions suivantes, dont la plupart proviennent du papier _Trust Region 
 
 
   [
-    #todo[Pas clair]
-
     Notamment, les espérances le long d'un chemin, notées $inline(exp_(s_0, a_0, ...))$ dans @trpo, sont dénotées ici par une opération-sur-ensemble usuelle#footnote[d'autres exemples d'"opérations-sur-ensemble" sont $sum_(x in RR)$ ou $product_(n in NN)$, par exemple.], avec $exp_(c in cal(C))$. De même, la notation $inline(exp_(s_0, a_0, ... ~ pi))$ est dénotée $exp_(c ~ pi in cal(C))$ et explicitée après @eta-exp-definition.
 
     Dans la documentation de _OpenAI Spinning Up_ (citation "@trpo-openai"), les espérances sont notées $op(E, limits: #true)_(s, a ~ pi)$, ce qui correspond à faire une espérance _le long_ de tout chemin: cela correspond ici à $exp_(c ~ pi in cal(C)) sum_(t=0)^oo dots.c$.
@@ -677,7 +672,7 @@ En robotique, il est commun d'inclure dans la récompense les éléments suivant
 - Couple maximal sur les commandes envoyées au moteurs
 - Limite sur la vélocité du robot
 - Prévention des auto-collisions (par exemple, le bras qui tape la jambe)
-- #todo[Ajouter @maciej]
+- Limite sur les magnitudes des forces de réaction du sol @maciej
 - etc.
 
 
@@ -731,4 +726,4 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
   scale(7%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
 )
 
-Bien que toutes ces dépendances puissent être spécifiées avec des contraintes de version strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ _à l'installation_#footnote[Pour des raisons de performance @cpp-python, certaines bibliothèques implémentent leurs fonctions critiques en C++. C'est par exemple le cas de NumPy #refneeded]: fixer la version de la bibliothèque ne suffit pas donc à guarantir la reproductibilité de la compilation de l'arbre des dépendances.
+Bien que toutes ces dépendances puissent être spécifiées avec des contraintes de version strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ _à l'installation_#footnote[Pour des raisons de performance @cpp-python, certaines bibliothèques implémentent leurs fonctions critiques en C++. C'est par exemple le cas de NumPy @numpy]: fixer la version de la bibliothèque ne suffit pas donc à guarantir la reproductibilité de la compilation de l'arbre des dépendances.

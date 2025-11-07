@@ -1,4 +1,4 @@
-#import "utils.typ": comment, refneeded
+#import "utils.typ": comment
 #show math.equation.where(block: true): set block(spacing: 2em)
 
 == Cas dégénéré de $D_"KL" (Q, Q') = 0$ sans utilisation de $max$ <dkl-zero>

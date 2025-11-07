@@ -1127,3 +1127,11 @@ ufw:
     date: '2025-11-05'
     value: https://launchpad.net/ufw
 
+numpy:
+  type: web
+  title: "The core of NumPy is well-optimized C code." 
+  author: Numpy
+  url:
+    date: '2025-11-07'
+    value: https://numpy.org
+

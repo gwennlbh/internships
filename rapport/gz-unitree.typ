@@ -1,7 +1,7 @@
 #import "@preview/zebraw:0.5.5"
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 #import "@preview/cetz:0.4.2"
-#import "./utils.typ": dontbreak, refneeded, trimmed-image
+#import "./utils.typ": dontbreak, trimmed-image
 #show figure: set block(spacing: 2em)
 #let zebraw = (..args) => zebraw.zebraw(
   lang: false,
@@ -419,7 +419,7 @@ On trouve dans les messages `rt/lowcmd` les champs nécéssaires à au calcul de
   [Respectivement $q$, $dot(q)$, $tau_"ff"$, $K_p$ et $K_d$],
 )
 
-Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement #refneeded
+Cette équation se rapproche des modèles de type PID (_proportional-integrative-derivative_) @control-pid, avec le terme intégratif remplacé par $tau_"ff"$, ce qui en fait une expression plus adaptée pour les politiques avec des mouvements non-brusques: le terme intégratif apporte une capacité d'instabilité qui complexifie l'entraînement
 
 
 #figure(
