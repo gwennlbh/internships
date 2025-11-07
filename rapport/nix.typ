@@ -75,9 +75,9 @@ Une autre caractéristique que l'on trouve souvent dans la famille de langages f
   ```,
   ```ocaml
   let request url = process (
-    try 
+    try
       http_get(url)
-    with e -> 
+    with e ->
       to_string(e)
   )
   ```,
