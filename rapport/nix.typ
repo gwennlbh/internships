@@ -1,5 +1,3 @@
-#import "utils.typ": comment, todo
-
 == Reproductibilité
 
 === État dans le domaine de la programmation
@@ -65,24 +63,22 @@ Nix ne peut pas garantir que le programme sera sans effets de bords au _runtime_
 
 Une autre caractéristique que l'on trouve souvent dans la famille de langages fonctionnels est l'omniprésence des _expressions_: la quasi-totalité des constructions syntaxiques forment des expressions valides, et peuvent donc servir de valeur
 
-#todo[améliorer exemple, ya des ternaires dans tt les langages...]
-
 #table(
   columns: (50%, 50%),
   ```python
-  def g(x, y):
-    if y == 5:
-      x = 6
-    else:
-      x = 8
-    return f(x)
+  def request(url):
+    try:
+      response = http_get(url)
+    except e:
+      response = str(e)
+    return process(response)
   ```,
   ```ocaml
-  let g x y = f (
-    if y = 5 then
-      6
-    else
-      8
+  let request url = process (
+    try 
+      http_get(url)
+    with e -> 
+      to_string(e)
   )
   ```,
 
