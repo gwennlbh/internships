@@ -722,13 +722,41 @@ namespace gz_unitree
   Pour des paquets reproductibles
 ]
 
-#centered(text(size: 0.7em, [
+#let code-highlights = (..hs) => codly(highlights: hs.pos().map(h => (
+  line: h.at(0),
+  start: h.at(1).len() + 1,
+  end: h.at(1).len() + 1 + h.at(2).len()
+)))
+
+#for i in range(4) {
+
+// SIX SEVEN!!!!!
+centered(text(size: 0.67em, [
+  #code-highlights(
+    ..if i == 1 {
+      (
+        (1, start: 3, end: 3 + "lib, stdenv, fetchFromGithub".len() - 1),
+        (3, start: 0, end: "stdenv.mkDerivation".len()),
+        (7, start: "  src = ".len() + 1, end: "  src = fetchFromGithub".len()),
+      )
+    } else if i == 2 {
+      (
+        (11, start: "  hash = \"".len() + 3, end: "  hash = \"".len() + 53),
+      )
+    } else if i == 3 {
+      (
+        (1, start: "{ lib, stdenv, fetchFromGithub, ".len() + 1, end: "{ lib, stdenv, fetchFromGithub, cmake, eigen".len()),
+        (14, start: "  nativeBuildInputs = [ ".len() + 1, end: "  nativeBuildInputs = [ cmake".len()),
+        (15, start: "  buildInputs = [ ".len() + 1, end: "  buildInputs = [ eigen".len())
+      )
+    },
+  )
   ```nix
 { lib, stdenv, fetchFromGitHub, cmake, eigen }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "unitree-sdk2";
-  version = "2.0.0";
+  version = "0.1.0";
 
   src = fetchFromGitHub {
     owner = "unitreerobotics";
@@ -739,6 +767,36 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
   buildInputs = [ eigen ];
+  meta = { ... };
+}
+  ```
+]))
+
+pagebreak()
+
+}
+
+#centered(text(size: 0.66em, [
+  #code-highlights(
+    (1, "{ lib, stdenv, fetchFromGitlab, ", "cmake")
+  )
+  ```nix
+{ lib, stdenv, fetchFromGitLab, cmake }:
+
+stdenv.mkDerivation {
+  pname = "eigen";
+  version = "3.4.0-unstable-2022-05-19";
+
+  src = fetchFromGitLab {
+    owner = "libeigen";
+    repo = "eigen";
+    rev = "e7248b26a1ed53fa030c5c459f7ea095dfd276ac";
+    hash = "sha256-uQ1YYV3ojbMVfHdqjXRyUymRPjJZV3WHT36PTxPRius=";
+  };
+
+  nativeBuildInputs = [ cmake ];
+  patches = [ ./include-dir.patch ];
+  postPatch = ''substituteInPlace Eigen/src/SVD/BDCSVD.h --replace-fail "if (l == 0) {" "if (i >= k && l == 0) {"'';
   meta = { ... };
 }
   ```
