@@ -679,22 +679,67 @@ namespace gz_unitree
 
 #pagebreak()
 
-#centered(
-  block(width: 16em)[
-    #codly(
-      highlights: (
-        (line: 4, start: 10, end: 15+6),
-      ), 
-      // annotations: (
-      //   (start: 4, content: [Impur]),
-      // )
-    )
-    ```python
-    from datetime import date
+#centered(block(width: 16em)[
+  #codly(
+    highlights: (
+      (line: 4, start: 10, end: 15+6),
+    ), 
+    // annotations: (
+    //   (start: 4, content: [Impur]),
+    // )
+  )
+  ```python
+  from datetime import date
 
-    def f(a):
-      return date.today().year + a
-    ```
-  ]
-)
+  def f(a):
+    return date.today().year + a
+  ```
+])
 
+#title-slide[
+  == Reproductibilité
+  Au _compile-time_
+]
+
+#centered(block(width: 20em, [
+  #codly(header: text(size: 1.2em, fill: luma(100), `./program.c`))
+  ```c
+  int main()
+  {
+    printf("Built at %s\n", BUILT_AT);
+  }
+  ```
+  puis
+  ```bash
+  gcc -DBUILT_AT="\"$(date)\"" program.c 
+  ```
+]))
+
+#pagebreak()
+
+#title-slide[
+  == Nix, le langage
+  Pour des paquets reproductibles
+]
+
+#centered(text(size: 0.7em, [
+  ```nix
+{ lib, stdenv, fetchFromGitHub, cmake, eigen }:
+
+stdenv.mkDerivation rec {
+  pname = "unitree-sdk2";
+  version = "2.0.0";
+
+  src = fetchFromGitHub {
+    owner = "unitreerobotics";
+    repo = "unitree_sdk2";
+    rev = version;
+    hash = "sha256-r05zwhZW36+VOrIuTCr2HLf2R23csmnj33JFzUqz62Q=";
+  };
+
+  nativeBuildInputs = [ cmake ];
+  buildInputs = [ eigen ];
+  meta = { ... };
+}
+  ```
+]))
