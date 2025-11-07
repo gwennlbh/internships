@@ -1,9 +1,11 @@
 #import "../rapport/utils.typ": dontbreak, todo
 #import "../rapport/context.typ": argmax, cL, definitions_paths_set, exp
 #import "../rapport/gz-unitree.typ": overlayed-img, zebraw
+#import "@preview/codly:1.3.0": *
+#show: codly-init.with()
+#codly(number-format: none, zebra-fill: none, stroke: none, lang-format: none)
 #import "@preview/touying:0.6.1": *
 #import themes.simple: *
-
 #import "@preview/fletcher:0.5.8": edge, node
 #import "@preview/fletcher:0.5.8"
 #import "@preview/diagraph:0.3.6"
@@ -665,4 +667,34 @@ namespace gz_unitree
   == Reproductibilité
   Avec Nix
 ]
+
+#centered(block(width: 16em, [
+  ```python
+  from datetime import date
+
+  def f(a):
+    return date.today().year + a
+  ```
+]))
+
+#pagebreak()
+
+#centered(
+  block(width: 16em)[
+    #codly(
+      highlights: (
+        (line: 4, start: 10, end: 15+6),
+      ), 
+      // annotations: (
+      //   (start: 4, content: [Impur]),
+      // )
+    )
+    ```python
+    from datetime import date
+
+    def f(a):
+      return date.today().year + a
+    ```
+  ]
+)
 
