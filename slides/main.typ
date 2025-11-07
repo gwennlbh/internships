@@ -295,43 +295,6 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 ]
 
 
-== `unitree_mujoco`
-
-#centered(scale(70%, reflow: true, diagram({
-  node(name: <sdk>, (0, 0))[SDK]
-  node(enclose: ((1, 1), (-1, 1)), stroke: blue, inset: 10pt, snap: false, text(
-    fill: blue,
-  )[Canaux \ DDS])
-  node(name: <lowcmd>, (1, 1))[`rt/lowcmd`]
-  node(name: <lowstate>, (-1, 1))[`rt/lowstate`]
-  node(
-    name: <bridge>,
-    enclose: ((1, 2), (-1, 2)),
-    stroke: black,
-    inset: 10pt,
-  )[Bridge]
-  node(name: <mujoco>, (0, 3))[Mujoco]
-
-
-  edge(<sdk>, <lowcmd>, "->", bend: 30deg)[pub]
-  edge(<lowcmd>, (1, 2), "-->", bend: 20deg)[via sub]
-  edge((1, 2), <mujoco>, "->", bend: 20deg, `data->ctrl[i] = ...`)
-
-  edge(<sdk>, <lowstate>, "<--", bend: -30deg)[via sub]
-  edge(<lowstate>, (-1, 2), "<-", bend: -20deg)[pub]
-  edge((-1, 2), <mujoco>, "<-", bend: -20deg, `... = data->sensordata[i]`)
-
-  edge(
-    <mujoco>,
-    <mujoco>,
-    "->",
-    bend: 130deg,
-    loop-angle: -90deg,
-    `mj_step(model, data)`,
-  )
-})))
-
-
 #title-slide[
   == Développement de _gz-unitree_
   Un bridge pour Gazebo
@@ -360,59 +323,6 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 #pagebreak()
 
-#centered(scale(75%, reflow: true, ```cpp
-#include <gz/sim/System.hh>
-namespace gz_unitree
-{
-    class UnitreePlugin :
-        public gz::sim::System,
-        public gz::sim::ISystemPreUpdate
-    {
-    public:
-        UnitreePlugin();
-    public:
-        ~UnitreePlugin() override;
-    public:
-        void PreUpdate(const gz::sim::UpdateInfo &_info,
-                       gz::sim::EntityComponentManager &ecm) override;
-    };
-}
-```))
-
-#pagebreak()
-
-#centered(scale(75%, reflow: true, grid(
-  columns: 2,
-  gutter: 2em,
-  ```cpp
-  #include <gz/plugin/Register.hh>
-
-  ... // class implementation
-
-  GZ_ADD_PLUGIN(
-      UnitreePlugin,
-      gz::sim::System,
-      UnitreePlugin::ISystemPreUpdate)
-  ```,
-
-  zebraw(
-    numbering: false,
-    highlight-lines: (..range(3, 5),),
-    ```xml
-    <sdf version='1.11'>
-    <world name="default">
-      <plugin filename="gz-unitree" name="gz_unitree::UnitreePlugin">
-      </plugin>
-    </world>
-    <model name='h1_description'>
-      <link name='pelvis'>
-        <inertial>
-        ...
-    ```,
-  ),
-)))
-
-#pagebreak()
 
 
 #let legend = (
@@ -544,40 +454,8 @@ namespace gz_unitree
 #let policy-edge = (..args) => colored-edge(fuchsia, ..args)
 
 #centered-slide(scale(56%, reflow: true, architecture(
-  show-legend: false,
-  pauses: true,
-  edge(
-    <configure>,
-    "u",
-    <channelfactory>,
-    "->",
-    label-side: left,
-    label-pos: 50%,
-  )[appelle],
-  pause,
-  edge(<configure>, "d,d,d,r", <gzclock>, "->", label-pos: 85%)[démarre],
-  pause,
-  edge(
-    <configure>,
-    "d,d",
-    (0, 3.75),
-    "r,r",
-    <gzimu>,
-    "->",
-    label-pos: 75%,
-  )[démarre],
-  pause,
-  edge(<channelfactory>, "->", <publisher>)[initialise],
-  edge(<channelfactory>, "->", <subscriber>)[initialise],
-  edge(<publisher>, "<->", <lowstate>)[`std::bind`],
-  edge(<subscriber>, "<->", <lowcmd>)[`std::bind`],
-)))
-
-#centered-slide(scale(56%, reflow: true, architecture(
   show-legend: true,
-  pauses: false,
-
-  pause,
+  pauses: true,
 
   // Simulation loop
   sim-edge(
