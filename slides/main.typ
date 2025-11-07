@@ -233,14 +233,14 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 ]
 
 // == Mise à jour de $Pi$: distance entre politiques
-// 
+//
 // #centered[
 //   $
 //     "distance"(Pi', Pi) & := max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) \
 //        D_"KL" (P || P') & := sum_(x in cal(X)) P(x) log P(x) / (P'(x))
 //   $
 // ]
-// 
+//
 
 #title-slide[
   == Le _SDK_#super[1] d'Unitree
