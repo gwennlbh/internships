@@ -232,15 +232,15 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 ]
 
-== Mise à jour de $Pi$: distance entre politiques
-
-#centered[
-  $
-    "distance"(Pi', Pi) & := max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) \
-       D_"KL" (P || P') & := sum_(x in cal(X)) P(x) log P(x) / (P'(x))
-  $
-]
-
+// == Mise à jour de $Pi$: distance entre politiques
+// 
+// #centered[
+//   $
+//     "distance"(Pi', Pi) & := max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) \
+//        D_"KL" (P || P') & := sum_(x in cal(X)) P(x) log P(x) / (P'(x))
+//   $
+// ]
+// 
 
 #title-slide[
   == Le _SDK_#super[1] d'Unitree
@@ -295,10 +295,11 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 ]
 
 
-#title-slide[
-  == Développement de _gz-unitree_
-  Un bridge pour Gazebo
-]
+// #title-slide[
+//   == Développement de _gz-unitree_
+//   Un bridge pour Gazebo
+// ]
+#pagebreak()
 
 #centered[
   #diagram({
@@ -550,17 +551,6 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 
 
-== Beaucoup de dépendances!
-#v(-1em)
-#text(size: 0.64em)[Dépendances de _Gepetto/h1v2-Isaac_]
-
-
-#import "@preview/diagraph:0.3.6"
-#centered(
-  scale(12%, reflow: true, diagraph.render(
-    read("../rapport/isaac-deptree.dot"),
-  )),
-)
 
 == Reproductibilité
 
@@ -596,6 +586,21 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
   == Reproductibilité
   Au _compile-time_
 ]
+
+
+== Beaucoup de dépendances!
+#v(-1em)
+#text(size: 0.64em)[Dépendances de _Gepetto/h1v2-Isaac_]
+
+
+#import "@preview/diagraph:0.3.6"
+#centered(
+  scale(12%, reflow: true, diagraph.render(
+    read("../rapport/isaac-deptree.dot"),
+  )),
+)
+
+== Reproductibilité
 
 #centered(block(width: 20em, [
   #codly(header: text(size: 1.2em, fill: luma(100), `./program.c`))
