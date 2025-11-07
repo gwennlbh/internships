@@ -58,10 +58,10 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 == RL en robotique
 
 #diagram(
-  node((0, 0), todo[Photo H1v2]),
-  node((1, 0), todo[H1v2 dans gz]),
+  node((0, 0), image(height: 4em, "./h1v2.png")),
+  node((1, 0), image(height: 4em, "./h1v2-with-env.png")),
   node((2, 0))[Score],
-  edge((0, 0), (1, 0), "->")[genou gauche +0.5°],
+  edge((0, 0), (1, 0), "->", shift: 15pt, text(size: 0.8em, align(center)[genou gauche \ +0.5°])),
   edge((1, 0), (2, 0), "-->", $cal(L)$),
   edge((2, 0), (0, 0), "->", bend: 45deg)[Mise à jour],
 )
@@ -901,4 +901,6 @@ stdenv.mkDerivation {
 }:
 ```]
 )))
+
+
 
