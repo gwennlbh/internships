@@ -668,6 +668,20 @@ namespace gz_unitree
   Avec Nix
 ]
 
+
+
+== Beaucoup de dépendances!
+#v(-1em)
+#text(size: 0.64em)[Dépendances de _Gepetto/h1v2-Isaac_]
+
+
+#import "@preview/diagraph:0.3.6"
+#centered(
+  scale(12%, reflow: true, diagraph.render(read("../rapport/isaac-deptree.dot")))
+)
+
+== Reproductibilité
+
 #centered(block(width: 16em, [
   ```python
   from datetime import date
@@ -721,6 +735,8 @@ namespace gz_unitree
   == Nix, le langage
   Pour des paquets reproductibles
 ]
+
+== Définition de `gz-unitree`
 
 #let codehighlights = (..hs) => codly(highlights: hs.pos().map(h => (
   line: h.at(0),
@@ -779,6 +795,8 @@ namespace gz_unitree
   }
 }
 
+== Définition de `nixpkgs#eigen`
+
 #centered(text(size: 0.64em, [
   #codehighlights(
     (1, "{ lib, stdenv, fetchFromGitlab, ", "cmake"),
@@ -808,6 +826,8 @@ stdenv.mkDerivation {
 ]))
 
 #pagebreak()
+
+== Définition de `nixpkgs#cmake`
 
 #centered(text(size: 0.48em, grid(columns: 2, 
  [
@@ -853,14 +873,14 @@ stdenv.mkDerivation {
   #codehighlights(
      (1, "  ", "zlib"),
      (2, "  ", "darwin"),
-     (3, "  ", "isBootstrap"),
-     (4, "  ", "isMinimalBuild"),
+     // (3, "  ", "isBootstrap"),
+     // (4, "  ", "isMinimalBuild"),
      (10, "  ", "useOpenSSL"),
-     (11, "  ", "useSharedLibraries"),
+     // (11, "  ", "useSharedLibraries"),
      (12, "  ", "uiToolkits"),
-     (13, "  ", "buildDocs"),
+     // (13, "  ", "buildDocs"),
      (14, "  ", "libsForQt5"),
-     (15, "  ", "gitUpdater"),
+     // (15, "  ", "gitUpdater"),
    )
 ```nix
   zlib,
@@ -882,10 +902,3 @@ stdenv.mkDerivation {
 ```]
 )))
 
-#pagebreak()
-
-
-#import "@preview/diagraph:0.3.6"
-#centered(
-  scale(7%, reflow: true, diagraph.render(read("../rapport/isaac-deptree.dot").replace("rankdir TB", "rankdir LR")))
-)

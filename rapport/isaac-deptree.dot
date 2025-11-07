@@ -1,5 +1,5 @@
 digraph {
-	// rankdir=LR;
+	rankdir=TB;
 	ranksep = 1.5;
 	node [shape=rectangle];
 	"absl-py" [label="absl-py\n2.3.1"]
