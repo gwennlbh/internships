@@ -722,63 +722,68 @@ namespace gz_unitree
   Pour des paquets reproductibles
 ]
 
-#let code-highlights = (..hs) => codly(highlights: hs.pos().map(h => (
+#let codehighlights = (..hs) => codly(highlights: hs.pos().map(h => (
   line: h.at(0),
   start: h.at(1).len() + 1,
-  end: h.at(1).len() + 1 + h.at(2).len()
+  end: h.at(1).len() + h.at(2).len()
 )))
 
-#for i in range(4) {
-
-// SIX SEVEN!!!!!
-centered(text(size: 0.67em, [
-  #code-highlights(
-    ..if i == 1 {
-      (
-        (1, start: 3, end: 3 + "lib, stdenv, fetchFromGithub".len() - 1),
-        (3, start: 0, end: "stdenv.mkDerivation".len()),
-        (7, start: "  src = ".len() + 1, end: "  src = fetchFromGithub".len()),
+#{
+  for i in range(4) {
+    // SIX SEVEN!!!!!
+    centered(text(size: 0.67em, [
+      #codehighlights(
+        ..(if i == 1 {
+          (
+            (1, "{ ", "lib, stdenv, fetchFromGithub"),
+            (3, "", "stdenv.mkDerivation"),
+            (7, "  src = ", "fetchFromGithub"),
+          )
+        } else if i == 2 {
+          (
+            (11,  "    hash = \"", "sha256-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
+          )
+        } else if i == 3 {
+          (
+            (1, "{ lib, stdenv, fetchFromGithub, ", "cmake, eigen"),
+            (14,  "  nativeBuildInputs = [ ",  "cmake"),
+            (15,  "  buildInputs = [ ",  "eigen")
+          )
+        } else {
+          ()
+        }),
       )
-    } else if i == 2 {
-      (
-        (11, start: "  hash = \"".len() + 3, end: "  hash = \"".len() + 53),
-      )
-    } else if i == 3 {
-      (
-        (1, start: "{ lib, stdenv, fetchFromGithub, ".len() + 1, end: "{ lib, stdenv, fetchFromGithub, cmake, eigen".len()),
-        (14, start: "  nativeBuildInputs = [ ".len() + 1, end: "  nativeBuildInputs = [ cmake".len()),
-        (15, start: "  buildInputs = [ ".len() + 1, end: "  buildInputs = [ eigen".len())
-      )
-    },
-  )
-  ```nix
-{ lib, stdenv, fetchFromGitHub, cmake, eigen }:
+      ```nix
+      { lib, stdenv, fetchFromGitHub, cmake, eigen }:
 
-stdenv.mkDerivation {
-  pname = "unitree-sdk2";
-  version = "0.1.0";
+      stdenv.mkDerivation {
+        pname = "unitree-sdk2";
+        version = "0.1.0";
 
-  src = fetchFromGitHub {
-    owner = "unitreerobotics";
-    repo = "unitree_sdk2";
-    rev = version;
-    hash = "sha256-r05zwhZW36+VOrIuTCr2HLf2R23csmnj33JFzUqz62Q=";
-  };
+        src = fetchFromGitHub {
+          owner = "unitreerobotics";
+          repo = "unitree_sdk2";
+          rev = version;
+          hash = "sha256-r05zwhZW36+VOrIuTCr2HLf2R23csmnj33JFzUqz62Q=";
+        };
 
-  nativeBuildInputs = [ cmake ];
-  buildInputs = [ eigen ];
-  meta = { ... };
+        nativeBuildInputs = [ cmake ];
+        buildInputs = [ eigen ];
+        meta = { ... };
+      }
+      ```
+    ]))
+
+    pagebreak()
+
+  }
 }
-  ```
-]))
 
-pagebreak()
-
-}
-
-#centered(text(size: 0.66em, [
-  #code-highlights(
-    (1, "{ lib, stdenv, fetchFromGitlab, ", "cmake")
+#centered(text(size: 0.64em, [
+  #codehighlights(
+    (1, "{ lib, stdenv, fetchFromGitlab, ", "cmake"),
+    // (11, "    hash = \"", "sha256-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"),
+    // (14, "  nativeBuildInputs = [ ", "cmake")
   )
   ```nix
 { lib, stdenv, fetchFromGitLab, cmake }:
@@ -801,3 +806,86 @@ stdenv.mkDerivation {
 }
   ```
 ]))
+
+#pagebreak()
+
+#centered(text(size: 0.48em, grid(columns: 2, 
+ [
+   #codehighlights(
+     (7, "  ", "bzip2"),
+     (8, "  ", "curlMinimal"),
+     (9, "  ", "expat"),
+     (10, "  ", "libarchive"),
+     (11, "  ", "libuv"),
+     (12, "  ", "ncurses"),
+     (13, "  ", "openssl"),
+     (14, "  ", "pkg-config"),
+     (15, "  ", "ps"),
+     (16, "  ", "sysctl"),
+     (17, "  ", "rhash"),
+     (18, "  ", "sphinx"),
+     (19, "  ", "texinfo"),
+     (20, "  ", "xz"),
+   )
+  ```nix
+{
+  lib,
+  stdenv,
+  fetchurl,
+  replaceVars,
+  buildPackages,
+  bzip2,
+  curlMinimal,
+  expat,
+  libarchive,
+  libuv,
+  ncurses,
+  openssl,
+  pkg-config,
+  ps,
+  sysctl,
+  rhash,
+  sphinx,
+  texinfo,
+  xz,
+```],
+[
+  #codehighlights(
+     (1, "  ", "zlib"),
+     (2, "  ", "darwin"),
+     (3, "  ", "isBootstrap"),
+     (4, "  ", "isMinimalBuild"),
+     (10, "  ", "useOpenSSL"),
+     (11, "  ", "useSharedLibraries"),
+     (12, "  ", "uiToolkits"),
+     (13, "  ", "buildDocs"),
+     (14, "  ", "libsForQt5"),
+     (15, "  ", "gitUpdater"),
+   )
+```nix
+  zlib,
+  darwin,
+  isBootstrap ? null,
+  isMinimalBuild ? (
+    if isBootstrap != null then
+      lib.warn "isBootstrap argument is deprecated and will be removed; use isMinimalBuild instead" isBootstrap
+    else
+      false
+  ),
+  useOpenSSL ? !isMinimalBuild,
+  useSharedLibraries ? (!isMinimalBuild && !stdenv.hostPlatform.isCygwin),
+  uiToolkits ? [ ], # can contain "ncurses" and/or "qt5"
+  buildDocs ? !(isMinimalBuild || (uiToolkits == [ ])),
+  libsForQt5,
+  gitUpdater,
+}:
+```]
+)))
+
+#pagebreak()
+
+
+#import "@preview/diagraph:0.3.6"
+#centered(
+  scale(7%, reflow: true, diagraph.render(read("../rapport/isaac-deptree.dot").replace("rankdir TB", "rankdir LR")))
+)
