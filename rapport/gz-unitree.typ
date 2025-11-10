@@ -1,4 +1,4 @@
-#import "@preview/zebraw:0.5.5"
+#import "@preview/zebraw:0.6.0"
 #import "@preview/fletcher:0.5.8": diagram, edge, node
 #import "@preview/cetz:0.4.2"
 #import "./utils.typ": dontbreak, trimmed-image
