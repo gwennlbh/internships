@@ -92,7 +92,7 @@ Le code source du SDK d'Unitree est disponible sur Github @sdk2_source_today. Ce
 
 Compiler le SDK nécéssite l'existance de ces fichiers binaires:
 
-#import "@preview/zebraw:0.5.5"
+#import "@preview/zebraw:0.6.0"
 #let zebraw = (..args) => zebraw.zebraw(
   lang: false,
   background-color: luma(255),
