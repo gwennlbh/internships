@@ -57,7 +57,7 @@ DDS groupe les messages dans des _topics_. Les messages sont échangés sur un t
 
 CycloneDDS est capable d'un débit d'environ #qty("1", "GB/s"), pour des messages d'environ #qty("1", "kB") chacun @dds-benchmark. On remarque, en pratique, des tailles de message entre #qty("0.9", "kB") et #qty("1.3", "kB") dans le cas des échanges commandes/état avec le robot.
 
-Et enfin, les topics peuvent être isolés d'autres topics via des _domain_#[s], identifiés par un numéro. Deux topics portant le même nom reste isolés si ils sont sur deux domaines différents.
+Et enfin, les topics peuvent être isolés d'autres topics via des _domain_#[s], identifiés par un numéro. Deux topics portant le même nom reste isolés s'ils sont sur deux domaines différents.
 
 
 == Une base de code partiellement open-source
@@ -90,7 +90,7 @@ Le code source du SDK d'Unitree est disponible sur Github @sdk2_source_today. Ce
   ```,
 )
 
-Compiler le SDK nécéssite l'existance de ces fichiers binaires:
+Compiler le SDK nécessite l'existance de ces fichiers binaires:
 
 #import "@preview/zebraw:0.6.0"
 #let zebraw = (..args) => zebraw.zebraw(
@@ -119,7 +119,7 @@ Compiler le SDK nécéssite l'existance de ces fichiers binaires:
 
 Ici est défini, via `set_target_properties(... IMPORTED_LOCATION)`, le chemin d'une bibliothèque à lier avec la bibliothèque finale @cmake-imported-location. Ici, c'est un des fichiers pré-compilés que l'on lie.
 
-On confirme cette nécéssite en lançant `mkdir build && cd build && cmake ..` après avoir supprimé le répertoire `lib/` :
+On confirme cette nécessite en lançant `mkdir build && cd build && cmake ..` après avoir supprimé le répertoire `lib/` :
 
 #{
   show regex(".*CMake Error.*"): set text(fill: red)
@@ -173,11 +173,11 @@ thirdparty/include/dds
 ...
 ```
 
-Ces particularités laissent planner quelques doutes sur la nature open-source du code: ces binaires requis sont-ils seulement présent pour améliorer l'expérience développeur en accélererant la compilation, ou "cachent"-ils du code non public?
+Ces particularités laissent planer quelques doutes sur la nature open-source du code: ces binaires requis sont-ils seulement présent pour améliorer l'expérience développeur en accélererant la compilation, ou "cachent"-ils du code non public?
 
 Ces constats ont motivé une première tentative de décompilation de ces `libunitree_sdk2.a` pour comprendre le fonctionnement du SDK, via _Ghidra_ @ghidra.
 
-Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mujoco @unitree_mujoco a rendu l'exploration de cette piste non nécéssaire.
+Cependant, la découverte de l'existance d'un bridge officiel SDK $arrows.lr$ Mujoco @unitree_mujoco a rendu l'exploration de cette piste non nécessaire.
 
 == Un autre bridge existant: `unitree_mujoco`
 
@@ -200,7 +200,7 @@ Le fonctionnement d'un bridge est au final assez similaire, quelque soit le simu
   }
 }))
 
-Un bridge se substitue au robot physique, interceptant les ordres du SDK et les traduisants en des appels de fonctions provenant de l'API du simulateur, et symmétriquement pour les envois d'états au SDK. On peut apparenter le fonctionnement d'un bridge à celui d'une attaque informatique de type "Man in the Middle" (MitM).
+Un bridge se substitue au robot physique, interceptant les ordres du SDK et les traduisant en des appels de fonctions provenant de l'API du simulateur, et symétriquement pour les envois d'états au SDK. On peut apparenter le fonctionnement d'un bridge à celui d'une attaque informatique de type "Man in the Middle" (MitM).
 
 
 #figure(caption: [Fonctionnement via _unitree\_mujoco_ du SDK], diagram({
@@ -264,7 +264,7 @@ Le but est de faire la même chose avec notre propre bridge. Le code du bridge M
   )[*API de Gazebo*])
 }))
 
-Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) reçu depuis le robot.
+Le bridge de Mujoco fonctionne en interceptant les messages sur le canal `rt/lowcmd` et en envoyant dans le canal `rt/lowstate`, qui correspondent respectivement aux commandes envoyées au robot et à l'état (angles des joints, moteurs, valeurs des capteurs, etc) reçu depuis le robot.
 
 Le `low` indique que ce sont des messages bas-niveau. Par exemple, `rt/lowcmd` correspond directement à des ordres en valeurs de couple pour les moteurs, au lieu d'envoyer des ordres plus évolués, tels que "se déplacer de $x$ mètres en avant" @h1-motion-services
 

@@ -22,7 +22,7 @@ Malheureusement, cette solution s'est avérée infructueuse, à cause d'une erre
 
 On change d'approche, en préférant plutôt utiliser les abstractions fournies par le SDK de Unitree (cf @receive-lowcmd et @send-lowstate)
 
-Enfin, si un pare-feu est actif, il faut autoriser le traffic UDP l'intervalle d'addresses IP `224.0.0.0/4`. Par exemple, avec _ufw_ @ufw
+Enfin, si un pare-feu est actif, il faut autoriser le trafic UDP l'intervalle d'adresses IP `224.0.0.0/4`. Par exemple, avec _ufw_ @ufw
 
 ```bash
 sudo ufw allow in proto udp from 224.0.0.0/4
@@ -34,7 +34,7 @@ sudo ufw allow in proto udp to 224.0.0.0/4
   gutter: 2em,
   [
 
-    Pour arriver à ces solutions, _Wireshark_ @wireshark s'est avéré utile, étant capable d'inspecter du traffic RTPS#footnote[Le protocole sur lequel est construit DDS @dds],
+    Pour arriver à ces solutions, _Wireshark_ @wireshark s'est avéré utile, étant capable d'inspecter du trafic RTPS#footnote[Le protocole sur lequel est construit DDS @dds],
 
 
     C'est notamment grâce à ce traçage des paquets que le problème de domaine DDS a été découvert: notre _subscriber_ DDS était réglé sur le domaine anonyme (ID aléatoire représenté par un 0 lors de la configuration) alors que le SDK d'Unitree communique sur le domaine d'ID 1.
@@ -376,14 +376,14 @@ Avec
     $ ddt(Delta q) = ddt(q_"new" - q_"old") = ddt(q_"new") - ddt(q_"old") = Delta ddt(q) = Delta dot(q) $
 
   ]
-/ $K_p$: prépondérance de la partie proportionelle
+/ $K_p$: prépondérance de la partie proportionnelle
 / $K_p$: prépondérance de la partie dérivée
 
 Cette équation met à jour $tau$ pour rapprocher l'état actuel du moteur de la nouvelle consigne, en prenant en compte
 
-- L'erreur sur l'angle $Delta q$ (partie proportionelle).
+- L'erreur sur l'angle $Delta q$ (partie proportionnelle).
 - L'erreur sur la vitesse de changement de $Delta q$ (partie dérivative). Cette prise en compte de la vitesse permet de lisser les changements appliqués aux moteurs.
-- Un couple dit de _feed-forward_, $tau_"ff"$, qui permet le maintient du robot à un état stable. On pourrait le déterminer en lançant une première simulation, avec pour objectif le maintient debout. Une fois la stabilité atteinte, on relève les couples des moteurs. Intuitivement, on peut voir $tau_"ff"$ comme un manière de s'affranchir de la partie "maintient debout" dans l'expression de la commande, similairement à la mise à zéro ("tarer") d'une balance.
+- Un couple dit de _feed-forward_, $tau_"ff"$, qui permet le maintien du robot à un état stable. On pourrait le déterminer en lançant une première simulation, avec pour objectif le maintien debout. Une fois la stabilité atteinte, on relève les couples des moteurs. Intuitivement, on peut voir $tau_"ff"$ comme un manière de s'affranchir de la partie "maintien debout" dans l'expression de la commande, similairement à la mise à zéro ("tarer") d'une balance.
 
 On contrôle la prépondérance des deux erreurs dans le calcul de la nouvelle consigne grâce à deux coefficients, $K_p$ et $K_d$.
 
@@ -391,7 +391,7 @@ On contrôle la prépondérance des deux erreurs dans le calcul de la nouvelle c
 == `rt/lowcmd` <receive-lowcmd>
 
 
-On trouve dans les messages `rt/lowcmd` les champs nécéssaires à au calcul de $tau$ @h1-rt-lowcmd comme décrit précédemment:
+On trouve dans les messages `rt/lowcmd` les champs nécessaires à au calcul de $tau$ @h1-rt-lowcmd comme décrit précédemment:
 
 #let greyedout = content => text(fill: luma(120), emph(content))
 #let undocumented = greyedout[Non documenté]
@@ -860,7 +860,7 @@ Ces désynchronisations pourraient expliquer les problèmes de performance recon
 
 == Vérification sur des politiques réelles
 
-Après avoir testé le bridge sur les politiques d'examples fournies par Unitree, il a été testé sur une politique en cours de développement au sein de l'équipe de robotique du LAAS, Gepetto.
+Après avoir testé le bridge sur les politiques d'exemples fournies par Unitree, il a été testé sur une politique en cours de développement au sein de l'équipe de robotique du LAAS, Gepetto.
 
 L'analyse de la vidéo (cf @video) montre que le bridge fonctionne: le comportement du robot est similaire à celui sur Isaac.
 
@@ -920,11 +920,11 @@ Notons également que, même si ce cyle-là a duré 0.267 ms, la durée d'un cyc
 
 #image("./profiler-two-ticks.png")
 
-Quelques mesures ont été tentées pour réduire le temps nécéssaire à l'envoi d'un message DDS:
+Quelques mesures ont été tentées pour réduire le temps nécessaire à l'envoi d'un message DDS:
 
-/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à tout addresse IP accessible dans un certain intervalle. En restreignant à `localhost`, on s'assure que le message n'a pas à être copié plusieurs fois.
+/ Restreindre DDS à `localhost`: Il est possible que DDS envoie les messages en mode "broadcast", c'est-à-dire à tout adresse IP accessible dans un certain intervalle. En restreignant à `localhost`, on s'assure que le message n'a pas à être copié plusieurs fois.
 / Déplacer dans un autre thread: C'est ce qui a motivé la désynchronisation du thread "LowStateWriter" (cf @send-lowstate)
-/ Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrant#footnote[Créé avec `CreateRecurrentThreadEx`]
+/ Ajuster la fréquence d'envoi: Une fois `LowStateWriter` déplacé dans un thread indépendant, on peut ajuster la fréquence d'envoi, le thread étant récurrent#footnote[Créé avec `CreateRecurrentThreadEx`]
 
 Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'un cycle:
 
@@ -932,7 +932,7 @@ Ainsi que d'autres optimisations, qui ne sont pas en rapport avec cette phase d'
 / Utilisation d'une implémentation de CRC32 plus rapide: tentative avec _CRC++_ @crcpp non achevée, à cause d'un _stack smashing_ pendant l'exécution
 
 
-Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécéssaires pour atteindre un RTF raisonnable.
+Après optimisations, on arrive à atteindre un RTF aux alentours des 30%. Des recherches supplémentaires sont nécessaires pour atteindre un RTF raisonnable.
 
 == Enregistrement automatique de vidéos <video>
 
@@ -984,9 +984,9 @@ Un workflow est un ensemble de commandes à exécuter dans un environnement virt
 
 === Une image de base avec Docker
 
-L'environnement d'exécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque exécution du workflow, dans laquelle tout les programmes nécéssaires sont déjà installés.
+L'environnement d'exécution des workflows ne comporte pas d'installation de Gazebo. Étant donné le temps de compilation élevé, on peut "factoriser" cette étape dans une _image de base_, de laquelle on démarre pour chaque exécution du workflow, dans laquelle tous les programmes nécessaires sont déjà installés.
 
-Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécéssaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), Gazebo et gz-unitree.
+Pour cela, on part d'une image Ubuntu, dans lequelle on installe le nécessaire: Just (pour lancer des commandes, un sorte de Makefile mais plus moderne @just), FFMpeg (pour l'encodage H.264 servant à la création du fichier vidéo), XVFB (pour émuler un serveur X, cf @simulate-x), Python (pour lancer la politique RL), Gazebo et gz-unitree.
 
 ```dockerfile
 FROM ubuntu:24.04
@@ -1052,7 +1052,7 @@ Pour récupérer le fichier vidéo final, on peut utiliser la notion d'_artifact
   [
 
     ==== Un environnement de développement contraignant
-    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur exécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'exécute entièrement, et regarde si quelque chose s'est mal passé.
+    Développer et débugger une définition de workflow peut s'avérer complexe et particulièrement chronophage: n'ayant pas d'accès interactif au serveur exécutant celui-ci, il faut envoyer ses changements au dépôt git, attendre que le workflow s'exécute entièrement, et regarder si quelque chose s'est mal passé.
 
     Par exemple, si jamais des fichiers sont manquants, ou ne sont pas au chemin attendu, il faut modifier le workflow pour y rajouter des instruction listant le contenu d'un répertoire (en utilisant `ls` ou `tree`, par exemple), lancer le workflow à nouveau et regarder les logs.
 

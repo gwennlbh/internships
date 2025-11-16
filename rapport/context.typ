@@ -30,7 +30,7 @@ L'apprentissage par renforcement, ou _Reinforcement Learning_, permet de dévelo
 - Un _environnement_, que les actions viennent modifier
 - Un _score_ (_coût_ s'il doit être minimisé, _récompense_ inversement) qui dépend de l'état pré- et post-action de l'environnement ainsi que de l'action qui a été effectuée
 
-La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec "meilleur" définit comme "qui minimise le coût" (ou maximise la récompense):
+La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, quelles sont les meilleures actions à prendre en fonction de l'environnement actuel, avec "meilleur" défini comme "qui minimise le coût" (ou maximise la récompense):
 
 #diagram({
   node((0, 0))[Agent]
@@ -41,14 +41,14 @@ La phase d'apprentissage consiste à trouver, par des cycles d'essai/erreur, que
   edge((2, 0), (0, 0), "->", bend: 45deg)[Mise à jour]
 })
 
-Cette technique est particulièrement adaptée au problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
+Cette technique est particulièrement adaptée aux problèmes qui se prêtent à une modélisation type "jeu vidéo", dans le sens où l'agent représente le personnage-joueur, et le coût un certain score, qui est condition de victoire ou défaite.
 
 En robotique, une approche similaire explore l'espace d'action (en général un courant à envoyer aux moteurs) de façon à optimiser le coût.
 
 En robotique, on a des correspondances claires pour ces quatres notions:
 
 / Agent: Robot pour lequel on développe le programme de contrôle (appelé _politique_)
-/ Actions: Envoi d'ordres aux moteurs, souvent le courant électrique à appliquer // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécéssaire au microcontrolleurs sur le robot même]
+/ Actions: Envoi d'ordres aux moteurs, souvent le courant électrique à appliquer // #footnote[il y a techniquement deux principales manières de contrôler un robot: l'envoi de commandes de courant, ou contrôle par puissance, et l'envoi de vitesses cibles, qui laisse la détermination du courant nécessaire au microcontrolleurs sur le robot même]
 / Environnement: Le monde réel. C'est de loin la partie la plus difficile à simuler informatiquement. On utilise des moteurs de simulation physique, dont la pluralité des implémentations est importante, voir @why_multiple_simulators
 / Coût: Ensemble de contraintes ("ne pas endommager le robot") et d'évaluations spécifiques à la tâche à effectuer ("s'est déplacé de 5m en avant selon l'axe $x$").
 
@@ -98,7 +98,7 @@ $
   L: E -> S
 $
 
-avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$). Ces fonctions coût, qui ne dépendent que de l'état actuel de l'environnement, représente un domaine du RL#footnote[Reinforcement Learning] appelé _Q-Learning_ @qlearning
+avec $E$ l'ensemble des états possibles de l'environnement, et $S$ un ensemble muni d'un ordre total (on utilise souvent $[0, 1]$). Ces fonctions coût, qui ne dépendent que de l'état actuel de l'environnement, représentent un domaine du RL#footnote[Reinforcement Learning] appelé _Q-Learning_ @qlearning
 
 On remplit la colonne "Action à effectuer" avec l'action au coût le plus bas:
 
@@ -144,23 +144,23 @@ L'expression comporte deux hyperparamètres, à valeurs dans $]0, 1[$:
 
 ==== Tendances à la "tricherie" des agents
 
-Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisemment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
+Expérimentalement, on sait que des tendances "tricheuses" émergent facilement pendant l'entraînement: l'agent découvre des séries d'actions qui causent un bug avantageux vis à vis du coût associé, soit parce qu'il y a un bug dans le calcul de l'état de l'environnement post-action, soit parce que la fonction coût ne prend pas suffisamment bien en compte toutes les possibilités de l'environnement (autrement dit, il manque de contraintes).
 
 Dans le cas de la robotique, cela arrive particulièrement souvent, et il faut donc un simulateur qui soit suffisamment réaliste.
 
 ==== Sous-spécification de la fonction coût
 
-Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: On imagine un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense "le nombre de trombones existant sur Terre". Il finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée
+Un exemple populaire est l'expérience de pensée du Maximiseur de trombones @trombones: on imagine un agent avec pour environnement le monde réel, pour actions "prendre des décisions"; "envoyer des emails"; etc. et pour fonction récompense "le nombre de trombones existant sur Terre". Il finirait possiblement par réduire en escalavage tout être vivant capable de produire des trombones: la fonction coût est sous-spécifiée.
 
 ==== La validation comme méthode de mitigation <why_multiple_simulators>
 
-Comme ces bugs sont des comportements non voulus, il est très probables qu'ils ne soient pas exactement les mêmes en changeant d'implémentation.
+Comme ces bugs sont des comportements non voulus, il est très probable qu'ils ne soient pas exactement les mêmes en changeant d'implémentation.
 
 Il convient donc de se servir de _plusieurs_ implémentations: une sert à la phase d'entraînement, pendant laquelle l'agent développe des "tendances à la tricherie", puis une autre sert à la phase de _validation_.
 
-Cette phase consiste en le lancement de l'agent dans une autre implémentation, avec les mêmes actions mais qui, crucialement, ne comporte pas les mêmes bugs que l'environnement ayant servi à la phase d'apprentissage.
+Cette phase consiste à lancer l'agent dans une autre implémentation, avec les mêmes actions mais qui, crucialement, ne comporte pas les mêmes bugs que l'environnement ayant servi à la phase d'apprentissage.
 
-Les "techniques de triche" ainsi apprises deviennent inefficace, et si le score devient bien pire que celui de l'apprentissage, on peut détecter les cas de triche.
+Les "techniques de triche" ainsi apprises deviennent inefficaces, et si le score devient bien inférieur à celui de l'apprentissage, on peut détecter les cas de triche.
 
 On peut même aller plus loin, et multiplier les phases de validation avec des implémentations supplémentaires, ce qui réduit encore la probabilité qu'une technique de triche se glisse dans l'agent final.
 
@@ -209,7 +209,7 @@ $M$ et $Pi$ forment en fait tout ce qui se passe pendant un pas de temps. c'est 
   edge((2, 0), (2, .75), (0, .75), (0, 0), "-->", label-side: left)[itération],
 )
 
-Quand on "déroule" $Pi$ en en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions:
+Quand on "déroule" $Pi$ en partant d'un certain état initial $s_0$, on obtient une suite d'états et d'actions:
 
 #diagram(
   $
@@ -243,10 +243,10 @@ $
   )
 $
 
-l'ensemble des chemins possibles avec la politique $pi$. C'est tout simplement l'ensemble de tout les "déroulements" de la politique $pi$ en partant des états possibles de l'environnement.
+l'ensemble des chemins possibles avec la politique $pi$. C'est tout simplement l'ensemble de tous les "déroulements" de la politique $pi$ en partant des états possibles de l'environnement.
 
 
-On définit également l'ensemble de _tout_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
+On définit également l'ensemble de _tous_ les chemins d'états possibles, peut importe la politique, $cal(C)$ :
 
 #let definitions_paths_set = $
   cal(C) & :=
@@ -364,14 +364,14 @@ On peut visualiser ce calcul ainsi:
   node(name: <bottom>, (4.5, +1.5))[$sum_(i=t+1)^oo gamma^t r(s'_i)$ ]
   node((5.75, +1.5), align(
     left,
-  )[si $Pi$ avait choisit $a'_t$ \ au lieu de $a_t$])
+  )[si $Pi$ avait choisi $a'_t$ \ au lieu de $a_t$])
   edge(<break>, <bottom>, "->", bend: -25deg)[$a'_t$]
 
   // top-branch path
   node(name: <top>, (4.5, -1.5))[$sum_(i=t+1)^oo gamma^t r(s''_i)$]
   node((5.75, -1.5), align(
     left,
-  )[si $Pi$ avait choisit $a''_t$ \ au lieu de $a_t$])
+  )[si $Pi$ avait choisi $a''_t$ \ au lieu de $a_t$])
   edge(<break>, <top>, "->", bend: 25deg)[$a''_t$]
 
   // Expectation bar V(s)
@@ -397,7 +397,7 @@ On peut visualiser ce calcul ainsi:
 
 On considère tout les chemins à partir de l'état $s_t$, et l'on regarde l'espérance...
 
-/ pour $V(s_t)$: de tout les chemins
+/ pour $V(s_t)$: de tous les chemins
 / pour $Q(s_t, a_t)$: du chemin où l'on a choisi $a_t$
 
 En suite, il suffit de faire la différence, pour savoir l'_avantage_ que l'on a à choisir $a_t$ par rapport au reste.
@@ -487,7 +487,7 @@ Avec $cal(X)$ l'espace des échantillons et $P, P'$ deux distributions de probab
 
 
 
-Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distributions de probabilité de politiques $Q_Pi$ et $Q_Pi'$, pour tout $s in S$ @trpo
+Pour évaluer cette distance, on regarde la plus grande des distances entre des paires de distribution de probabilité de politique $Q_Pi$ et $Q_Pi'$, pour tout $s in S$ @trpo
 
 $
   max_(s in S) D_"KL" (Q_Pi' (s, dot) || Q_Pi (s, dot)) < delta
@@ -521,11 +521,11 @@ $
   )
 $
 
-On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tout les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.
+On a $D_"KL" (Q, Q') = 0$ (cf @dkl-zero), alors qu'il y a eu une modification très importante des probabilités de choix de l'action 1 et 2 dans tous les états possibles : si on imagine $Q(s, 1) = Q(s, 2) = 1 slash 4$, on a après modification $Q'(s, 1) = 1 slash 2$ et $Q'(s, 2) = 1 slash 8$.
 
 ==== Région de confiance
 
-Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvelle politique, aussi appelé une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
+Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvelle politique, aussi appelée une _trust region_ (région de confiance), d'où la méthode d'optimisation tire son nom @trpo.
 
 #let ddot = [ #sym.dot #h(-1em / 16) #sym.dot ]
 
@@ -545,7 +545,7 @@ Cette contrainte définit un ensemble réduit de $Pi'$ acceptables comme nouvell
 
 La _PPO_ repose sur le même principe de stabilisation de l'entraînement par limitation de l'ampleur des changements de politique à chaque pas.
 
-Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant un problème d'optimisation sans contraintes @ppo
+Cependant, les méthodes _PPO_ préfèrent changer la quantité à optimiser, pour limiter intrinsèquement l'ampleur des modifications, en résolvant un problème d'optimisation sans contrainte @ppo
 
 
 $
@@ -681,7 +681,7 @@ En robotique, il est commun d'inclure dans la récompense les éléments suivant
 
 Dans le contexte de la robotique, le calcul de l'état post-action de l'environnement est le travail du _moteur de physique_.
 
-Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équation physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
+Bien évidemment, ce sont des programmes complexes avec des résolutions souvent numériques d'équations physiques; il est presque inévitable que des bugs se glissent dans ces programmes.
 
 
 
@@ -726,4 +726,4 @@ En plus des difficultés de reproductibilité sur l'algorithme lui-même, le pay
   scale(7%, reflow: true, diagraph.render(read("./isaac-deptree.dot"))),
 )
 
-Bien que toutes ces dépendances puissent être spécifiées avec des contraintes de version strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup celles-ci ont besoin de compiler du code C++ _à l'installation_#footnote[Pour des raisons de performance @cpp-python, certaines bibliothèques implémentent leurs fonctions critiques en C++. C'est par exemple le cas de NumPy @numpy]: fixer la version de la bibliothèque ne suffit pas donc à guarantir la reproductibilité de la compilation de l'arbre des dépendances.
+Bien que toutes ces dépendances puissent être spécifiées avec des contraintes de version strictes @lockfiles pour éviter des changements imprévus de comportement du code venant des bibliothèques, beaucoup ont besoin de compiler du code C++ _à l'installation_#footnote[Pour des raisons de performance @cpp-python, certaines bibliothèques implémentent leurs fonctions critiques en C++. C'est par exemple le cas de NumPy @numpy]: fixer la version de la bibliothèque ne suffit pas donc à garantir la reproductibilité de la compilation de l'arbre des dépendances.

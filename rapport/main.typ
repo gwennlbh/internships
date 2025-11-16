@@ -123,11 +123,14 @@
 
 #pagebreak()
 
+#outline(depth: 3)
+
+#pagebreak()
+
 = Remerciements
 
 #include "thanks.typ"
 
-#outline(depth: 3)
 
 = Contexte
 

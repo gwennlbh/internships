@@ -2,11 +2,11 @@
 
 === État dans le domaine de la programmation
 
-La différence entre une fonction au sens mathématique et une fonction au sens programmatique consiste en le fait que, par des raisons de practicité, on permet aux `function`s des langages de programmation d'avoir des _effets de bords_. Ces effets affectent, modifient ou font dépendre la fonction d'un environnement global qui n'est pas explicitement déclaré comme une entrée (argument) de la fonction en question @purefunctions.
+La différence entre une fonction au sens mathématique et une fonction au sens programmatique consiste dans le fait que, pour des raisons de practicité, on permet aux `function`s des langages de programmation d'avoir des _effets de bords_. Ces effets affectent, modifient ou font dépendre la fonction d'un environnement global qui n'est pas explicitement déclaré comme une entrée (argument) de la fonction en question @purefunctions.
 
-Cette liberté permet, par exemple, d'avoir accès à la date et à l'heure courante, interagir avec un système de fichier d'un ordinateur, générer une surface pseudo aléatoire par bruit de Perlin, etc.
+Cette liberté permet, par exemple, d'avoir accès à la date et à l'heure courante, d'interagir avec un système de fichier d'un ordinateur, de générer une surface pseudo aléatoire par bruit de Perlin, etc.
 
-Mais, en contrepartie, on perd une équation qui est fondamentale en mathématiques:
+Mais, en contrepartie, on perd une équation qui est fondamentale en mathématique:
 
 $
   forall E, F, forall f: E->F, forall (e_1, e_2) in E^2, e_1 = e_2 => f(e_1) = f(e_2)
@@ -29,12 +29,12 @@ De manière donc très concrète, si cette fonction `f` fait partie d'un protoco
 
 En dehors du besoin de vérifiabilité du monde de la recherche, la reproductibilité est une qualité recherchée en programmation @reproducibility.
 
-Il existe donc des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limitent les effets de bords. Certains langages font également la distinction entre une fonction _pure_ (sans effets de bord) et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord et ne renvoie pas de valeur @ibm-function-procedure-routine.
+Il existe donc des langages de programmation dits _fonctionnels_, qui, de manière plus ou moins stricte, limitent les effets de bords. Certains langages font également la distinction entre une fonction _pure_ (sans effets de bord) et une fonction classique @fortran-pure. Certaines fonctions, plutôt appelées _procédures_, sont uniquement composées d'effet de bord et ne renvoient pas de valeur @ibm-function-procedure-routine.
 
 
 === État dans le domaine de la robotique
 
-En robotique, pour donner des ordres au matériel, on intéragit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel.
+En robotique, pour donner des ordres au matériel, on interagit beaucoup avec le monde extérieur (ordres et lecture d'état de servo-moteurs, flux vidéo d'une caméra, etc.), souvent dans un langage plutôt bas-niveau, pour des questions de performance et de proximité abstractionnelle au matériel.
 
 De fait, les langages employés sont communément C, C++ ou Python#footnote[Il arrive assez communément d'utiliser Python, un langage haut-niveau, mais c'est dans ce cas   à but de prototypage. Le code contrôlant les moteurs est écrit dans un langage bas niveau, mais appelé par Python via FFI.] @programming-languages-robotics, des langages bien plus impératifs que fonctionnels @imperative-languages.
 
@@ -148,7 +148,7 @@ La dérivation prend ici en entrée le code source (`src-odri-masterboard-sdk`),
 
 === Un ecosystème de dépendances
 
-Afin de conserver la reproductibilité même lorsque l'on dépend de libraries tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des paquets Nix, disponibles sur un registre centralisé, _Nixpkgs_ @nixpkgs.
+Afin de conserver la reproductibilité même lorsque l'on dépend de bibliothèques tierces, ces dépendances doivent également avoir une compilation reproductible: on déclare donc des dépendances à des paquets Nix, disponibles sur un registre centralisé, _Nixpkgs_ @nixpkgs.
 
 Ainsi, écrire un paquet Nix pour son logiciel demande parfois d'écrire des paquets Nix pour les dépendances de notre projet, si celles-ci n'existent pas encore, et cela récursivement. On peut ensuite soumettre ces autres paquets à Nixpkgs @nixpkgs-contributing afin que d'autres puissent en dépendre sans les réécrire.
 
@@ -234,5 +234,4 @@ Il existe plusieurs tentatives de packaging de Gazebo pour Nix:
 - Un outil de génération de paquets Nix à partir de paquets ROS ou Gazebo, développé par Guilhem Saurel au sein de l'équipe Gepetto, _gazebros2nix_ @gazebros2nix
 
 Au début du développement de _gz-unitree_, des essais d'utilisation des paquets Nix pour le développement et la compilation ont été réalisés, mais des erreurs subsistaient, en particulier avec Gazebo.
-Des efforts supplémentaires sont nécéssaires pour empaqueter _gz-unitree_.
-
+Des efforts supplémentaires sont nécessaires pour empaqueter _gz-unitree_.

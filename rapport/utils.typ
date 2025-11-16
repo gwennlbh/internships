@@ -1,6 +1,6 @@
 #let comment = content => text(fill: gray)[(Note: #content)]
 #let todo = content => text(fill: red)[(TODO: #content)]
-#let refneeded = text(fill: luma(100), [[Réf. nécéssaire]])
+#let refneeded = text(fill: luma(100), [[Réf. nécessaire]])
 #let dontbreak = content => block(breakable: false, content)
 
 // https://github.com/typst/typst/issues/3147#issuecomment-2457554155
@@ -98,8 +98,7 @@
     lines_from_start
       .slice(
         0,
-        lines_from_start.position(predicate(ends))
-          + if keep_delimiting { 1 } else { 0 },
+        lines_from_start.position(predicate(ends)) + if keep_delimiting { 1 } else { 0 },
       )
       .join("\n")
   }
@@ -179,4 +178,3 @@
     raw(lang: lang, dedent(transform(contents)))
   }
 }
-

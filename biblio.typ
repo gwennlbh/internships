@@ -14,7 +14,7 @@ Le but était de pouvoir utiliser ce logiciel de simulation open source avec un 
 
 === Une base de code partiellement open-source
 
-Une partie du code source de ce SDK n'est pas disponible, et n'est que distribué sous forme de binaires @sdk2-in-source-binaries. J'ai donc chercher à comprendre cette partie du code par ingénierie inverse, ce qui ne s'est pas avéré nécéssaire.
+Une partie du code source de ce SDK n'est pas disponible, et n'est que distribué sous forme de binaires @sdk2-in-source-binaries. J'ai donc chercher à comprendre cette partie du code par ingénierie inverse, ce qui ne s'est pas avéré nécessaire.
 
 Au final, en explorant le code source du plugin pour un autre logiciel de simulation, Mujoco @mujoco @unitree-mujoco, j'ai pu comprendre comment interfacer le SDK avec Gazebo.
 
