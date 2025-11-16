@@ -98,7 +98,8 @@
     lines_from_start
       .slice(
         0,
-        lines_from_start.position(predicate(ends)) + if keep_delimiting { 1 } else { 0 },
+        lines_from_start.position(predicate(ends))
+          + if keep_delimiting { 1 } else { 0 },
       )
       .join("\n")
   }
