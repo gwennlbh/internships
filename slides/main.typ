@@ -799,3 +799,9 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
 
 
 
+= Conclusion
+
+#title-slide[
+  == Merci!
+  Des questions?
+]
