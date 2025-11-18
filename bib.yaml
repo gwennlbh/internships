@@ -1135,3 +1135,11 @@ numpy:
     date: '2025-11-07'
     value: https://numpy.org
 
+
+nixos-infra-cache:
+  type: web
+  title: cache.nixos.org is up
+  url:
+    date: '2025-11-18'
+    value: https://cache.nixos.org
+
