@@ -152,7 +152,7 @@ Afin de conserver la reproductibilité même lorsque l'on dépend de bibliothèq
 
 Ainsi, écrire un paquet Nix pour son logiciel demande parfois d'écrire des paquets Nix pour les dépendances de notre projet, si celles-ci n'existent pas encore, et cela récursivement. On peut ensuite soumettre ces autres paquets à Nixpkgs @nixpkgs-contributing afin que d'autres puissent en dépendre sans les réécrire.
 
-Pour ne pas avoir à compiler toutes les dépendances à chaque compilation, il existe une notion de _Binary Cache_#footnote[Cache binaire]. Un cache existe en local sur la machine exécutant `nix`, qui est rempli au fur et à mesure des compilations effectuées localement. Il y a aussi un serveur de cache distant à _cache.nixos.org_ @nixos-infra-cache, qui offre des caches binaires des paquets sur _Nixpkgs_, permettant d'éviter totalement la compilation en local. Enfin, il est également possible de déployer ses propres binaires sur Cachix @cachix.
+Pour ne pas avoir à compiler toutes les dépendances à chaque compilation, il existe une notion de _Binary Cache_#footnote[Cache binaire]. Un cache existe en local sur la machine exécutant `nix`, qui se remplit au fur et à mesure des compilations effectuées localement. Il y a aussi un serveur de cache distant à _cache.nixos.org_ @nixos-infra-cache, qui offre des caches binaires des paquets sur _Nixpkgs_, permettant d'éviter totalement la compilation en local. Enfin, il est également possible de déployer ses propres binaires sur Cachix @cachix.
 
 === Une compilation dans un environnement fixé
 
