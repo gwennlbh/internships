@@ -770,7 +770,7 @@ Gwenn Le Bihan `<gwenn.lebihan@etu.inp-n7.fr>` \
       (2, "  ", "darwin"),
       // (3, "  ", "isBootstrap"),
       // (4, "  ", "isMinimalBuild"),
-      (10, "  ", "useOpenSSL"),
+      // (10, "  ", "useOpenSSL"),
       // (11, "  ", "useSharedLibraries"),
       (12, "  ", "uiToolkits"),
       // (13, "  ", "buildDocs"),
